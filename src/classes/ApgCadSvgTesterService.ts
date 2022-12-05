@@ -191,7 +191,7 @@ export class ApgCadSvgTesterService {
     cad.svg.title = "Test Random Lines";
     cad.svg.description = "Apg Svg Cad";
     const _layers = this.buildTestLayers(cad);
-    cad.setLayer('1');
+    cad.setLayer('2');
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
@@ -218,7 +218,7 @@ export class ApgCadSvgTesterService {
     cad.svg.title = "Test Random Points";
     cad.svg.description = "Apg Svg Cad";
     const _layers = this.buildTestLayers(cad);
-    cad.setLayer('1');
+    cad.setLayer('3');
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
@@ -240,7 +240,7 @@ export class ApgCadSvgTesterService {
     cad.svg.title = "Test Random Points";
     cad.svg.description = "Apg Svg Cad";
     const _layers = this.buildTestLayers(cad);
-    cad.setLayer('1');
+    cad.setLayer('4');
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
@@ -287,7 +287,7 @@ export class ApgCadSvgTesterService {
     cad.svg.title = "Test Random Labels";
     cad.svg.description = "Apg Svg Cad";
     const _layers = this.buildTestLayers(cad);
-    cad.setLayer('1');
+    cad.setLayer('2');
 
     const maxX = this.MAX_X;
     const maxn = this.MAX_N;
@@ -329,6 +329,7 @@ export class ApgCadSvgTesterService {
     cad.svg.description = "Apg Svg Cad";
     const layers = this.buildTestLayers(cad);
     const dimFact = new ApgCadSvgLinearDimensionsFactory(cad.svg, layers[0]);
+    dimFact.setup(layers[0], 20, "");
 
     const maxxy = this.MAX_X;
     const maxn = this.MAX_N;

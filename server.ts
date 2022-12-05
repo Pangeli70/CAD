@@ -15,7 +15,7 @@ const SERVER_INFO: Uts.IApgUtsServerInfo = {
   localPort: 49604
 }
 
-Tng.ApgTngService.Init("./templates", {
+Tng.ApgTngService.Init("./templates", "", {
   useCache: false,
   cacheChunksLongerThan: 100,
   consoleLog: true

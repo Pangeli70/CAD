@@ -2,7 +2,7 @@
   src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
 
 <div 
-  id="embedded-svg"
+  id="inline-svg"
   width="800"
   height="450"
   style="background-color: #000000; margin-left: auto; margin-right: auto; display:block">
@@ -10,16 +10,16 @@
 </div>
 
 <script>
-  document.getElementById('embedded-svg').addEventListener('load', function () {
+  document.getElementById('APG_SVG_DOC').addEventListener('load', function () {
     // Will get called after embed element was loaded
     svgPanZoom(
-      document.getElementById('Apg_Svg_Root_Node'),
+      document.getElementById('APG_SVG_DOC'),
       {
         panEnabled: true,
         controlIconsEnabled: true,
         zoomEnabled: true,
         dblClickZoomEnabled: true,
-        mouseWheelZoomEnabled: false,
+        mouseWheelZoomEnabled: true,
         preventMouseEventsDefault: true,
         zoomScaleSensitivity: 0.2,
         minZoom: 0.5,
