@@ -30,7 +30,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
   /** The font data */
   fontName = "";
   /** Character Height */
-  charHeight = 8;
+  charHeight = 12;
   /** Arrow Block name*/
   terminator = eApgCadDftDimTerminatorStyles.UNDEFINED;
   /** Additional class for the annotations */
@@ -288,7 +288,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
         .childOf(r);
 
       this.svgDoc
-        .use(arrow1Pos.x, arrow1Pos.y, this.terminator)
+        .use(arrow2Pos.x, arrow2Pos.y, this.terminator)
         .rotate(arrowOrientation + 180, arrow2Pos.x, arrow2Pos.y)
         .childOf(r);
     }
@@ -296,16 +296,17 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
     // Draw the text
     const textDef = this.svgDoc.text(textPoint.x, textPoint.y, dimension);
     textDef
-      .rotate(textOrientation, textPoint.x, textPoint.y)
+      .rotate(textOrientation +180, textPoint.x, textPoint.y)
+      .attrib("stroke","none")
       .childOf(r);
 
     // Draw the ladders
     this.svgDoc
-      .line(p1.x, p1.y, arrow1Pos.x, arrow1Pos.y)
+      .line(ip1.x, ip1.y, arrow1Pos.x, arrow1Pos.y)
       .childOf(r);
 
     this.svgDoc
-      .line(p2.x, p2.y, arrow2Pos.x, arrow2Pos.y)
+      .line(ip2.x, ip2.y, arrow2Pos.x, arrow2Pos.y)
       .childOf(r);
 
     // Draw debug elements

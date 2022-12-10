@@ -418,7 +418,7 @@ export class ApgCadSvg {
   // Common SVG object definitions (Blocks , Patterns, Gradients)
   protected _initDefs() {
 
-    const size = 10;
+    const size = 20;
     const ratio = 0.25;
 
     const mechPts: A2D.Apg2DPoint[] = [
@@ -426,25 +426,27 @@ export class ApgCadSvg {
       new A2D.Apg2DPoint(size, -size * ratio),
       new A2D.Apg2DPoint(size, size * ratio),
     ];
-    const mechArrow = this.svg.polygon(mechPts);
-    this.newBlock(eApgCadDftDimTerminatorStyles.MECHANICAL, mechArrow);
+    const mechArrow = this.svg
+      .polygon(mechPts, eApgCadDftDimTerminatorStyles.MECHANICAL)
+      .stroke(eApgCadStdColors.NONE, 0);
+    this.newBlock(mechArrow);
 
-    const g = this.svg.group();
+    const g = this.svg.group(eApgCadDftDimTerminatorStyles.ARROW);
     this.svg
       .line(mechPts[0].x, mechPts[0].y, mechPts[1].x, mechPts[1].y)
       .childOf(g);
     this.svg
       .line(mechPts[0].x, mechPts[0].y, mechPts[2].x, mechPts[2].y)
       .childOf(g);
-    this.newBlock(eApgCadDftDimTerminatorStyles.ARROW, g);
+    this.newBlock(g);
 
     const archPts: A2D.Apg2DPoint[] = [
       new A2D.Apg2DPoint(-size * ratio / 2, -size / 2),
       new A2D.Apg2DPoint(size * ratio / 2, size / 2),
     ];
-    const acrhLine = this.svg
-      .line(archPts[0].x, archPts[0].y, archPts[1].x, archPts[1].y);
-    this.newBlock(eApgCadDftDimTerminatorStyles.ARCHITECTONICAL, acrhLine);
+    const archLine = this.svg
+      .line(archPts[0].x, archPts[0].y, archPts[1].x, archPts[1].y, eApgCadDftDimTerminatorStyles.ARCHITECTURAL);
+    this.newBlock(archLine);
   }
 
 
@@ -734,8 +736,8 @@ export class ApgCadSvg {
   }
 
 
-  newBlock(ablockId: string, anode: Svg.ApgSvgNode) {
-    this.svg.addToDefs(ablockId, anode);
+  newBlock(anode: Svg.ApgSvgNode) {
+    this.svg.addToDefs(anode.ID, anode);
   }
 
 

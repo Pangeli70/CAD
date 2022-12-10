@@ -12,5 +12,5 @@ export enum eApgCadDftDimTerminatorStyles {
   UNDEFINED = "undefined",
   MECHANICAL = 'mechDimTerminator',
   ARROW = 'arrowDimTerminator',
-  ARCHITECTONICAL = 'archDimTerminator',
+  ARCHITECTURAL = 'archDimTerminator',
 }

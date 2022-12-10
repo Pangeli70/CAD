@@ -466,7 +466,7 @@ export class ApgCadSvgTesterService {
     cad.svg.description = "Apg Svg Cad";
     const layers = this.#buildTestLayers(cad);
     const dimFact = new ApgCadSvgLinearDimensionsFactory(cad.svg, layers[0]);
-    dimFact.setup(layers[0], 20, eApgCadDftDimTerminatorStyles.MECHANICAL);
+    dimFact.setup(layers[0], 20, eApgCadDftDimTerminatorStyles.ARCHITECTURAL);
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
