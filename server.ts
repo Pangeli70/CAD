@@ -12,7 +12,7 @@ const SERVER_INFO: Uts.IApgUtsServerInfo = {
   name: 'Apg-Cad',
   title: 'Directory of Apg Cad',
   subtitle: 'Apg Cad tests',
-  localPort: 49604
+  localPort: 49605
 }
 
 Tng.ApgTngService.Init("./templates", "", {

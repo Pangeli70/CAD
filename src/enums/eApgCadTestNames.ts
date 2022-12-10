@@ -2,6 +2,7 @@
  * @module [CAD]
  * @author [APG] ANGELI Paolo Giusto
  * @version 0.9.2 [APG 2022/11/30] Github beta
+ * @version 0.9.3 [APG 2022/12/05] Deno Deploy
  * -----------------------------------------------------------------------
  */
 
@@ -9,22 +10,24 @@
  * Default Line styles 
  */
 export enum eApgCadTestNames {
-    LAYERS = "Layers",
-
-    STROKE_STYLES = "StrokeStyles",
     POINTS = "Points",
     LINES = "Lines",
     POLYLINES = "PolyLines",
-    ARCS = "Arcs",
     CIRCLES = "Circles",
+    ARCS = "Arcs",
     LABELS = "Lables",
-    DIM_STYLES = `DimStyles`,
 
+    LAYERS = "Layers",
+    STROKE_STYLES = "StrokeStyles",
+
+    BASIC_SHAPES = "BasicShapes",
+    
     HORIZONTAL_DIMS = `HorizontalDims`,
     VERTICAL_DIMS = `VerticalDims`,
-
+    
     ALIGNED_DIMS = `AlignedDims`,
     DIAMETER_DIMS = `DiameterDims`,
     RADIOUS_DIMS = `RadiousDims`,
-    ANGULAR_DIMS = 'AngularDims'
+    ANGULAR_DIMS = 'AngularDims',
+    DIM_STYLES = `DimStyles`,
 }

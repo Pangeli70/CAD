@@ -5,13 +5,15 @@
  * @version 0.5.0 [APG 2018/11/25]
  * @version 0.8.0 [APG 2022/04/03] Porting to Deno
  * @version 0.9.2 [APG 2022/11/30] Github beta
+ * @version 0.9.3 [APG 2022/12/05] Deno Deploy
  * -----------------------------------------------------------------------
  */
 import { A2D, Svg } from "../../deps.ts";
 
 import {
-  ApgCadSvgPrimitiveFactory,
+  ApgCadSvgPrimitivesFactory,
   eApgCadSvgPrimitiveFactoryTypes,
+  eApgCadDftDimTerminatorStyles,
   eApgCadLinearDimensionTypes,
   ApgCadSvgBasicShapesFactory
 } from "../../mod.ts";
@@ -20,7 +22,7 @@ import { ApgCadSvgUtils } from "./ApgCadSvgUtils.ts";
 
 /** Apg Svg : Factory for CAD Linear dimensions with arrows and ladders
  */
-export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitiveFactory {
+export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory {
 
 
   DEBUG_MODE = false;
@@ -30,7 +32,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitiveFactory 
   /** Character Height */
   charHeight = 8;
   /** Arrow Block name*/
-  arrowDefName = "";
+  terminator = eApgCadDftDimTerminatorStyles.UNDEFINED;
   /** Additional class for the annotations */
   cssClass = "";
 
@@ -48,13 +50,13 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitiveFactory 
   setup(
     alayer: Svg.ApgSvgNode,
     acharHeight: number,
-    aarrowName: string,
+    aterminator: eApgCadDftDimTerminatorStyles,
     acss = ''
   ) {
     this.layer = alayer;
     this.fontName = "...";
     this.charHeight = acharHeight;
-    this.arrowDefName = aarrowName;
+    this.terminator = aterminator;
     this.cssClass = acss;
     this._ready = true;
   }
@@ -155,10 +157,10 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitiveFactory 
 
   /** Builds a Cad Linear Dimension with the ladders*/
   build(
-    afirst: A2D.Apg2DPoint,
-    asecond: A2D.Apg2DPoint,
-    adistance: number,
     atype: eApgCadLinearDimensionTypes = eApgCadLinearDimensionTypes.Aligned,
+    afirstPoint: A2D.Apg2DPoint,
+    asecondPoint: A2D.Apg2DPoint,
+    adisplacement: number,
     atextBef = '',
     atextAft = ''
   ) {
@@ -170,8 +172,8 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitiveFactory 
     }
 
     // Copy the points
-    const p1 = A2D.Apg2DPoint.Clone(afirst);
-    const p2 = A2D.Apg2DPoint.Clone(asecond);
+    const p1 = A2D.Apg2DPoint.Clone(afirstPoint);
+    const p2 = A2D.Apg2DPoint.Clone(asecondPoint);
 
     // Preliminary checks
     // ------------------------------------------------------------------------------
@@ -215,7 +217,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitiveFactory 
     const ip2 = A2D.Apg2DPoint.Clone(p2);
 
     /** This flag determines if the points must be exchanged */
-    const exchange = this.#adaptPoints(p1, p2, adistance, atype);
+    const exchange = this.#adaptPoints(p1, p2, adisplacement, atype);
 
     if (exchange) {
       p1.SwapWith(p2);
@@ -226,8 +228,8 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitiveFactory 
     // --------------------------------------------------------------------------------------------
 
     const pointsLine = new A2D.Apg2DLine(p1, p2);
-    const arrow1Pos = pointsLine.OffsetPoint(p1, adistance);
-    const arrow2Pos = pointsLine.OffsetPoint(p2, adistance);
+    const arrow1Pos = pointsLine.OffsetPoint(p1, adisplacement);
+    const arrow2Pos = pointsLine.OffsetPoint(p2, adisplacement);
     const dimLine = new A2D.Apg2DLine(arrow1Pos, arrow2Pos);
 
     const textBasePoint = arrow1Pos.HalfwayFrom(arrow2Pos);
@@ -251,7 +253,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitiveFactory 
         + 'p3: ' + arrow1Pos.x.toFixed(0).toString() + ',' + arrow1Pos.y.toFixed(0).toString() + '\n'
         + 'p4: ' + arrow2Pos.x.toFixed(0).toString() + ',' + arrow2Pos.y.toFixed(0).toString() + '\n'
         + 'o: ' + dimLine.angle.toFixed(0).toString() + '°\n'
-        + 'll: ' + adistance.toFixed(0).toString();
+        + 'll: ' + adisplacement.toFixed(0).toString();
     }
 
     const dimension =
@@ -265,6 +267,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitiveFactory 
 
     // Start to create the svg element
     const r = this.svgDoc.group();
+    r.childOf(this.layer);
 
     // If specified adds the CSS class
     if (this.cssClass !== '') {
@@ -277,19 +280,15 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitiveFactory 
       .childOf(r);
 
     // Draw the arrow symbols
-
-    const arrowDef1 = this.svgDoc.getFromDef(this.arrowDefName);
-    if (arrowDef1) {
-      arrowDef1
-        .move(arrow1Pos.x, arrow1Pos.y)
+    const dimTerminatorDef = this.svgDoc.getFromDef(this.terminator);
+    if (dimTerminatorDef) {
+      this.svgDoc
+        .use(arrow1Pos.x, arrow1Pos.y, this.terminator)
         .rotate(arrowOrientation, arrow1Pos.x, arrow1Pos.y)
         .childOf(r);
-    }
 
-    const arrowDef2 = this.svgDoc.getFromDef(this.arrowDefName);
-    if (arrowDef2) {
-      arrowDef2
-        .move(arrow1Pos.x, arrow1Pos.y)
+      this.svgDoc
+        .use(arrow1Pos.x, arrow1Pos.y, this.terminator)
         .rotate(arrowOrientation + 180, arrow2Pos.x, arrow2Pos.y)
         .childOf(r);
     }

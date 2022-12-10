@@ -1,10 +1,11 @@
 /** -----------------------------------------------------------------------
- * @module [SVG-CAD]
+ * @module [CAD-SVG]
  * @author [APG] ANGELI Paolo Giusto
  * @version 0.0.1 [APG 2017/10/27]
  * @version 0.5.0 [APG 2018/11/25]
  * @version 0.8.0 [APG 2022/04/03] Porting to Deno
  * @version 0.9.2 [APG 2022/11/30] Github beta
+ * @version 0.9.3 [APG 2022/12/05] Deno Deploy
  * -----------------------------------------------------------------------
  */
 
@@ -19,10 +20,11 @@ import {
   IApgCadSvgAxis,
   IApgCadSvgTextStyle,
   ApgCadSvgBasicShapesFactory,
+  eApgCadDftDimTerminatorStyles,
   eApgCadSvgPrimitiveFactoryTypes,
-  ApgCadSvgPrimitiveFactory,
+  ApgCadSvgPrimitivesFactory,
   ApgCadSvgAxisFactory,
-eApgCadDftLayers,
+  eApgCadDftLayers,
 } from "../../mod.ts";
 
 /** The Object that allows to create an Svg CAD Drawing
@@ -75,7 +77,7 @@ export class ApgCadSvg {
 
   /** Dictionary of the primitives factory */
 
-  primitiveFactories: Map<string, ApgCadSvgPrimitiveFactory> = new Map();
+  primitiveFactories: Map<string, ApgCadSvgPrimitivesFactory> = new Map();
 
   /** Constant that sets the standard size elements */
   readonly STD_SIZE_K = 10;
@@ -102,10 +104,10 @@ export class ApgCadSvg {
         drawTicks: true,
         tickStroke: { color: eApgCadStdColors.GRAY, width: 2 },
         ticksDistance: 100,
-        ticksSize: 50,
+        ticksSize: 25,
         drawBigTicks: true,
-        bigTicksEvery: 10,
-        bigTicksSize: 100,
+        bigTicksEvery: 500,
+        bigTicksSize: 50,
         drawBigTicksLables: true,
         labelsStyleName: "AxisLabel",
       },
@@ -162,6 +164,9 @@ export class ApgCadSvg {
     // If requested draws background
     this._initBackGround();
 
+    // Builds standard blocks like arrows
+    this._initDefs();
+
     // Build the primitive factories
     this._initPrimitiveFactories();
 
@@ -171,6 +176,7 @@ export class ApgCadSvg {
     // Set the current layer
     this.setLayer(eApgCadDftLayers.ZERO);
   }
+
 
   protected _resetViewBox() {
     /** Display ratio */
@@ -409,6 +415,39 @@ export class ApgCadSvg {
   }
 
 
+  // Common SVG object definitions (Blocks , Patterns, Gradients)
+  protected _initDefs() {
+
+    const size = 10;
+    const ratio = 0.25;
+
+    const mechPts: A2D.Apg2DPoint[] = [
+      new A2D.Apg2DPoint(0, 0),
+      new A2D.Apg2DPoint(size, -size * ratio),
+      new A2D.Apg2DPoint(size, size * ratio),
+    ];
+    const mechArrow = this.svg.polygon(mechPts);
+    this.newBlock(eApgCadDftDimTerminatorStyles.MECHANICAL, mechArrow);
+
+    const g = this.svg.group();
+    this.svg
+      .line(mechPts[0].x, mechPts[0].y, mechPts[1].x, mechPts[1].y)
+      .childOf(g);
+    this.svg
+      .line(mechPts[0].x, mechPts[0].y, mechPts[2].x, mechPts[2].y)
+      .childOf(g);
+    this.newBlock(eApgCadDftDimTerminatorStyles.ARROW, g);
+
+    const archPts: A2D.Apg2DPoint[] = [
+      new A2D.Apg2DPoint(-size * ratio / 2, -size / 2),
+      new A2D.Apg2DPoint(size * ratio / 2, size / 2),
+    ];
+    const acrhLine = this.svg
+      .line(archPts[0].x, archPts[0].y, archPts[1].x, archPts[1].y);
+    this.newBlock(eApgCadDftDimTerminatorStyles.ARCHITECTONICAL, acrhLine);
+  }
+
+
   protected _initPrimitiveFactories() {
     const basicShapes: ApgCadSvgBasicShapesFactory =
       new ApgCadSvgBasicShapesFactory(
@@ -466,6 +505,7 @@ export class ApgCadSvg {
       }
     }
   }
+
 
   private __drawGridLine(
     g: Svg.ApgSvgNode,
@@ -530,8 +570,10 @@ export class ApgCadSvg {
     afillName?: string
   ) {
 
-    const layer = this.svg.group("LAYER_" + aname.toUpperCase())
-      .class("layer-" + aname.toLowerCase())
+    const layerId = "LAYER_" + aname.toUpperCase();
+    const layerClass = "layer-" + aname.toLowerCase();
+    const layer = this.svg.group(layerId)
+      .class(layerClass)
       .childOfRoot(this.svg);
 
     const strokeStyle = this.getStrokeStyle(astrokeName);
@@ -692,43 +734,14 @@ export class ApgCadSvg {
   }
 
 
-  newBlock(anode: Svg.ApgSvgNode) {
-    this.svg.addToDefs(anode);
+  newBlock(ablockId: string, anode: Svg.ApgSvgNode) {
+    this.svg.addToDefs(ablockId, anode);
   }
 
 
-  getBlock(aname: string) {
-    // Common SVG object definitions (Blocks , Patterns, Gradients)
-    return this.svg.getFromDef(aname);
+  getBlock(ablockId: string) {
+    return this.svg.getFromDef(ablockId);
   }
-
-
-  /** Tries to get the block from the definitions.
-   *  If not found it creates the block.  */
-  getArrowBlock(aname: string, asize: number, aratio: number) {
-    // Il already created returns the one in the definitions
-    let larrow = this.getBlock(aname);
-    if (!larrow) {
-      // Common SVG object definitions (Blocks , Patterns, Gradients)
-      const pts: A2D.Apg2DPoint[] = [
-        new A2D.Apg2DPoint(0, 0),
-        new A2D.Apg2DPoint(-asize, -asize * aratio),
-        new A2D.Apg2DPoint(-asize, asize * aratio),
-      ];
-
-      // Build arrow
-      const newArrow = this.svg.polygon(
-        pts,
-        aname,
-      );
-
-      this.newBlock(newArrow);
-
-      larrow = newArrow;
-    }
-    return larrow;
-  }
-
 
   /** Draws a simple svg as stub for the tests */
   drawStub() {
