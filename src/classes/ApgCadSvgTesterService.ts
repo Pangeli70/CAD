@@ -3,7 +3,7 @@
  * @author [APG] ANGELI Paolo Giusto
  * @version 0.8.0 [APG 2022/05/21] Porting to Deno
  * @version 0.9.2 [APG 2022/11/30] Github beta
- * @version 0.9.3 [APG 2022/12/05] Deno Deploy
+ * @version 0.9.3 [APG 2022/12/18] Deno Deploy
  * -----------------------------------------------------------------------
  */
 
@@ -16,7 +16,7 @@ import {
   ApgCadSvg,
   ApgCadSvgBasicShapesFactory,
   ApgCadSvgLinearDimensionsFactory,
-  eApgCadDftDimTerminatorStyles,
+  eApgCadDftDimArrowStyles,
   eApgCadLinearDimensionTypes,
   eApgCadStdColors
 } from '../../mod.ts';
@@ -302,7 +302,7 @@ export class ApgCadSvgTesterService {
 
       const p1 = this.#randomPoint(0, maxX)
       const p2 = this.#randomPoint(0, maxX)
-      const midPoint = p1.HalfwayFrom(p2);
+      const midPoint = p1.halfwayFrom(p2);
       const line = new A2D.Apg2DLine(p1, p2);
 
       // cad.svg.text(x1, y1, line.length / strings[j].length, line.slope, strings[j])
@@ -362,7 +362,7 @@ export class ApgCadSvgTesterService {
       const p1 = this.#randomPoint(0, maxX);
       const w = this.#randomInt(minR, maxR);
       const h = this.#randomInt(minR, maxR);
-      const rect = shapeFact.buildRect(p1, w, h);
+      const rect = shapeFact.buildRectWH(p1, w, h);
       rect.attrib("fill", "none");
     }
 
@@ -449,16 +449,6 @@ export class ApgCadSvgTesterService {
     }
 */
 
-
-
-
-
-
-
-
-
-
-
   static #testLinearDims(atype: eApgCadLinearDimensionTypes) {
 
     const cad = new ApgCadSvg();
@@ -466,7 +456,7 @@ export class ApgCadSvgTesterService {
     cad.svg.description = "Apg Svg Cad";
     const layers = this.#buildTestLayers(cad);
     const dimFact = new ApgCadSvgLinearDimensionsFactory(cad.svg, layers[0]);
-    dimFact.setup(layers[0], 20, eApgCadDftDimTerminatorStyles.ARCHITECTURAL);
+    dimFact.setup(layers[0], 20, eApgCadDftDimArrowStyles.ARCHITECTURAL);
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
@@ -478,6 +468,11 @@ export class ApgCadSvgTesterService {
       const p2 = this.#randomPoint(0, maxX);
       const d = this.#randomInt(minD, maxD);
       dimFact.build(atype, p1, p2, d, "<", ">");
+
+      cad.setLayer(layers[1].ID);
+      cad.svg
+        .line(p1.x, p1.y, p2.x, p2.y)
+        .childOf(cad.currentLayer);
     }
     return cad.svg.render();
 
@@ -504,11 +499,11 @@ export class ApgCadSvgTesterService {
     cad.svg.description = "Apg Svg Cad";
     const layers = this.#buildTestLayers(cad);
     const dimFact = new ApgCadSvgLinearDimensionsFactory(cad.svg, layers[2]);
-    dimFact.setup(layers[0], 20, eApgCadDftDimTerminatorStyles.ARROW);
+    dimFact.setup(layers[0], 20, eApgCadDftDimArrowStyles.SIMPLE);
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
-    const maxR = 100;
+    const maxR = 400;
     const minR = 10;
 
     for (let i = 0; i < num; i++) {
@@ -516,12 +511,13 @@ export class ApgCadSvgTesterService {
       const ladderPoint = this.#randomPoint(0, maxX);
       const radious = this.#randomInt(minR, maxR);
       const ladderline = new A2D.Apg2DLine(centerPoint, ladderPoint);
-      const pc1 = ladderline.PointAtTheDistanceFromPoint(centerPoint, radious);
-      const pc2 = ladderline.PointAtTheDistanceFromPoint(centerPoint, -radious);
+      const pc1 = ladderline.pointAtDistanceFromPoint(centerPoint, radious);
+      const pc2 = ladderline.pointAtDistanceFromPoint(centerPoint, -radious);
 
-      cad.setLayer(layers[0].ID);
+      cad.setLayer(layers[4].ID);
       cad.svg
         .circle(centerPoint.x, centerPoint.y, radious)
+        .fill(eApgCadStdColors.NONE)
         .childOf(cad.currentLayer);
 
       cad.setLayer(layers[1].ID);
@@ -531,7 +527,7 @@ export class ApgCadSvgTesterService {
 
       cad.setLayer(layers[2].ID);
       cad.svg
-        .line(centerPoint.x, centerPoint.y, ladderPoint.x, ladderPoint.y)
+        .line(pc1!.x, pc1!.y, pc2!.x, pc2!.y)
         .childOf(cad.currentLayer);
 
       dimFact.build(atype, pc1!, pc2!, 50);

@@ -12,8 +12,11 @@ import {
 
 import {
   ApgCadSvg,
+  ApgCadSvgAngularDimensionsFactory,
   ApgCadSvgLinearDimensionsFactory,
+  eApgCadDftDimArrowStyles,
   eApgCadDftLineStyles,
+  eApgCadDftTextStyles,
   eApgCadLinearDimensionTypes,
   eApgCadStdColors
 } from '../../mod.ts';
@@ -354,7 +357,7 @@ export class ApgCadSvgTester {
       const y2 = Math.random() * maxxy;
       const p1 = new A2D.Apg2DPoint(x1, y1);
       const p2 = new A2D.Apg2DPoint(x2, y2);
-      dimFact.build(p1, p2, 20, atype);
+      dimFact.build(atype, p1, p2, 20);
     }
 
     return cad.svg.render();
@@ -379,8 +382,14 @@ export class ApgCadSvgTester {
     const cad = new ApgCadSvg();
     cad.svg.title = `Test Arc dims (${atype})`;
     cad.svg.description = "Apg Svg Cad";
+    const txtStyle = cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS)
     const layers = ApgCadSvgTester.#buildTestLayers(cad);
-    const dimFact = new ApgCadSvgLinearDimensionsFactory(cad.svg, layers[2]);
+    const dimFact = new ApgCadSvgAngularDimensionsFactory(
+      cad.svg,
+      layers[2],
+      txtStyle!,
+      eApgCadDftDimArrowStyles.MECHANICAL
+    );
 
 
     const maxxy = ApgCadSvgTester.MAX_X;
@@ -402,12 +411,13 @@ export class ApgCadSvgTester {
 
       const pc = new A2D.Apg2DPoint(cx, cy);
       const p2 = new A2D.Apg2DPoint(x2, y2);
-      const l = new A2D.Apg2DLine(pc, p2);
-      const pc1 = l.PointAtTheDistanceFromPoint(pc, r);
-      const pc2 = l.PointAtTheDistanceFromPoint(pc, -r);
+      const l1 = new A2D.Apg2DLine(pc, p2);
+      const pc1 = l1.pointAtDistanceFromPoint(pc, r);
+      const pc2 = l1.pointAtDistanceFromPoint(pc, -r);
+      const l2 = new A2D.Apg2DLine(pc1!, pc2!);
 
       cad.setLayer('2');
-      dimFact.build(pc1!, pc2!, 50, atype);
+      dimFact.build(l1, l2, 50, A2D.eApg2DQuadrant.posXposY);
     }
 
     return cad.svg.render();

@@ -1,22 +1,21 @@
 /** -----------------------------------------------------------------------
- * @module [CAD-SVG]
+ * @module [CAD-svg]
  * @author [APG] ANGELI Paolo Giusto
  * @version 0.0.1 [APG 2017/10/27]
  * @version 0.5.0 [APG 2018/11/25]
  * @version 0.8.0 [APG 2022/04/03] Porting to Deno
  * @version 0.9.2 [APG 2022/11/30] Github beta
- * @version 0.9.3 [APG 2022/12/05] Deno Deploy
+ * @version 0.9.3 [APG 2022/12/18] Deno Deploy
  * -----------------------------------------------------------------------
  */
-import { Svg } from "../../deps.ts";
+import { Svg } from "../../../deps.ts";
 
 import {
   eApgCadSvgPrimitiveFactoryTypes,
   IApgCadSvgTextStyle
-} from "../../mod.ts";
+} from "../../../mod.ts";
 
 export class ApgCadSvgPrimitivesFactory {
-
 
   protected _ready = false;
 
@@ -43,13 +42,13 @@ export class ApgCadSvgPrimitivesFactory {
     this.layer = alayer;
   }
 
-  textStyle(
+  applyTextStyle(
     anode: Svg.ApgSvgNode,
     atextStyle: IApgCadSvgTextStyle,
   ) {
     const ALLOWED_TAGS = "text|textPath";
     anode.aheckTag("TextStyle", ALLOWED_TAGS);
-    anode.attrib("font-family", `${atextStyle.family}`);
+    anode.attrib("font-family", `${atextStyle.font}`);
     anode.attrib("font-size", `${atextStyle.size}`);
     anode.attrib("text-anchor", `${atextStyle.anchor}`);
     if (atextStyle.italic) {

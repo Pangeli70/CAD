@@ -1,22 +1,22 @@
 /** -----------------------------------------------------------------------
- * @module [SVG-CAD]
+ * @module [CAD-Svg]
  * @author [APG] ANGELI Paolo Giusto
  * @version 0.0.1 [APG 2017/10/27]
  * @version 0.5.0 [APG 2018/11/25]
  * @version 0.8.0 [APG 2022/04/03] Porting to Deno
  * @version 0.9.2 [APG 2022/11/30] Github beta
- * @version 0.9.3 [APG 2022/12/05] Deno Deploy
+ * @version 0.9.3 [APG 2022/12/18] Deno Deploy
  * -----------------------------------------------------------------------
  */
 
-import { A2D, Svg } from "../../deps.ts";
+import { A2D, Svg } from "../../../deps.ts";
 
 import {
   ApgCadSvgPrimitivesFactory,
   eApgCadOrientations,
   eApgCadSvgPrimitiveFactoryTypes,
   IApgCadSvgAxis,
-} from "../../mod.ts";
+} from "../../../mod.ts";
 
 export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
 
@@ -25,7 +25,7 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
     this.type = eApgCadSvgPrimitiveFactoryTypes.axis;
   }
 
-  buildAxis(
+  build(
     atype: eApgCadOrientations,
     asettings: IApgCadSvgAxis,
     alayer?: Svg.ApgSvgNode,
@@ -90,7 +90,6 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
     } while (currentTick <= ticksNum);
   }
 
-
   #drawTick(
     aancestor: Svg.ApgSvgNode,
     atype: eApgCadOrientations,
@@ -141,7 +140,7 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
           .childOf(aancestor);
 
         if (aaxis.labelsStyle) {
-          this.textStyle(label, aaxis.labelsStyle);
+          this.applyTextStyle(label, aaxis.labelsStyle);
         }
       }
     }

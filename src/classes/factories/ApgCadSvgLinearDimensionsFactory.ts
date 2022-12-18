@@ -1,23 +1,24 @@
 /** -----------------------------------------------------------------------
- * @module [CAD-SVG]
+ * @module [CAD-svg]
  * @author [APG] ANGELI Paolo Giusto
  * @version 0.0.1 [APG 2017/10/27]
  * @version 0.5.0 [APG 2018/11/25]
  * @version 0.8.0 [APG 2022/04/03] Porting to Deno
  * @version 0.9.2 [APG 2022/11/30] Github beta
- * @version 0.9.3 [APG 2022/12/05] Deno Deploy
+ * @version 0.9.3 [APG 2022/12/18] Deno Deploy
  * -----------------------------------------------------------------------
  */
-import { A2D, Svg } from "../../deps.ts";
+import { A2D, Svg } from "../../../deps.ts";
 
 import {
   ApgCadSvgPrimitivesFactory,
   eApgCadSvgPrimitiveFactoryTypes,
-  eApgCadDftDimTerminatorStyles,
+  eApgCadDftDimArrowStyles,
   eApgCadLinearDimensionTypes,
   ApgCadSvgBasicShapesFactory
-} from "../../mod.ts";
-import { ApgCadSvgUtils } from "./ApgCadSvgUtils.ts";
+} from "../../../mod.ts";
+
+import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
 
 
 /** Apg Svg : Factory for CAD Linear dimensions with arrows and ladders
@@ -32,7 +33,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
   /** Character Height */
   charHeight = 12;
   /** Arrow Block name*/
-  terminator = eApgCadDftDimTerminatorStyles.UNDEFINED;
+  arrowStyle = eApgCadDftDimArrowStyles.UNDEFINED;
   /** Additional class for the annotations */
   cssClass = "";
 
@@ -50,13 +51,13 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
   setup(
     alayer: Svg.ApgSvgNode,
     acharHeight: number,
-    aterminator: eApgCadDftDimTerminatorStyles,
+    aarrowStyle: eApgCadDftDimArrowStyles,
     acss = ''
   ) {
     this.layer = alayer;
     this.fontName = "...";
     this.charHeight = acharHeight;
-    this.terminator = aterminator;
+    this.arrowStyle = aarrowStyle;
     this.cssClass = acss;
     this._ready = true;
   }
@@ -64,10 +65,10 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
   /** Reconditions the original points and type accordingly with the ladder 
    * lenght and the real dimension type
    */
-  #adaptPoints(
+  #isNecessaryToSwapPoints(
     afirst: A2D.Apg2DPoint,
     asecond: A2D.Apg2DPoint,
-    all: number,
+    adisplacement: number,
     atype: eApgCadLinearDimensionTypes
   ): boolean {
     let r = false;
@@ -75,21 +76,21 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
     // If the segment is diagonal
     if ((afirst.x !== asecond.x) && (afirst.y !== asecond.y)) {
 
-      // Segmment diagonal type vertical
+      // Segment diagonal type vertical
       if (atype === eApgCadLinearDimensionTypes.Vertical) {
 
-        if (afirst.x > asecond.x && all > 0) {
+        if (afirst.x > asecond.x && adisplacement > 0) {
           asecond.x = afirst.x; // ok
         }
 
-        else if (afirst.x > asecond.x && all < 0) {
+        else if (afirst.x > asecond.x && adisplacement < 0) {
           afirst.x = asecond.x;
           if (asecond.y > afirst.y) {
             r = true; // ok
           }
         }
 
-        else if (afirst.x < asecond.x && all > 0) {
+        else if (afirst.x < asecond.x && adisplacement > 0) {
           afirst.x = asecond.x;
           if (asecond.y > afirst.y) {
             r = true; // ok
@@ -104,17 +105,17 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
       // Segment diagonal type horizontal
       else if (atype === eApgCadLinearDimensionTypes.Horizontal) {
 
-        if (afirst.y > asecond.y && all > 0) {
+        if (afirst.y > asecond.y && adisplacement > 0) {
           asecond.y = afirst.y; // ok
         }
 
-        else if (afirst.y > asecond.y && all < 0) {
+        else if (afirst.y > asecond.y && adisplacement < 0) {
           afirst.y = asecond.y;
           if (afirst.x > asecond.x) {
             r = true; // ok
           }
         }
-        else if (afirst.y < asecond.y && all > 0) {
+        else if (afirst.y < asecond.y && adisplacement > 0) {
           afirst.y = asecond.y;
           if (afirst.x > asecond.x) {
             r = true; // ok
@@ -135,7 +136,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
         }
       }
     }
-    // If the segment is horizontal
+    // Segment is horizontal
     else if (afirst.y === asecond.y) {
 
       if (afirst.x > asecond.x) {
@@ -143,7 +144,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
       }
 
     }
-    // if the segment is vertical
+    // Segment is vertical
     else if (afirst.x === asecond.x) {
 
       if (asecond.y > afirst.y) {
@@ -208,31 +209,36 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
       }
     }
 
-    // 1st step: Manipulate the starting and ending points
-    // This is necessary if the segment is diagonal but we need an horizontal or vertical dimension
+    //In arc dimensions displacement must be calculated properly
+    if (atype === eApgCadLinearDimensionTypes.Diameter) { 
+      const radious = (p1.distanceFrom(p2) * Math.sign(adisplacement)) / 2;
+      adisplacement += radious; 
+    }
+
+    // 1st step: Prepare the starting and ending points
+    // Eg. this is necessary if the segment is diagonal but we need an horizontal or vertical dimension
     // --------------------------------------------------------------------------------------------
 
     // Copy the original points into the Intial Ladder Points.
-    const ip1 = A2D.Apg2DPoint.Clone(p1);
-    const ip2 = A2D.Apg2DPoint.Clone(p2);
+    const ladderStart1 = A2D.Apg2DPoint.Clone(p1);
+    const ladderStart2 = A2D.Apg2DPoint.Clone(p2);
 
-    /** This flag determines if the points must be exchanged */
-    const exchange = this.#adaptPoints(p1, p2, adisplacement, atype);
+    const swap = this.#isNecessaryToSwapPoints(p1, p2, adisplacement, atype);
 
-    if (exchange) {
-      p1.SwapWith(p2);
-      ip1.SwapWith(ip2);
+    if (swap) {
+      p1.swapWith(p2);
+      ladderStart1.swapWith(ladderStart2);
     }
 
     // 2nd step: perform calculations
     // --------------------------------------------------------------------------------------------
 
     const pointsLine = new A2D.Apg2DLine(p1, p2);
-    const arrow1Pos = pointsLine.OffsetPoint(p1, adisplacement);
-    const arrow2Pos = pointsLine.OffsetPoint(p2, adisplacement);
+    const arrow1Pos = pointsLine.offsetPoint(p1, adisplacement);
+    const arrow2Pos = pointsLine.offsetPoint(p2, adisplacement);
     const dimLine = new A2D.Apg2DLine(arrow1Pos, arrow2Pos);
 
-    const textBasePoint = arrow1Pos.HalfwayFrom(arrow2Pos);
+    const textBasePoint = arrow1Pos.halfwayFrom(arrow2Pos);
 
     const textDirections = ApgCadSvgUtils.getTextDirection(dimLine.angle);
     const textOrientation = ApgCadSvgUtils.getTextOrientation(dimLine.angle);
@@ -241,24 +247,24 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
     const textHeight = this.K_H_LINE_RATIO * this.charHeight * textDirections;
 
     /** (T)ext (P)osition related to the medium point */
-    const textPoint = dimLine.OffsetPoint(textBasePoint, textHeight);
+    const textPoint = dimLine.offsetPoint(textBasePoint, textHeight);
 
     /** (D)ebug (T)ext */
     let ldt = '';
     if (this.DEBUG_MODE) {
       ldt += '\n'
         + 't: ' + atype + '\n'
-        + 'p1: ' + p1.x.toFixed(0).toString() + ',' + p1.y.toFixed(0).toString() + '\n'
-        + 'p2: ' + p2.x.toFixed(0).toString() + ',' + p2.y.toFixed(0).toString() + '\n'
-        + 'p3: ' + arrow1Pos.x.toFixed(0).toString() + ',' + arrow1Pos.y.toFixed(0).toString() + '\n'
-        + 'p4: ' + arrow2Pos.x.toFixed(0).toString() + ',' + arrow2Pos.y.toFixed(0).toString() + '\n'
-        + 'o: ' + dimLine.angle.toFixed(0).toString() + '°\n'
-        + 'll: ' + adisplacement.toFixed(0).toString();
+        + 'p1: ' + p1.x.toFixed(2) + ',' + p1.y.toFixed(2) + '\n'
+        + 'p2: ' + p2.x.toFixed(2) + ',' + p2.y.toFixed(2) + '\n'
+        + 'p3: ' + arrow1Pos.x.toFixed(2) + ',' + arrow1Pos.y.toFixed(2) + '\n'
+        + 'p4: ' + arrow2Pos.x.toFixed(2) + ',' + arrow2Pos.y.toFixed(2) + '\n'
+        + 'o: ' + dimLine.angle.toFixed(2) + '°\n'
+        + 'll: ' + adisplacement.toFixed(2);
     }
 
     const dimension =
       (atextBef !== '' ? atextBef + ' ' : '')
-      + dimLine.length.toFixed(0).toString()
+      + dimLine.length.toFixed(2)
       + (atextAft !== '' ? ' ' + atextAft : '')
       + ldt;
 
@@ -280,15 +286,15 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
       .childOf(r);
 
     // Draw the arrow symbols
-    const dimTerminatorDef = this.svgDoc.getFromDef(this.terminator);
-    if (dimTerminatorDef) {
+    const arrowBlock = this.svgDoc.getFromDef(this.arrowStyle);
+    if (arrowBlock) {
       this.svgDoc
-        .use(arrow1Pos.x, arrow1Pos.y, this.terminator)
+        .use(arrow1Pos.x, arrow1Pos.y, this.arrowStyle)
         .rotate(arrowOrientation, arrow1Pos.x, arrow1Pos.y)
         .childOf(r);
 
       this.svgDoc
-        .use(arrow2Pos.x, arrow2Pos.y, this.terminator)
+        .use(arrow2Pos.x, arrow2Pos.y, this.arrowStyle)
         .rotate(arrowOrientation + 180, arrow2Pos.x, arrow2Pos.y)
         .childOf(r);
     }
@@ -302,11 +308,11 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
 
     // Draw the ladders
     this.svgDoc
-      .line(ip1.x, ip1.y, arrow1Pos.x, arrow1Pos.y)
+      .line(ladderStart1.x, ladderStart1.y, arrow1Pos.x, arrow1Pos.y)
       .childOf(r);
 
     this.svgDoc
-      .line(ip2.x, ip2.y, arrow2Pos.x, arrow2Pos.y)
+      .line(ladderStart2.x, ladderStart2.y, arrow2Pos.x, arrow2Pos.y)
       .childOf(r);
 
     // Draw debug elements

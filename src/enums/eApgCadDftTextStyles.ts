@@ -7,14 +7,15 @@
  * -----------------------------------------------------------------------
  */
 
-/**
- * Default layers
+/** 
+ * Default Text styles 
  */
-export enum eApgCadDftLayers {
-  BACKGROUND = 'Background',
-  AXIS = 'Axis',
-  DIMENSIONS = 'Dimensions',
-  DEBUG = 'Debug',
-  HIDDEN = 'Hidden',
-  ZERO = '0',
+export enum eApgCadDftTextStyles {
+  DEFAULT = 'default',
+  DEBUG = 'debug',
+  MONO = 'mono',
+  TITLE = 'title',
+  DIMENSIONS = 'dimensions',
+  ANNOTATIONS = 'annotations',
+  AXIS_LABEL = 'axis_label'
 }
