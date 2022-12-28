@@ -18,11 +18,21 @@ import {
   IApgCadSvgAxis,
 } from "../../../mod.ts";
 
+
+interface IApgCadAxisTickData {
+  p1: A2D.Apg2DPoint;
+  p2: A2D.Apg2DPoint;
+  isBigTick: boolean;
+  tickValue: number;
+  tickSize: number;
+}
+
+
 export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
 
   public constructor(adoc: Svg.ApgSvgDoc, anode: Svg.ApgSvgNode) {
     super(adoc, anode);
-    this.type = eApgCadSvgPrimitiveFactoryTypes.axis;
+    this._type = eApgCadSvgPrimitiveFactoryTypes.axis;
   }
 
   build(
@@ -30,11 +40,13 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
     asettings: IApgCadSvgAxis,
     alayer?: Svg.ApgSvgNode,
   ) {
-    const r = this.svgDoc.group();
-    r.childOf(alayer ? alayer : this.layer);
+    const r = this._svgDoc.group();
+    r
+      .stroke(asettings.axisStroke.color, asettings.axisStroke.width)
+      .childOf(alayer ? alayer : this._layer);
 
-    const topLeft = this.svgDoc.topLeft();
-    const bottomRight = this.svgDoc.bottomRight();
+    const topLeft = this._svgDoc.topLeft();
+    const bottomRight = this._svgDoc.bottomRight();
 
     let p1, p2: A2D.Apg2DPoint;
     if (atype == eApgCadOrientations.horizontal) {
@@ -45,9 +57,8 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
       p2 = new A2D.Apg2DPoint(0, bottomRight.y);
     }
 
-    this.svgDoc
+    this._svgDoc
       .line(p1.x, p1.y, p2.x, p2.y)
-      .stroke(asettings.axisStroke.color, asettings.axisStroke.width)
       .childOf(r);
 
     this.#drawTicks(r, atype, asettings);
@@ -63,8 +74,8 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
     let firstTick: number;
     let lastTick: number;
     let ticksNum: number;
-    const topLeft = this.svgDoc.topLeft();
-    const bottomRight = this.svgDoc.bottomRight();
+    const topLeft = this._svgDoc.topLeft();
+    const bottomRight = this._svgDoc.bottomRight();
 
     if (atype == eApgCadOrientations.horizontal) {
 
@@ -83,66 +94,87 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
       ticksNum = (lastTick - firstTick) / aaxis.ticksDistance;
     }
 
+    const ticksG = this._svgDoc.group().childOf(aancestor);
+
+    const labelsG = this._svgDoc.group().childOf(aancestor);
+    if (aaxis.labelsStyle) {
+      labelsG.textStyle(aaxis.labelsStyle);
+    }
+
+
     let currentTick = 0;
     do {
-      this.#drawTick(aancestor, atype, aaxis, currentTick, firstTick);
+      const tickData = this.#getTickData(aaxis, atype, currentTick, firstTick);
+      this.#drawTick(ticksG, aaxis, tickData);
+      this.#drawTickLabel(labelsG, aaxis, atype, tickData);
       currentTick++;
     } while (currentTick <= ticksNum);
   }
 
-  #drawTick(
-    aancestor: Svg.ApgSvgNode,
-    atype: eApgCadOrientations,
+  #getTickData(
     aaxis: IApgCadSvgAxis,
+    atype: eApgCadOrientations,
     atickNumber: number,
     afirstTick: number,
   ) {
+    const tickValue = (atickNumber * aaxis.ticksDistance) + afirstTick;
+    // If nth tick so is Big one
+    const isBigTick = tickValue % aaxis.bigTicksEvery === 0;
+    /** Lenght of the tick */
+    let tickSize = aaxis.ticksSize;
+    if (aaxis.drawBigTicks && isBigTick) {
+      tickSize = aaxis.bigTicksSize;
+    }
+    let p1, p2: A2D.Apg2DPoint;
+    if (atype == eApgCadOrientations.horizontal) {
+      p1 = new A2D.Apg2DPoint(tickValue, 0);
+      p2 = new A2D.Apg2DPoint(tickValue, -tickSize);
+    } else {
+      p1 = new A2D.Apg2DPoint(0, tickValue);
+      p2 = new A2D.Apg2DPoint(-tickSize, tickValue);
+    }
+    return { p1, p2, isBigTick, tickValue, tickSize } as IApgCadAxisTickData
+  }
+
+  #drawTick(
+    aancestor: Svg.ApgSvgNode,
+    aaxis: IApgCadSvgAxis,
+    atickData: IApgCadAxisTickData,
+  ) {
     if (aaxis.drawTicks) {
 
-      const tickValue = (atickNumber  * aaxis.ticksDistance) + afirstTick;
-      // If nth tick so is Big one
-      const isBigTick = tickValue % aaxis.bigTicksEvery === 0;
-      /** Lenght of the tick */
-      let tickSize = aaxis.ticksSize;
-      if (aaxis.drawBigTicks && isBigTick) {
-        tickSize = aaxis.bigTicksSize;
-      }
-      let p1, p2: A2D.Apg2DPoint;
-      if (atype == eApgCadOrientations.horizontal) {
-        p1 = new A2D.Apg2DPoint(tickValue, 0);
-        p2 = new A2D.Apg2DPoint(tickValue, -tickSize);
-      } else {
-        p1 = new A2D.Apg2DPoint(0, tickValue);
-        p2 = new A2D.Apg2DPoint(-tickSize, tickValue);
-      }
-
-      this.svgDoc
-        .line(p1.x, p1.y, p2.x, p2.y)
-        .stroke(aaxis.tickStroke.color, aaxis.tickStroke.width)
+      this._svgDoc
+        .line(atickData.p1.x, atickData.p1.y, atickData.p2.x, atickData.p2.y)
         .childOf(aancestor);
+    }
+  }
 
-      if (aaxis.drawBigTicksLables && isBigTick) {
-        const topLeft = this.svgDoc.topLeft();
-        const value = tickValue;
+  #drawTickLabel(
+    aancestor: Svg.ApgSvgNode,
+    aaxis: IApgCadSvgAxis,
+    atype: eApgCadOrientations,
+    atickData: IApgCadAxisTickData,
+  ) {
+    if (aaxis.drawTicks) {
 
-        const labelPoint = new A2D.Apg2DPoint(p1.x, p1.y);
+      if (aaxis.drawBigTicksLables && atickData.isBigTick) {
+
+        const labelPoint = new A2D.Apg2DPoint(atickData.p1.x, atickData.p1.y);
         if (aaxis.labelsStyle) {
           if (atype == eApgCadOrientations.horizontal) {
-            labelPoint.y -= (aaxis.labelsStyle.size + tickSize);
+            labelPoint.y -= (aaxis.labelsStyle.size + atickData.tickSize);
           } else {
-            labelPoint.x -= (aaxis.labelsStyle.size + tickSize);
+            labelPoint.x -= (aaxis.labelsStyle.size + atickData.tickSize);
             labelPoint.y -= (aaxis.labelsStyle.size / 2.75);
           }
         }
 
-        const label = this.svgDoc
-          .text(labelPoint.x, labelPoint.y, value.toString())
+        const _label = this._svgDoc
+          .text(labelPoint.x, labelPoint.y, atickData.tickValue.toString())
           .childOf(aancestor);
-
-        if (aaxis.labelsStyle) {
-          this.applyTextStyle(label, aaxis.labelsStyle);
-        }
       }
     }
   }
 }
+
+

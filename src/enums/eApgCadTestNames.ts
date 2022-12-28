@@ -24,10 +24,14 @@ export enum eApgCadTestNames {
     
     HORIZONTAL_DIMS = `HorizontalDims`,
     VERTICAL_DIMS = `VerticalDims`,
-    
     ALIGNED_DIMS = `AlignedDims`,
+
     DIAMETER_DIMS = `DiameterDims`,
     RADIOUS_DIMS = `RadiousDims`,
+
     ANGULAR_DIMS = 'AngularDims',
+
     DIM_STYLES = `DimStyles`,
+
+    INSTRUCTIONS_SETS = `InstructionsSets`
 }

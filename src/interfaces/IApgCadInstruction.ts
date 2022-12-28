@@ -20,12 +20,12 @@ export interface IApgCadInstruction {
   y?: number;
   origin?: string;
   radious?: number;
-  pivot: string;
+  pivot?: string;
   angle?: number;
   points?: string[];
   text?: string[];
   stroke?: string;
   fill?: string;
   font?: string;
-  payload: any;
+  payload?: any;
 }

@@ -12,6 +12,7 @@
 /** Apg Cad Istruction Names
  */
 export enum eApgCadInstructionTypes {
+  TYPES = "TYPES",
   GENERIC = "GENERIC",
   SET_NAME = "SET_NAME",
   SET_VIEWBOX = "SET_VIEWBOX",

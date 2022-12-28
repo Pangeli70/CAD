@@ -14,20 +14,22 @@ import { Svg, A2D } from "../../deps.ts";
 import {
   IApgCadSvgViewBox,
   IApgCadSvgSettings,
-  eApgCadOrientations,
-  eApgCadStdColors,
   IApgCadSvgBackground,
   IApgCadSvgAxis,
-  IApgCadSvgTextStyle,
   ApgCadSvgBasicShapesFactory,
+  eApgCadStdColors,
+  eApgCadOrientations,
   eApgCadDftDimArrowStyles,
   eApgCadSvgPrimitiveFactoryTypes,
-  ApgCadSvgPrimitivesFactory,
-  ApgCadSvgAxisFactory,
   eApgCadDftLayers,
   eApgCadDftTextStyles,
+  ApgCadSvgPrimitivesFactory,
+  ApgCadSvgAxisFactory,
   ApgCadSvgAnnotationsFactory,
 } from "../../mod.ts";
+import { eApgCadDftFillStyles } from "../enums/eApgCadDftFillStyles.ts";
+import { eApgCadDftStrokeStyles } from "../enums/eApgCadDftStrokeStyles.ts";
+import { IApgCadStyleOptions } from "../interfaces/IApgCadStyleOptions.ts";
 
 /** The Object that allows to create an Svg CAD Drawing
  */
@@ -46,18 +48,18 @@ export class ApgCadSvg {
 
   settings!: IApgCadSvgSettings;
 
-  strokeStyles: Map<string, Svg.IApgSvgStroke> = new Map();
+  strokeStyles: Map<string, Svg.IApgSvgStrokeStyle> = new Map();
 
-  fillStyles: Map<string, Svg.IApgSvgFill> = new Map();
+  fillStyles: Map<string, Svg.IApgSvgFillStyle> = new Map();
 
-  textStyles: Map<string, IApgCadSvgTextStyle> = new Map();
+  textStyles: Map<string, Svg.IApgSvgTextStyle> = new Map();
 
   layers: Map<string, Svg.ApgSvgNode> = new Map();
   currentLayer!: Svg.ApgSvgNode;
 
   groupsDefs: Map<string, string> = new Map();
   groups: Map<string, Svg.ApgSvgNode> = new Map();
-  currentGroup!: Svg.ApgSvgNode;
+  currentGroup!: Svg.ApgSvgNode | undefined;
 
   patterns: Map<string, Svg.ApgSvgNode> = new Map();
   patternsDefs: string[] = [];
@@ -151,7 +153,7 @@ export class ApgCadSvg {
 
     this._resetAxis();
 
-    this.setLayer(eApgCadDftLayers.ZERO);
+    this.setCurrentLayer(eApgCadDftLayers.ZERO);
   }
 
 
@@ -182,65 +184,77 @@ export class ApgCadSvg {
 
   protected _initStrokeStyles() {
 
-    const sdBkg = <Svg.IApgSvgStroke>{
+    const strokeNone = <Svg.IApgSvgStrokeStyle>{
+      color: eApgCadStdColors.NONE,
+      width: 0,
+    };
+    this.newStrokeStyle("None", strokeNone);
+
+    const sdBkg = <Svg.IApgSvgStrokeStyle>{
       color: this.settings.background.borderColor,
       width: this.settings.background.borderWidth,
     };
     this.newStrokeStyle("Background", sdBkg);
 
-    const sdAxis = <Svg.IApgSvgStroke>{
+    const sdAxis = <Svg.IApgSvgStrokeStyle>{
       color: this.settings.axis.axisStroke.color,
       width: this.settings.axis.axisStroke.width,
     };
     this.newStrokeStyle("Axis", sdAxis);
 
-    const sdDbg = <Svg.IApgSvgStroke>{
+    const sdDbg = <Svg.IApgSvgStrokeStyle>{
       color: eApgCadStdColors.MAGENTA,
       width: 5,
     };
     this.newStrokeStyle("Debug", sdDbg);
 
-    const sdDft = <Svg.IApgSvgStroke>{
+    const sdDft = <Svg.IApgSvgStrokeStyle>{
       color: eApgCadStdColors.BLACK,
       width: 1,
     };
     this.newStrokeStyle("Default", sdDft);
 
-    const sd0 = <Svg.IApgSvgStroke>{
-      color: eApgCadStdColors.BLUE,
-      width: 8,
-    };
-    this.newStrokeStyle("BoldBlue", sd0);
-
-    const sdDim = <Svg.IApgSvgStroke>{
+    const sdDim = <Svg.IApgSvgStrokeStyle>{
       color: eApgCadStdColors.RED,
       width: 2,
     };
     this.newStrokeStyle("Dimensions", sdDim);
 
-    const sdHidden = <Svg.IApgSvgStroke>{
+    const sdHidden = <Svg.IApgSvgStrokeStyle>{
       color: eApgCadStdColors.GRAY,
       width: 2,
       dashPattern: [5, 5]
     };
     this.newStrokeStyle("Hidden", sdHidden);
+
+    const sdThickBlue = <Svg.IApgSvgStrokeStyle>{
+      color: eApgCadStdColors.BLUE,
+      width: 8,
+    };
+    this.newStrokeStyle(eApgCadDftStrokeStyles.THICK_BLUE, sdThickBlue);
   }
 
 
   protected _initFillSyles() {
-    const fdBkg = <Svg.IApgSvgFill>{
+    const fillNone = <Svg.IApgSvgFillStyle>{
+      color: eApgCadStdColors.NONE,
+      opacity: 0,
+    };
+    this.newFillStyle("None", fillNone);
+
+    const fdBkg = <Svg.IApgSvgFillStyle>{
       color: this.settings.background.fillColor,
       opacity: 1,
     };
     this.newFillStyle("Background", fdBkg);
 
-    const fdDbg = <Svg.IApgSvgFill>{
+    const fdDbg = <Svg.IApgSvgFillStyle>{
       color: eApgCadStdColors.GREEN,
       opacity: 1,
     };
     this.newFillStyle("Debug", fdDbg);
 
-    const fdDims = <Svg.IApgSvgFill>{
+    const fdDims = <Svg.IApgSvgFillStyle>{
       color: eApgCadStdColors.RED,
       opacity: 1,
     };
@@ -265,7 +279,7 @@ export class ApgCadSvg {
     this.newLayer(eApgCadDftLayers.HIDDEN, "Hidden");
 
     // Layer zero
-    this.newLayer(eApgCadDftLayers.ZERO, "BoldBlue");
+    this.newLayer(eApgCadDftLayers.ZERO, eApgCadDftStrokeStyles.THICK_BLUE);
 
   }
 
@@ -288,9 +302,9 @@ export class ApgCadSvg {
     const ptn3 = this.svg.pattern(0, 0, 12, 16, aname3);
     this.svg.line(0, 0, 12, 16).stroke("#444444", 2).childOf(ptn3);
     this.svg.line(0, 16, 12, 0).stroke("#343434", 2).childOf(ptn3);
+    this.newPattern(aname3, ptn3);
 
     const aname4 = "Grid3";
-    this.newPattern(aname3, ptn3);
     const ptn4 = this.svg.pattern(0, 0, 50, 50, aname4);
     this.svg.line(0, 25, 50, 25).stroke("#0f0f0f", 3).childOf(ptn4);
     this.svg.line(25, 0, 25, 50).stroke("#2f2f2f", 3).childOf(ptn4);
@@ -304,74 +318,74 @@ export class ApgCadSvg {
 
 
   protected _initTextStyles() {
-    const defautStyle = <IApgCadSvgTextStyle>{
+    const defautStyle = <Svg.IApgSvgTextStyle>{
       font: "Verdana",
       size: this.standardHeight * 1,
       anchor: Svg.eApgSvgTextAnchor.start,
       italic: false,
       bold: false,
-      fill: eApgCadStdColors.BLACK,
-      stroke: "none",
+      fill: { color: eApgCadStdColors.BLACK },
+      stroke: { color: "none", width: 0 },
       HWRatio: 0.51,
     };
     this.newTextStyle(eApgCadDftTextStyles.DEFAULT, defautStyle);
 
-    const debugStyle = <IApgCadSvgTextStyle>{
+    const debugStyle = <Svg.IApgSvgTextStyle>{
       font: "Calibri",
       size: this.standardHeight * 1,
       anchor: Svg.eApgSvgTextAnchor.start,
       italic: false,
       bold: false,
-      fill: eApgCadStdColors.MAGENTA,
-      stroke: "none",
+      fill: { color: eApgCadStdColors.MAGENTA },
+      stroke: { color: "none", width: 0 },
       HWRatio: 0.41,
     };
     this.newTextStyle(eApgCadDftTextStyles.DEBUG, debugStyle);
 
-    const monoStyle = <IApgCadSvgTextStyle>{
+    const monoStyle = <Svg.IApgSvgTextStyle>{
       font: "Lucida Console",
       size: this.standardHeight * 1,
       anchor: Svg.eApgSvgTextAnchor.start,
       italic: false,
       bold: false,
-      fill: eApgCadStdColors.BLACK,
-      stroke: "none",
+      fill: { color: eApgCadStdColors.BLACK },
+      stroke: { color: "none", width: 0 },
       HWRatio: 0.59,
     };
     this.newTextStyle(eApgCadDftTextStyles.MONO, monoStyle);
 
-    const titleStyle = <IApgCadSvgTextStyle>{
+    const titleStyle = <Svg.IApgSvgTextStyle>{
       font: "Arial",
       size: this.standardHeight * 1,
       anchor: Svg.eApgSvgTextAnchor.middle,
       italic: false,
       bold: false,
-      fill: eApgCadStdColors.BLACK,
-      stroke: "none",
+      fill: { color: eApgCadStdColors.BLACK },
+      stroke: { color: "none", width: 0 },
       HWRatio: 0.45,
     };
     this.newTextStyle(eApgCadDftTextStyles.TITLE, titleStyle);
 
-    const dimensionsType = <IApgCadSvgTextStyle>{
+    const dimensionsType = <Svg.IApgSvgTextStyle>{
       font: "Lucida Sans Unicode",
       size: this.standardHeight * 1,
       anchor: Svg.eApgSvgTextAnchor.middle,
       italic: false,
       bold: false,
-      fill: eApgCadStdColors.RED,
-      stroke: "none",
+      fill: { color: eApgCadStdColors.RED },
+      stroke: { color: "none", width: 0 },
       HWRatio: 0.49,
     };
     this.newTextStyle(eApgCadDftTextStyles.DIMENSIONS, dimensionsType);
 
-    const axisLabelType = <IApgCadSvgTextStyle>{
+    const axisLabelType = <Svg.IApgSvgTextStyle>{
       font: "Courier new",
       size: this.standardHeight * 1,
       anchor: Svg.eApgSvgTextAnchor.middle,
       italic: false,
       bold: false,
-      fill: eApgCadStdColors.GRAY,
-      stroke: "none",
+      fill: { color: eApgCadStdColors.GRAY },
+      stroke: { color: "none", width: 0 },
       HWRatio: 0.5,
     };
     this.newTextStyle(eApgCadDftTextStyles.AXIS_LABEL, axisLabelType);
@@ -380,7 +394,7 @@ export class ApgCadSvg {
 
   protected _initBackGround() {
     if (this.settings.background.draw) {
-      this.setLayer("Background");
+      this.setCurrentLayer("Background");
 
       const vb = this.settings.viewBox;
       const x = -vb.originXDisp;
@@ -390,7 +404,6 @@ export class ApgCadSvg {
       this.svg.rect(x, y, w, h, "Background");
     }
   }
-
 
 
   protected _initBlocks() {
@@ -481,21 +494,22 @@ export class ApgCadSvg {
       const axisLayer: Svg.ApgSvgNode | undefined = this.getLayer("Axis");
 
       if (axisLayer) {
-        let axisLabelsStyle: IApgCadSvgTextStyle | undefined = this
+        let axisLabelsStyle: Svg.IApgSvgTextStyle | undefined = this
           .getTextStyle(this.settings.axis.labelsStyleName);
         if (!axisLabelsStyle) {
           axisLabelsStyle = this.getTextStyle("Default");
         }
         this.settings.axis.labelsStyle = axisLabelsStyle;
 
-        axisFactory.setLayer(axisLayer);
         axisFactory.build(
           eApgCadOrientations.horizontal,
           this.settings.axis,
+          axisLayer
         );
         axisFactory.build(
           eApgCadOrientations.vertical,
-          this.settings.axis
+          this.settings.axis,
+          axisLayer
         );
       }
     }
@@ -505,7 +519,7 @@ export class ApgCadSvg {
   private __drawGridLine(
     g: Svg.ApgSvgNode,
     tickPos: number,
-    asd: Svg.IApgSvgStroke,
+    asd: Svg.IApgSvgStrokeStyle,
     x: boolean,
   ) {
     if (this.settings.axis) {
@@ -561,8 +575,8 @@ export class ApgCadSvg {
 
   newLayer(
     aname: string,
-    astrokeName: string,
-    afillName?: string
+    astrokeName: eApgCadDftStrokeStyles | string,
+    afillName?: eApgCadDftFillStyles | string
   ) {
 
     const layerId = aname;
@@ -571,7 +585,7 @@ export class ApgCadSvg {
       .class(layerClass)
       .childOfRoot(this.svg);
 
-    const strokeStyle = this.getStrokeStyle(astrokeName);
+    const strokeStyle = this.getStrokeStyle(astrokeName as string);
     if (!strokeStyle) {
       throw new Error(
         `Stroke named ${astrokeName} not available in ApgCadSvg Stroke Styles`,
@@ -582,9 +596,9 @@ export class ApgCadSvg {
       layer.strokeDashPattern(strokeStyle.dashPattern)
     }
 
-    let fill: Svg.IApgSvgFill | undefined = undefined;
+    let fill: Svg.IApgSvgFillStyle | undefined = undefined;
     if (afillName) {
-      fill = this.getFillStyle(afillName);
+      fill = this.getFillStyle(afillName as string);
       if (!fill) {
         throw new Error(
           `Fill named ${afillName} not available in ApgCadSvg Fill Styles`,
@@ -618,7 +632,7 @@ export class ApgCadSvg {
   }
 
 
-  setLayer(aname: string) {
+  setCurrentLayer(aname: string) {
     const g = this.getLayer(aname);
     if (g !== undefined) {
       this.currentLayer = g;
@@ -631,7 +645,7 @@ export class ApgCadSvg {
 
   /** Clear the drawing by clearing all the layers except the Axis one. 
     * Defs, Styles and other stuff will remain */
-  clear() {
+  clearAllLayers() {
     this.layers.forEach((_layer, key) => {
       if (key != "Axis") {
         this.clearLayer(key);
@@ -642,23 +656,33 @@ export class ApgCadSvg {
 
   /** Creates a new group on the current layer, sets it as the current group
    * and adds it to the groups library */
-  newGroup(aname: string, astroke?: string, afill?: string) {
+  newGroup(aname: string, astyleOptions:IApgCadStyleOptions ) {
     const g = this.svg.group("GROUP_" + aname.toUpperCase())
       .childOf(this.currentLayer);
 
-    if (astroke) {
-      const l = this.strokeStyles.get(astroke);
-      if (l) {
-        g.stroke(l.color, l.width);
+    if (astyleOptions.strokeName) {
+      const strokeStyle = this.strokeStyles.get(astyleOptions.strokeName);
+      if (strokeStyle) {
+        g.stroke(strokeStyle.color, strokeStyle.width);
       }
     }
 
-    if (afill) {
-      const l = this.fillStyles.get(afill);
-      if (l) {
-        g.fill(l.color);
+    if (astyleOptions.fillName) {
+      const fillStyle = this.fillStyles.get(astyleOptions.fillName);
+      if (fillStyle) {
+        g.fill(fillStyle.color);
       }
     }
+
+    if (astyleOptions.textName) {
+      const textStyle = this.textStyles.get(astyleOptions.textName);
+      if (textStyle) {
+        g
+          .fill(textStyle.fill.color)
+          .stroke(textStyle.stroke.color, textStyle.stroke.width)
+      }
+    }
+
     // Add to library
     this.groups.set(aname, g);
     this.groupsDefs.set(aname, this.currentLayer.ID);
@@ -675,12 +699,16 @@ export class ApgCadSvg {
   }
 
 
-  setGroup(aname: string) {
+  setCurrentGroup(aname: string) {
     const g = this.getGroup(aname);
     if (g !== undefined) {
       this.currentGroup = g;
     }
     return g;
+  }
+
+  unSetCurrentGroup(){
+    this.currentGroup = undefined;
   }
 
 
@@ -696,7 +724,7 @@ export class ApgCadSvg {
   }
 
 
-  newStrokeStyle(aname: string, adata: Svg.IApgSvgStroke) {
+  newStrokeStyle(aname: string, adata: Svg.IApgSvgStrokeStyle) {
     this.strokeStyles.set(aname, adata);
   }
 
@@ -707,7 +735,7 @@ export class ApgCadSvg {
   }
 
 
-  newFillStyle(aname: string, adata: Svg.IApgSvgFill) {
+  newFillStyle(aname: string, adata: Svg.IApgSvgFillStyle) {
     this.fillStyles.set(aname, adata);
   }
 
@@ -718,13 +746,13 @@ export class ApgCadSvg {
   }
 
 
-  newTextStyle(aname: string, atextStyle: IApgCadSvgTextStyle) {
+  newTextStyle(aname: string, atextStyle: Svg.IApgSvgTextStyle) {
     this.textStyles.set(aname, atextStyle);
   }
 
 
-  getTextStyle(aname: string): IApgCadSvgTextStyle | undefined {
-    const r: IApgCadSvgTextStyle | undefined = this.textStyles.get(aname);
+  getTextStyle(aname: string): Svg.IApgSvgTextStyle | undefined {
+    const r: Svg.IApgSvgTextStyle | undefined = this.textStyles.get(aname);
     return r;
   }
 

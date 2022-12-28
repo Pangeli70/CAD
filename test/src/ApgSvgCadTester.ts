@@ -26,7 +26,7 @@ import {
 export class ApgCadSvgTester {
 
   static readonly MAX_X = 2000;
-  static readonly MAX_N = 20;
+  static readonly MAX_N = 2;
 
   private _outputPath = '';
 
@@ -384,12 +384,12 @@ export class ApgCadSvgTester {
     cad.svg.description = "Apg Svg Cad";
     const txtStyle = cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS)
     const layers = ApgCadSvgTester.#buildTestLayers(cad);
-    const dimFact = new ApgCadSvgAngularDimensionsFactory(
+    const dimFact = new ApgCadSvgLinearDimensionsFactory(
       cad.svg,
-      layers[2],
-      txtStyle!,
-      eApgCadDftDimArrowStyles.MECHANICAL
+      layers[2]
     );
+
+    dimFact.setup(layers[2], 20, eApgCadDftDimArrowStyles.MECHANICAL);
 
 
     const maxxy = ApgCadSvgTester.MAX_X;
@@ -417,24 +417,24 @@ export class ApgCadSvgTester {
       const l2 = new A2D.Apg2DLine(pc1!, pc2!);
 
       cad.setLayer('2');
-      dimFact.build(l1, l2, 50, A2D.eApg2DQuadrant.posXposY);
+      dimFact.build(atype, pc, p2, 50, "{<", ">}");
     }
 
     return cad.svg.render();
   }
 
-  private _testDiameterDims() {
+  #testDiameterDims() {
     return ApgCadSvgTester.#testArcDims(
-      eApgCadLinearDimensionTypes.Radious);
+      eApgCadLinearDimensionTypes.Diameter);
   }
-  private _testRadiousDims() {
+  #testRadiousDims() {
     return ApgCadSvgTester.#testArcDims(
       eApgCadLinearDimensionTypes.Radious);
   }
 
-  /*
- 
-  
+
+
+
   private _m(arr: number[]) {
     const sorted = arr.sort((a, b) => a === b ? 0 : a < b ? -1 : 1);
     const min = sorted[0];
@@ -442,16 +442,26 @@ export class ApgCadSvgTester {
     const delta = (max - min) / 2;
     return delta + min;
   }
-  
-  private _testAngularDims() {
-    const maxxy = 200;
-    const maxn = 2;
-  
-    const dxf = new ApgDxfDrawing();
-    dxf.addLayer('1', eApgDxfStdColors.GREEN, 'CONTINUOUS');
-    dxf.addLayer('2', eApgDxfStdColors.RED, 'CONTINUOUS');
-    dxf.addLayer('3', eApgDxfStdColors.BLUE, 'CONTINUOUS');
-  
+
+  #testAngularDims() {
+
+    const cad = new ApgCadSvg();
+    cad.svg.title = `Test Arc dims`;
+    cad.svg.description = "Apg Svg Cad";
+    const txtStyle = cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS)
+    const layers = ApgCadSvgTester.#buildTestLayers(cad);
+    const dimFact = new ApgCadSvgAngularDimensionsFactory(
+      cad.svg,
+      layers[2],
+      20,
+      eApgCadDftDimArrowStyles.MECHANICAL,
+      20
+    );
+
+
+    const maxxy = ApgCadSvgTester.MAX_X;
+    const maxn = ApgCadSvgTester.MAX_N;
+
     for (let i = 0; i < maxn; i++) {
       const x1 = Math.random() * maxxy - maxxy / 2;
       const y1 = Math.random() * maxxy - maxxy / 2;
@@ -461,43 +471,52 @@ export class ApgCadSvgTester {
       const y3 = Math.random() * maxxy - maxxy / 2;
       const x4 = Math.random() * maxxy - maxxy / 2;
       const y4 = Math.random() * maxxy - maxxy / 2;
-  
-      dxf.setActiveLayer('3');
-      dxf.drawLine(x1, y1, x2, y2);
-      dxf.drawLine(x3, y3, x4, y4);
-  
+
+
+      cad.setLayer('3');
+      cad.svg.line(x1, y1, x2, y2)
+      cad.svg.line(x3, y3, x4, y4);
+
       const xm = [x1, x2, x3, x4];
       const ym = [y1, y2, y3, y4];
-  
+
       const mx = this._m(xm);
       const my = this._m(ym);
-  
-      dxf.setActiveLayer('2');
-      dxf.drawAngularDim(x1, y1, x2, y2, x3, y3, x4, y4, mx, my);
+
+      const pt1 = new A2D.Apg2DPoint(x1, y1);
+      const pt2 = new A2D.Apg2DPoint(x2, y2);
+      const l1 = new A2D.Apg2DLine(pt1, pt2);
+
+      const pt3 = new A2D.Apg2DPoint(x3, y3);
+      const pt4= new A2D.Apg2DPoint(x4, y4);
+      const l2 = new A2D.Apg2DLine(pt3, pt4);
+
+      cad.setLayer('2');
+      dimFact.build(l1, l2, 50, A2D.eApg2DQuadrant.posXposY, "##", "##");
     }
-  
-    return dxf.toDxfString();
+
+    return cad.svg.render();
   }
+
+  /*
+    demo(): string {
+      const dxf = new ApgDxfDrawing();
   
+      // @todo_9 add more functions in this test
   
-  demo(): string {
-    const dxf = new ApgDxfDrawing();
+      dxf.drawText(10, 0, 10, 0, 'Apg Dxf Simple test');
   
-    // @todo_9 add more functions in this test
+      dxf.addLayer('l', eApgDxfStdColors.GREEN, eApgDxfDftLineStyles.CONTINUOUS)
+        .setActiveLayer('l')
+        .drawText(20, -70, 10, 0, 'Version 0.5.1');
   
-    dxf.drawText(10, 0, 10, 0, 'Apg Dxf Simple test');
+      dxf.addLayer('2', eApgDxfStdColors.RED, 'DOTTED')
+        .setActiveLayer('2')
+        .drawCircle(50, -30, 25);
   
-    dxf.addLayer('l', eApgDxfStdColors.GREEN, eApgDxfDftLineStyles.CONTINUOUS)
-      .setActiveLayer('l')
-      .drawText(20, -70, 10, 0, 'Version 0.5.1');
-  
-    dxf.addLayer('2', eApgDxfStdColors.RED, 'DOTTED')
-      .setActiveLayer('2')
-      .drawCircle(50, -30, 25);
-  
-    return dxf.toDxfString();
-  }
- */
+      return dxf.toDxfString();
+    }
+    */
 
 
   #tester(an: number, afn: Function, aname: string, aisProd: boolean) {
@@ -516,7 +535,7 @@ export class ApgCadSvgTester {
 
     let i = 0;
     this.#tester(i++, this._testLayers, "Layers", aisProd);
-    
+
     this.#tester(i++, this._testLineStyles, "StrokeStyles", aisProd);
 
     this.#tester(i++, this._testPoints, "Points", aisProd);
@@ -530,9 +549,10 @@ export class ApgCadSvgTester {
     this.#tester(i++, this._testHorizontalDims, `HorizontalDims`, aisProd);
     this.#tester(i++, this._testVerticalDims, `VerticaleDims`, aisProd);
     this.#tester(i++, this._testAlignedDims, `AlignedDims`, aisProd);
-    this.#tester(i++, this._testDiameterDims, `DiameterDims}`, aisProd);
-    this.#tester(i++, this._testRadiousDims, `RadiousDims`, aisProd);
-    // this.#tester(i++,this._testAngularDims, `AngularDims`, aisProd);
+    this.#tester(i++, this.#testDiameterDims, `DiameterDims}`, aisProd);
+    this.#tester(i++, this.#testRadiousDims, `RadiousDims`, aisProd);
+    this.#tester(i++, this.#testAngularDims, `AngularDims`, aisProd);
+
 
     // this.#tester(i++,this.demo, `${i++}_SvgTestDemoDrawing`, aisProd);
 

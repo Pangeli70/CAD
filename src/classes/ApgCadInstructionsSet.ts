@@ -19,7 +19,6 @@ import {
   ApgCadSvgAnnotationsFactory,
   eApgCadInstructionTypes,
   IApgCadSvgAxis,
-  IApgCadSvgTextStyle,
   IApgCadSvgBackground,
   IApgCadSvgViewBox,
   IApgCadInstruction,
@@ -29,66 +28,82 @@ import {
   eApgCadDftTextStyles
 } from "../../mod.ts";
 
+import { eApgCadIns_TypesSchema } from "../schemas/eApgCadInsTypesSchema.ts";
+import { ApgCadIns_GenericSchema } from "../schemas/ApgCadInsGenericSchema.ts";
+import { ApgCadIns_DrawLineSchema } from "../schemas/ApgCadInsDrawLineSchema.ts";
+import { ApgCadIns_SetNameSchema } from "../schemas/ApgCadInsSetNameSchema.ts";
+import { ApgCadIns_NewPointSchema } from "../schemas/ApgCadInsNewPointSchema.ts";
+import { IApgCadStyleOptions } from "../interfaces/IApgCadStyleOptions.ts";
 
 
 const APG_SVG_INS_VALIDATORS = [
   {
+    type: eApgCadInstructionTypes.TYPES,
+    schema: 'eApgCadInsTypes',
+    jsonSchema: eApgCadIns_TypesSchema,
+  },
+  {
     type: eApgCadInstructionTypes.GENERIC,
-    schema: 'IApgCadInstruction'
+    schema: 'IApgCadInsGeneric',
+    jsonSchema: ApgCadIns_GenericSchema,
+    dependencies: ['eApgCadInsTypes']
   }, {
     type: eApgCadInstructionTypes.SET_NAME,
-    schema: 'IApgCadSvgInsSetName'
+    schema: 'IApgCadInsSetName',
+    jsonSchema: ApgCadIns_SetNameSchema,
   }, {
-    type: eApgCadInstructionTypes.SET_VIEWBOX,
-    schema: 'IApgCadSvgInsSetViewbox'
-  }, {
-    type: eApgCadInstructionTypes.SET_AXIS,
-    schema: 'IApgCadSvgInsSetAxis'
-  }, {
-    type: eApgCadInstructionTypes.SET_BACKGROUND,
-    schema: 'IApgCadSvgInsSetBackground'
-  }, {
-    type: eApgCadInstructionTypes.SET_LAYER,
-    schema: 'IApgCadSvgInsSetLayer'
-  }, {
+    //   type: eApgCadInstructionTypes.SET_VIEWBOX,
+    //   schema: 'IApgCadSvgInsSetViewbox'
+    // }, {
+    //   type: eApgCadInstructionTypes.SET_AXIS,
+    //   schema: 'IApgCadSvgInsSetAxis'
+    // }, {
+    //   type: eApgCadInstructionTypes.SET_BACKGROUND,
+    //   schema: 'IApgCadSvgInsSetBackground'
+    // }, {
+    //   type: eApgCadInstructionTypes.SET_LAYER,
+    //   schema: 'IApgCadSvgInsSetLayer'
+    // }, {
     type: eApgCadInstructionTypes.NEW_POINT,
-    schema: 'IApgCadSvgInsNewPoint'
+    schema: 'IApgCadInsNewPoint',
+    jsonSchema: ApgCadIns_NewPointSchema,
   }, {
-    type: eApgCadInstructionTypes.NEW_POINT_DELTA,
-    schema: 'IApgCadSvgInsNewPointDelta'
-  }, {
-    type: eApgCadInstructionTypes.DRAW_POINTS,
-    schema: 'IApgCadSvgInsDrawPoints'
-  }, {
-    type: eApgCadInstructionTypes.DRAW_ALL_POINTS,
-    schema: 'IApgCadSvgInsDrawAllPoints'
-  }, {
-    type: eApgCadInstructionTypes.DRAW_ARC,
-    schema: 'IApgCadSvgInsDrawArc'
-  }, {
-    type: eApgCadInstructionTypes.DRAW_CIRCLE,
-    schema: 'IApgCadSvgInsDrawCircle'
-  }, {
+    //   type: eApgCadInstructionTypes.NEW_POINT_DELTA,
+    //   schema: 'IApgCadSvgInsNewPointDelta'
+    // }, {
+    //   type: eApgCadInstructionTypes.DRAW_POINTS,
+    //   schema: 'IApgCadSvgInsDrawPoints'
+    // }, {
+    //   type: eApgCadInstructionTypes.DRAW_ALL_POINTS,
+    //   schema: 'IApgCadSvgInsDrawAllPoints'
+    // }, {
+    //   type: eApgCadInstructionTypes.DRAW_ARC,
+    //   schema: 'IApgCadSvgInsDrawArc'
+    // }, {
+    //   type: eApgCadInstructionTypes.DRAW_CIRCLE,
+    //   schema: 'IApgCadSvgInsDrawCircle'
+    // }, {
     type: eApgCadInstructionTypes.DRAW_LINE,
-    schema: 'IApgCadSvgInsDrawLine'
-  }, {
-    type: eApgCadInstructionTypes.DRAW_POLYLINE,
-    schema: 'IApgCadSvgInsDrawPolyline'
-  }, {
-    type: eApgCadInstructionTypes.DRAW_RECTANGLE_POINTS,
-    schema: 'IApgCadSvgInsDrawRectanglePoints'
-  }, {
-    type: eApgCadInstructionTypes.DRAW_RECTANGLE_SIZE,
-    schema: 'IApgCadSvgInsDrawRectangleSize'
-  }, {
-    type: eApgCadInstructionTypes.DRAW_POLYGON,
-    schema: 'IApgCadSvgInsDrawPolygon'
-  }, {
-    type: eApgCadInstructionTypes.DRAW_TEXT,
-    schema: 'IApgCadSvgInsDrawText'
-  }, {
-    type: eApgCadInstructionTypes.DRAW_NAME,
-    schema: 'IApgCadSvgInsDrawName'
+    schema: 'IApgCadInsDrawLine',
+    jsonSchema: ApgCadIns_DrawLineSchema,
+    // }, {
+    //   type: eApgCadInstructionTypes.DRAW_POLYLINE,
+    //   schema: 'IApgCadSvgInsDrawPolyline'
+    // }, {
+    //   type: eApgCadInstructionTypes.DRAW_RECTANGLE_POINTS,
+    //   schema: 'IApgCadSvgInsDrawRectanglePoints'
+    // }, {
+    //   type: eApgCadInstructionTypes.DRAW_RECTANGLE_SIZE,
+    //   schema: 'IApgCadSvgInsDrawRectangleSize'
+    // }, {
+    //   type: eApgCadInstructionTypes.DRAW_POLYGON,
+    //   schema: 'IApgCadSvgInsDrawPolygon'
+    // }, {
+    //   type: eApgCadInstructionTypes.DRAW_TEXT,
+    //   schema: 'IApgCadSvgInsDrawText'
+    // }, {
+    //   type: eApgCadInstructionTypes.DRAW_NAME,
+    //   schema: 'IApgCadSvgInsDrawName'
   }
 ];
 
@@ -108,10 +123,10 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   private _lastPointIndex = 0;
   /** Set of instructions */
   instructions: IApgCadInstruction[] = [];
-  /** All the validators for the set retrieved from Apg Era Schemas */
-  validators: Map<eApgCadInstructionTypes, Jsv. > = new Map();
-  /** The Object is correctly initilized */
-  initialized = false;
+  /** All the validators for the various instruction types */
+  validators: Map<eApgCadInstructionTypes, Jsv.ApgJsvAjvValidator> = new Map();
+  /** The Object is correctly initialized */
+  private _ready = false;
   /** The general status of the object */
   status: Rst.ApgRst;
 
@@ -119,16 +134,16 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
   constructor(alogger: Lgr.ApgLgr, acad: ApgCadSvg, ainstructions?: IApgCadInstruction[]) {
 
-    super('ApgSvgInstructionsSet', alogger);
+    super('ApgCadInstructionsSet', alogger);
     this.logBegin('constructor');
 
     this._cad = acad;
     this.name = 'Undefined';
 
-    this.status = this.#getValidators(eraApp.api.schemas);
+    this.status = this.#getValidators();
 
     if (this.status.Ok) {
-      this.initialized = true;
+      this._ready = true;
       if (ainstructions) {
         this.validateAndSet(ainstructions);
       }
@@ -141,17 +156,22 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   }
 
 
-  #getValidators(aeraSchemas: Jsv.) {
+  #getValidators() {
 
     this.logBegin(this.#getValidators.name);
     let r = new Rst.ApgRst();
 
+    const validatorService = new Jsv.ApgJsvService(this._logger);
+
     APG_SVG_INS_VALIDATORS.forEach(element => {
-      r = aeraSchemas.getValidator(element.schema);
-      if (r.Ok) {
-        const ajv = <ApgAjv>
-          Rst.ApgRst.payload('ApgAjv', r);
-        this.validators.set(element.type, ajv);
+      if (r.Ok && element.jsonSchema) {
+        const deps = element.dependencies ? element.dependencies : [];
+        r = validatorService.addValidator(element.jsonSchema, deps);
+        if (r.Ok) {
+          const validatorName = element.jsonSchema.$id.replaceAll("#", "");
+          const validator = validatorService.getValidator(validatorName);
+          this.validators.set(element.type, validator!);
+        }
       }
     });
 
@@ -162,7 +182,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
   public async load(adataPath: string) {
 
-    if (this.initialized) {
+    if (this._ready) {
       this.logBegin(this.load.name);
 
       const jsonData = await Uts.ApgUtsJsonFile.Read(adataPath);
@@ -181,17 +201,15 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   }
 
 
-  public validateAndSet(ainstructions: any) {
+  public validateAndSet(ainstructions: IApgCadInstruction[]) {
 
-    if (this.initialized) {
+    if (this._ready) {
       this.logBegin(this.validateAndSet.name);
 
-      const instructions: IApgCadInstruction[] = <IApgCadInstruction[]>ainstructions;
-
-      this.status = this.#validateInstructions(instructions);
+      this.status = this.#validateInstructions(ainstructions);
 
       if (this.status.Ok) {
-        this.instructions = instructions;
+        this.instructions = ainstructions;
       }
 
       this.logEnd(this.status);
@@ -224,11 +242,10 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
     if (r.Ok) {
 
-      const genVal: Jsv.ApgAjv | undefined = this.validators.get(eApgCadInstructionTypes.GENERIC);
+      const genVal = this.validators.get(eApgCadInstructionTypes.GENERIC);
 
       if (!genVal) {
-        r = Rst.ApgRstErrors.NotFound(
-          eApgSvgErrorCodes.Svg_Validator_NotFound_1, [eApgCadInstructionTypes.GENERIC]);
+        r = Rst.ApgRstErrors.NotFound("", "Validator [%1] Not found", [eApgCadInstructionTypes.GENERIC]);
       }
       else {
         instructions.forEach(instruction => {
@@ -239,11 +256,10 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
             if (r.Ok) {
 
-              const instVal: ApgAjv | undefined = this.validators.get(instruction.type);
+              const instVal = this.validators.get(instruction.type);
 
               if (!instVal) {
-                this.status = Rst.ApgRstErrors.NotFound(
-                  eApgSvgErrorCodes.Svg_Validator_NotFound_1, [instruction.type]);
+                r = Rst.ApgRstErrors.NotFound("", "Validator [%1] Not found", [instruction.type]);
               }
               else {
                 r = instVal!.validate(instruction);
@@ -477,6 +493,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     }
 
     this.logEnd(this.status);
+    return this.status;
   }
 
 
@@ -489,7 +506,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     this.logBegin(this.#currentLayer.name);
     this.logTrace(`${ainstructionId}`);
 
-    const layer: Svg.ApgSvgNode | undefined = this._cad.setLayer(alayerName);
+    const layer: Svg.ApgSvgNode | undefined = this._cad.setCurrentLayer(alayerName);
 
     if (!layer) {
       this.status = Rst.ApgRstErrors.NotFound(
@@ -500,16 +517,17 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     }
 
     this.logEnd(this.status);
+    return this.status;
   }
 
 
-  /** Creates a new group ad sets it as the current one
+  /** Creates a new group in the current layer ad sets it as the current one
+   * @returns Error If the group name already exists
    */
   #newGroup(
     ainstructionId: number,
     agroupName: string,
-    astrokeStyleName?: string,
-    afillStyleName?: string
+    aoptions: IApgCadStyleOptions
   ) {
 
     this.logBegin(this.#newGroup.name);
@@ -525,18 +543,19 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       )
     }
     else {
-      if (astrokeStyleName) {
-        this.#checkStroke(astrokeStyleName);
+      if (aoptions.strokeName) {
+        this.#checkStrokeStyle(aoptions.strokeName);
       }
-      if (this.status.Ok && afillStyleName) {
-        this.#checkFill(afillStyleName);
+      if (this.status.Ok && aoptions.fillName) {
+        this.#checkFillStyle(aoptions.fillName);
       }
       if (this.status.Ok) {
-        this._cad.newGroup(agroupName, astrokeStyleName, afillStyleName);
+        this._cad.newGroup(agroupName, aoptions);
       }
     }
 
     this.logEnd(this.status);
+    return this.status;
   }
 
 
@@ -549,7 +568,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     this.logBegin(this.#setGroup.name);
     this.logTrace(`${ainstructionId}`);
 
-    const group: Svg.ApgSvgNode | undefined = this._cad.setGroup(agroupName);
+    const group: Svg.ApgSvgNode | undefined = this._cad.setCurrentGroup(agroupName);
 
     if (!group) {
       this.status = Rst.ApgRstErrors.NotFound(
@@ -560,6 +579,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     }
 
     this.logEnd(this.status);
+    return this.status;
   }
 
 
@@ -573,15 +593,15 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     this.logBegin(this.#drawLine.name);
     this.logTrace(`${ainstructionId}`);
 
-    const pts = this._get2PointsByNames(apointsNames);
+    const pts = this.#get2PointsByNames(apointsNames);
 
     if (this.status.Ok) {
-
+      const currentGroup = (this._cad.currentGroup) ? this._cad.currentGroup : this._cad.currentLayer;
       const pf = <ApgCadSvgBasicShapesFactory>this._cad.getPrimitiveFactory(eApgCadSvgPrimitiveFactoryTypes.basicShapes)
-      const e = pf.buildLine(pts[0], pts[1]);
+      const e = pf.buildLine(pts[0], pts[1], currentGroup);
       e.fill('none');
       if (astrokeStyleName) {
-        const strokeStyle = this.#checkStroke(astrokeStyleName);
+        const strokeStyle = this.#checkStrokeStyle(astrokeStyleName);
         if (strokeStyle) {
           e.stroke(strokeStyle.color, strokeStyle.width);
         }
@@ -589,10 +609,11 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     }
 
     this.logEnd();
+    return this.status;
   }
 
 
-  private _get2PointsByNames(apointsNames: string[]) {
+  #get2PointsByNames(apointsNames: string[]) {
 
     let r: A2D.Apg2DPoint[] = [];
 
@@ -649,7 +670,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       const e = pf.buildPolyLine(pts);
       e.fill('none');
       if (astrokeStyleName) {
-        const strk = this.#checkStroke(astrokeStyleName);
+        const strk = this.#checkStrokeStyle(astrokeStyleName);
         if (strk) {
           e.stroke(strk.color, strk.width);
         }
@@ -657,7 +678,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     }
 
     this.logEnd();
-
+    return this.status;
   }
 
 
@@ -714,8 +735,8 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
     if (this.status.Ok) {
 
-      const fill = this.#checkFill(afillStyleName);
-      const strk = this.#checkStroke(astrokeStyleName);
+      const fill = this.#checkFillStyle(afillStyleName);
+      const strk = this.#checkStrokeStyle(astrokeStyleName);
       const pf = this._cad.getPrimitiveFactory(
         eApgCadSvgPrimitiveFactoryTypes.basicShapes
       ) as ApgCadSvgBasicShapesFactory;
@@ -731,7 +752,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     }
 
     this.logEnd(this.status);
-
+    return this.status;
   }
 
 
@@ -740,7 +761,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   #drawAllpoints(
     ainstructionId: number,
     aradious: number,
-    atextStyle: IApgCadSvgTextStyle
+    atextStyle: Svg.IApgSvgTextStyle
   ) {
     this.logBegin(this.#drawAllpoints.name);
     this.logTrace(`${ainstructionId}`);
@@ -751,10 +772,11 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     ) as ApgCadSvgBasicShapesFactory;
 
     this._points.forEach((pt, name) => {
-      const e = pf.buildPoint(pt, aradious, name, atextStyle);
+      const g = pf.buildPoint(pt, aradious, name, atextStyle);
     });
 
     this.logEnd();
+    return this.status;
   }
 
 
@@ -767,7 +789,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     this.logBegin(this.#drawRectanglePoints.name);
     this.logTrace(`${ainstructionId}`);
 
-    const pts: A2D.Apg2DPoint[] = this._get2PointsByNames(apointsNames);
+    const pts: A2D.Apg2DPoint[] = this.#get2PointsByNames(apointsNames);
 
     if (this.status.Ok) {
 
@@ -777,8 +799,8 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       ppts.push(new A2D.Apg2DPoint(pts[1].x, pts[1].y));
       ppts.push(new A2D.Apg2DPoint(pts[1].x, pts[0].y));
 
-      const strk = this.#checkStroke(astrokeStyleName);
-      const fill = this.#checkFill(afillStyleName);
+      const strk = this.#checkStrokeStyle(astrokeStyleName);
+      const fill = this.#checkFillStyle(afillStyleName);
 
       const pf = this._cad.getPrimitiveFactory(
         eApgCadSvgPrimitiveFactoryTypes.basicShapes
@@ -793,6 +815,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       }
     }
     this.logEnd();
+    return this.status;
   }
 
 
@@ -826,8 +849,8 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       ppts.push(new A2D.Apg2DPoint(p.x + ax, p.y + ay));
       ppts.push(new A2D.Apg2DPoint(p.x, p.y + ay));
 
-      const strk = this.#checkStroke(astrk);
-      const fill = this.#checkFill(afill);
+      const strk = this.#checkStrokeStyle(astrk);
+      const fill = this.#checkFillStyle(afill);
 
       const pf = this._cad.getPrimitiveFactory(
         eApgCadSvgPrimitiveFactoryTypes.basicShapes
@@ -842,6 +865,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       }
     }
     this.logEnd(this.status);
+    return this.status;
   }
 
 
@@ -875,28 +899,28 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
       const e = pf.buildClosedPolyLine(pts);
 
-      const strk = this.#checkStroke(astrk);
+      const strk = this.#checkStrokeStyle(astrk);
       if (strk) {
         e.stroke(strk.color, strk.width);
       }
 
-      const fill = this.#checkFill(afill);
+      const fill = this.#checkFillStyle(afill);
       if (fill) {
         e.fill(fill.color);
       }
 
     }
     this.logEnd(this.status);
+    return this.status;
   }
 
 
-  /** Draws a text at the given coord
- */
+  /** Draws a text at the given coords */
   #drawText(
     ainstructionId: number,
     atext: string[],
     aorigin: string,
-    afont?: string
+    atextStyleName?: string
   ) {
 
     this.logBegin(this.#drawText.name);
@@ -915,17 +939,21 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     if (this.status.Ok) {
       const zero = new A2D.Apg2DPoint(0, 0);
       pts.push(zero);
-      const font: IApgCadSvgTextStyle | undefined = this.#checkTextStyle(afont);
 
       if (this.status.Ok) {
         const pf = this._cad.getPrimitiveFactory(
           eApgCadSvgPrimitiveFactoryTypes.annotations
         ) as ApgCadSvgAnnotationsFactory;
-        pf.build(pts[0], pts[1], atext[0]);
+        const g = pf.build(pts[0], pts[1], atext[0]);
+        const textStyle = this.#checkTextStyle(atextStyleName);
+        if (textStyle) {
+          g?.textStyle(textStyle);
+        }
       }
 
     }
     this.logEnd(this.status);
+    return this.status;
   }
 
 
@@ -942,17 +970,21 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
     const origin = new A2D.Apg2DPoint(ax, ay);
     const zero = new A2D.Apg2DPoint(0, 0);
-    const textStyle = this.#checkTextStyle(eApgCadDftTextStyles.TITLE);
 
     if (this.status.Ok) {
       const pf = this._cad.getPrimitiveFactory(
         eApgCadSvgPrimitiveFactoryTypes.annotations
       ) as ApgCadSvgAnnotationsFactory;
-      // TODO this is a mess better to draw text without Annotations factory
-      pf.build(origin, zero, this.name);
+      // TODO this is a mess better to draw text without Annotations factory -- APG
+      const g = pf.build(origin, zero, this.name);
+      const textStyle = this.#checkTextStyle(eApgCadDftTextStyles.TITLE);
+      if (textStyle) {
+        g?.textStyle(textStyle);
+      }
     }
 
     this.logEnd();
+    return this.status;
   }
 
 
@@ -968,7 +1000,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     this.logBegin(this.#drawAnnotation.name);
     this.logTrace(`${ainstructionId}`);
 
-    const pts = this._get2PointsByNames(apointsNames);
+    const pts = this.#get2PointsByNames(apointsNames);
 
     if (this.status.Ok) {
       const pf = this._cad.getPrimitiveFactory(
@@ -977,9 +1009,10 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
       const disp = new A2D.Apg2DPoint(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
 
-      pf.build(pts[0], disp, atext[0], aangle);
+      const _g = pf.build(pts[0], disp, atext[0], aangle);
     }
     this.logEnd();
+    return this.status;
   }
 
 
@@ -995,7 +1028,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     this.logBegin(this.#drawLinearDim.name);
     this.logTrace(`${ainstructionId}`);
 
-    const pts = this._get2PointsByNames(apointsNames);
+    const pts = this.#get2PointsByNames(apointsNames);
 
     if (this.status.Ok) {
 
@@ -1006,6 +1039,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
     }
     this.logEnd();
+    return this.status;
   }
 
 
@@ -1058,7 +1092,8 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
             break;
           }
           case eApgCadInstructionTypes.NEW_GROUP: {
-            this.#newGroup(lcii, ainstruction.name!, <string>ainstruction.stroke, <string>ainstruction.fill); // 2017/11/26
+            const options: IApgCadStyleOptions = { strokeName: ainstruction.stroke, fillName: ainstruction.fill }
+            this.#newGroup(lcii, ainstruction.name!, options); // 2017/11/26
             break;
           }
           case eApgCadInstructionTypes.SET_GROUP: {
@@ -1140,7 +1175,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     this.logEnd();
 
     const r: any = {};
-    r.svg = this._cad.svg;
+    r.svg = this._cad.svg.render();
     r.data = this.#getData();
     return r;
   }
@@ -1171,45 +1206,45 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     return r;
   }
 
-  #checkStroke(astrk?: string) {
-    let r: Svg.IApgSvgStroke | undefined = undefined;
-    if (astrk) {
-      r = this._cad.getStrokeStyle(astrk);
+  #checkStrokeStyle(astrokeStyleName?: string) {
+    let r: Svg.IApgSvgStrokeStyle | undefined = undefined;
+    if (astrokeStyleName) {
+      r = this._cad.getStrokeStyle(astrokeStyleName);
       if (r === undefined) {
         this.status = Rst.ApgRstErrors.NotFound(
           "",
           `Stroke style [%1] not found`,
-          [astrk]
+          [astrokeStyleName]
         )
       }
     }
     return r;
   }
 
-  #checkFill(afill?: string) {
-    let r: Svg.IApgSvgFill | undefined = undefined;
-    if (afill !== undefined) {
-      r = this._cad.getFillStyle(afill);
+  #checkFillStyle(afillStyleName?: string) {
+    let r: Svg.IApgSvgFillStyle | undefined = undefined;
+    if (afillStyleName !== undefined) {
+      r = this._cad.getFillStyle(afillStyleName);
       if (r === undefined) {
         this.status = Rst.ApgRstErrors.NotFound(
           "",
           `Fill style [%1] not found`,
-          [afill]
+          [afillStyleName]
         )
       }
     }
     return r;
   }
 
-  #checkTextStyle(afont?: string) {
-    let r: IApgCadSvgTextStyle | undefined = undefined;
-    if (afont !== undefined) {
-      r = this._cad.getTextStyle(afont);
+  #checkTextStyle(atextStyleName?: string) {
+    let r: Svg.IApgSvgTextStyle | undefined = undefined;
+    if (atextStyleName !== undefined) {
+      r = this._cad.getTextStyle(atextStyleName);
       if (r === undefined) {
         this.status = Rst.ApgRstErrors.NotFound(
           "",
           `Text style [%1] not found`,
-          [afont]
+          [atextStyleName]
         )
       }
     }

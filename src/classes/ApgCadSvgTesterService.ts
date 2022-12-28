@@ -8,18 +8,22 @@
  */
 
 import {
-  A2D, Svg
+  A2D, Svg, Lgr
 } from '../../deps.ts';
 
 
 import {
+ApgCadInstructionsSet,
   ApgCadSvg,
+  ApgCadSvgAngularDimensionsFactory,
   ApgCadSvgBasicShapesFactory,
   ApgCadSvgLinearDimensionsFactory,
   eApgCadDftDimArrowStyles,
+  eApgCadDftTextStyles,
   eApgCadLinearDimensionTypes,
   eApgCadStdColors
 } from '../../mod.ts';
+import { ApgCadInsSetTest_01 } from "../../test/data/ApgCadInsSetTest_01.ts";
 import { eApgCadTestNames } from "../enums/eApgCadTestNames.ts";
 
 
@@ -40,7 +44,7 @@ enum eApgCadSvgTesterLayers {
 export class ApgCadSvgTesterService {
 
   static readonly MAX_X = 4000;
-  static readonly MAX_N = 20;
+  static readonly MAX_N = 3;
 
 
   static #buildTestLayers(acad: ApgCadSvg) {
@@ -129,7 +133,7 @@ export class ApgCadSvgTesterService {
     cad.svg.description = "Apg Svg Cad";
     const layers = this.#buildTestLayers(cad);
     const layId = this.#randomInt(1, layers.length).toString();
-    cad.setLayer(layId);
+    cad.setCurrentLayer(layId);
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
@@ -154,7 +158,7 @@ export class ApgCadSvgTesterService {
     cad.svg.description = "Apg Svg Cad";
     const layers = this.#buildTestLayers(cad);
     const layId = this.#randomInt(1, layers.length).toString();
-    cad.setLayer(layId);
+    cad.setCurrentLayer(layId);
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
@@ -181,7 +185,7 @@ export class ApgCadSvgTesterService {
     cad.svg.description = "Apg Svg Cad";
     const layers = this.#buildTestLayers(cad);
     const layId = this.#randomInt(1, layers.length).toString();
-    cad.setLayer(layId);
+    cad.setCurrentLayer(layId);
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
@@ -227,7 +231,7 @@ export class ApgCadSvgTesterService {
     cad.svg.description = "Apg Svg Cad";
     const layers = this.#buildTestLayers(cad);
     const layId = this.#randomInt(1, layers.length).toString();
-    cad.setLayer(layId);
+    cad.setCurrentLayer(layId);
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
@@ -255,7 +259,7 @@ export class ApgCadSvgTesterService {
     cad.svg.description = "Apg Svg Cad";
     const layers = this.#buildTestLayers(cad);
     const layId = this.#randomInt(1, layers.length).toString();
-    cad.setLayer(layId);
+    cad.setCurrentLayer(layId);
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
@@ -285,7 +289,7 @@ export class ApgCadSvgTesterService {
     cad.svg.description = "Apg Svg Cad";
     const layers = this.#buildTestLayers(cad);
     const layId = this.#randomInt(1, layers.length).toString();
-    cad.setLayer(layId);
+    cad.setCurrentLayer(layId);
 
     const maxX = this.MAX_X;
     const maxn = this.MAX_N;
@@ -325,7 +329,7 @@ export class ApgCadSvgTesterService {
     cad.svg.title = "Test Random Points";
     cad.svg.description = "Apg Svg Cad";
     const layers = this.#buildTestLayers(cad);
-    cad.setLayer('4');
+    cad.setCurrentLayer('4');
 
     const maxX = this.MAX_X;
     const num = this.MAX_N;
@@ -340,39 +344,35 @@ export class ApgCadSvgTesterService {
       const cp = this.#randomPoint(0, maxX);
       const r = this.#randomInt(minR, maxR);
       const circle = shapeFact.buildCircle(cp, r);
-      circle.attrib("fill", "none");
+      circle.fill("none");
     }
 
-    shapeFact.setLayer(layers[1])
     for (let i = 0; i < num; i++) {
       const cp = this.#randomPoint(0, maxX);
       const r = this.#randomInt(minR, maxR);
-      shapeFact.buildDot(cp, r);
+      shapeFact.buildDot(cp, r, layers[1]);
     }
 
-    shapeFact.setLayer(layers[2])
     for (let i = 0; i < num; i++) {
       const p1 = this.#randomPoint(0, maxX);
       const p2 = this.#randomPoint(0, maxX);
-      shapeFact.buildLine(p1, p2);
+      shapeFact.buildLine(p1, p2, layers[2]);
     }
 
-    shapeFact.setLayer(layers[3])
     for (let i = 0; i < num; i++) {
       const p1 = this.#randomPoint(0, maxX);
       const w = this.#randomInt(minR, maxR);
       const h = this.#randomInt(minR, maxR);
-      const rect = shapeFact.buildRectWH(p1, w, h);
+      const rect = shapeFact.buildRectWH(p1, w, h, layers[3]);
       rect.attrib("fill", "none");
     }
 
-    shapeFact.setLayer(layers[4])
     for (let i = 0; i < num; i++) {
       const cp = this.#randomPoint(0, maxX);
       const r = this.#randomInt(minR, maxR);
       const sides = this.#randomInt(minSides, maxSides);
-      const rect = shapeFact.buildPolygon(cp, r, sides, 360/sides/2);
-      rect.attrib("fill", "none");
+      const rect = shapeFact.buildPolygon(cp, r, sides, 360 / sides / 2, layers[4]);
+      rect.fill("none");
       shapeFact.buildDot(cp, 4);
     }
 
@@ -389,7 +389,7 @@ export class ApgCadSvgTesterService {
     });
 
     cad.newLayer('1', 'ContinuousGreen4');
-    cad.setLayer('1');
+    cad.setCurrentLayer('1');
     cad.svg.line(0, 0, 200, 200)
       .childOf(cad.currentLayer);
 
@@ -400,7 +400,7 @@ export class ApgCadSvgTesterService {
     });
 
     cad.newLayer('2', 'DottedRed8');
-    cad.setLayer('2');
+    cad.setCurrentLayer('2');
     cad.svg.line(0, 40, 200, 240)
       .childOf(cad.currentLayer);
 
@@ -420,7 +420,7 @@ export class ApgCadSvgTesterService {
     });
 
     cad.newLayer('1', 'MyDASHDOT');
-    cad.setLayer('1');
+    cad.setCurrentLayer('1');
     cad.svg
       .line(0, 0, 200, 200)
       .childOf(cad.currentLayer);
@@ -432,7 +432,7 @@ export class ApgCadSvgTesterService {
     });
 
     cad.newLayer('2', 'MyDOT');
-    cad.setLayer('2');
+    cad.setCurrentLayer('2');
     cad.svg
       .line(0, 200, 200, 400)
       .childOf(cad.currentLayer);
@@ -469,7 +469,7 @@ export class ApgCadSvgTesterService {
       const d = this.#randomInt(minD, maxD);
       dimFact.build(atype, p1, p2, d, "<", ">");
 
-      cad.setLayer(layers[1].ID);
+      cad.setCurrentLayer(layers[1].ID);
       cad.svg
         .line(p1.x, p1.y, p2.x, p2.y)
         .childOf(cad.currentLayer);
@@ -514,18 +514,18 @@ export class ApgCadSvgTesterService {
       const pc1 = ladderline.pointAtDistanceFromPoint(centerPoint, radious);
       const pc2 = ladderline.pointAtDistanceFromPoint(centerPoint, -radious);
 
-      cad.setLayer(layers[4].ID);
+      cad.setCurrentLayer(layers[4].ID);
       cad.svg
         .circle(centerPoint.x, centerPoint.y, radious)
         .fill(eApgCadStdColors.NONE)
         .childOf(cad.currentLayer);
 
-      cad.setLayer(layers[1].ID);
+      cad.setCurrentLayer(layers[1].ID);
       cad.svg
         .line(centerPoint.x, centerPoint.y, ladderPoint.x, ladderPoint.y)
         .childOf(cad.currentLayer);
 
-      cad.setLayer(layers[2].ID);
+      cad.setCurrentLayer(layers[2].ID);
       cad.svg
         .line(pc1!.x, pc1!.y, pc2!.x, pc2!.y)
         .childOf(cad.currentLayer);
@@ -545,10 +545,10 @@ export class ApgCadSvgTesterService {
       eApgCadLinearDimensionTypes.Radious);
   }
 
-  /*
+  
  
   
-  private _m(arr: number[]) {
+  static _m(arr: number[]) {
     const sorted = arr.sort((a, b) => a === b ? 0 : a < b ? -1 : 1);
     const min = sorted[0];
     const max = sorted[arr.length - 1];
@@ -556,15 +556,24 @@ export class ApgCadSvgTesterService {
     return delta + min;
   }
   
-  private _testAngularDims() {
-    const maxxy = 200;
-    const maxn = 2;
-  
-    const dxf = new ApgDxfDrawing();
-    dxf.addLayer('1', eApgDxfStdColors.GREEN, 'CONTINUOUS');
-    dxf.addLayer('2', eApgDxfStdColors.RED, 'CONTINUOUS');
-    dxf.addLayer('3', eApgDxfStdColors.BLUE, 'CONTINUOUS');
-  
+  static  testAngularDims() {
+    const cad = new ApgCadSvg();
+    cad.svg.title = `Test Angular dims`;
+    cad.svg.description = "Apg Svg Cad";
+    const textStyle = cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS)
+    const layers = this.#buildTestLayers(cad);
+    const dimFact = new ApgCadSvgAngularDimensionsFactory(
+      cad.svg,
+      layers[2],
+      textStyle!,
+      eApgCadDftDimArrowStyles.MECHANICAL,
+      20
+    );
+
+
+    const maxxy = this.MAX_X;
+    const maxn = this.MAX_N;
+
     for (let i = 0; i < maxn; i++) {
       const x1 = Math.random() * maxxy - maxxy / 2;
       const y1 = Math.random() * maxxy - maxxy / 2;
@@ -574,25 +583,34 @@ export class ApgCadSvgTesterService {
       const y3 = Math.random() * maxxy - maxxy / 2;
       const x4 = Math.random() * maxxy - maxxy / 2;
       const y4 = Math.random() * maxxy - maxxy / 2;
-  
-      dxf.setActiveLayer('3');
-      dxf.drawLine(x1, y1, x2, y2);
-      dxf.drawLine(x3, y3, x4, y4);
-  
+
+
+      cad.setCurrentLayer('3');
+      cad.svg.line(x1, y1, x2, y2)
+      cad.svg.line(x3, y3, x4, y4);
+
       const xm = [x1, x2, x3, x4];
       const ym = [y1, y2, y3, y4];
-  
+
       const mx = this._m(xm);
       const my = this._m(ym);
-  
-      dxf.setActiveLayer('2');
-      dxf.drawAngularDim(x1, y1, x2, y2, x3, y3, x4, y4, mx, my);
+
+      const pt1 = new A2D.Apg2DPoint(x1, y1);
+      const pt2 = new A2D.Apg2DPoint(x2, y2);
+      const l1 = new A2D.Apg2DLine(pt1, pt2);
+
+      const pt3 = new A2D.Apg2DPoint(x3, y3);
+      const pt4 = new A2D.Apg2DPoint(x4, y4);
+      const l2 = new A2D.Apg2DLine(pt3, pt4);
+
+      cad.setCurrentLayer('2');
+      dimFact.build(l1, l2, 50, A2D.eApg2DQuadrant.posXposY, "##", "##");
     }
-  
-    return dxf.toDxfString();
+
+    return cad.svg.render();
   }
   
-  
+  /*
   demo(): string {
     const dxf = new ApgDxfDrawing();
   
@@ -612,7 +630,18 @@ export class ApgCadSvgTesterService {
   }
  */
 
+  static testInstructionsSet() {
+    const cad = new ApgCadSvg();
+    cad.svg.title = `Test instructions set`;
+    cad.svg.description = "Apg Svg Cad";
 
+    const logger = new Lgr.ApgLgr('Instructions set');
+
+    const set = new ApgCadInstructionsSet(logger, cad, ApgCadInsSetTest_01);
+    const { svg, data } = set.build();
+    return svg
+  }
+  
 
 
   static RunTest(atest: eApgCadTestNames) {
@@ -664,8 +693,13 @@ export class ApgCadSvgTesterService {
       case eApgCadTestNames.RADIOUS_DIMS:
         r = this.testRadiousDims();
         break;
+      case eApgCadTestNames.ANGULAR_DIMS:
+        r = this.testAngularDims();
+        break;
+      case eApgCadTestNames.INSTRUCTIONS_SETS:
+        r = this.testInstructionsSet();
+        break;
     }
-    // this.testers.set(eApgCadTestNames.ANGULAR_DIMS,this._testAngularDims );
 
     // this.testers.set('DemoDrawing',this.demo);
     return r;

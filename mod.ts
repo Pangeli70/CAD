@@ -8,7 +8,6 @@ export type { IApgCadSvgAxis } from "./src/interfaces/IApgCadSvgAxis.ts";
 export type { IApgCadSvgBackground } from "./src/interfaces/IApgCadSvgBackground.ts";
 export type { IApgCadSvgLayerDef } from "./src/interfaces/IApgCadSvgLayerDef.ts";
 export type { IApgCadSvgSettings } from "./src/interfaces/IApgCadSvgSettings.ts";
-export type { IApgCadSvgTextStyle } from "./src/interfaces/IApgCadSvgTextStyle.ts";
 export type { IApgCadSvgViewBox } from "./src/interfaces/IApgCadSvgViewBox.ts";
 
 export { eApgCadOrientations } from "./src/enums/eApgCadOrientations.ts";
@@ -22,7 +21,6 @@ export { eApgCadDftDimArrowStyles } from "./src/enums/eApgCadDftDimArrowStyles.t
 export { eApgCadInstructionTypes } from "./src/enums/eApgCadInstructionTypes.ts";
 export { eApgCadSvgPrimitiveFactoryTypes} from "./src/enums/eApgCadSvgPrimitiveFactoryTypes.ts";
 
-// Warning!! Th fuck damn order matters!!!
 export { ApgCadSvg } from "./src/classes/ApgCadSvg.ts";
 export { ApgCadSvgUtils } from "./src/classes/ApgCadSvgUtils.ts";
 export { ApgCadInstructionsSet } from "./src/classes/ApgCadInstructionsSet.ts";

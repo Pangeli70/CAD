@@ -9,14 +9,13 @@
  */
 
 import { Svg } from "../../deps.ts";
-import { IApgCadSvgTextStyle } from "../../mod.ts";
 
 
 export interface IApgCadSvgAxis {
-  axisStroke: Svg.IApgSvgStroke;
+  axisStroke: Svg.IApgSvgStrokeStyle;
 
   drawTicks: boolean;
-  tickStroke: Svg.IApgSvgStroke;
+  tickStroke: Svg.IApgSvgStrokeStyle;
   ticksDistance: number;
   ticksSize: number;
   drawBigTicks: boolean;
@@ -26,5 +25,5 @@ export interface IApgCadSvgAxis {
   drawBigTicksLables: boolean;
   labelsStyleName: string;
 
-  labelsStyle?: IApgCadSvgTextStyle;
+  labelsStyle?: Svg.IApgSvgTextStyle;
 }

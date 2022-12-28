@@ -11,8 +11,7 @@
 import { A2D, Svg, Uts } from "../../../deps.ts";
 
 import {
-  ApgCadSvgPrimitivesFactory,
-  IApgCadSvgTextStyle
+  ApgCadSvgPrimitivesFactory
 } from "../../../mod.ts";
 
 import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
@@ -23,7 +22,7 @@ import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
 export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
 
   /** The local copy of the text style data */
-  textStyle: IApgCadSvgTextStyle;
+  textStyle: Svg.IApgSvgTextStyle;
 
   /** Arrow block name  */
   arrowName: string;
@@ -45,12 +44,12 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
   constructor(
     adoc: Svg.ApgSvgDoc,
     alayer: Svg.ApgSvgNode,
-    atextStyle: IApgCadSvgTextStyle,
+    atextStyle: Svg.IApgSvgTextStyle,
     aarrowName: string,
     acssClass = ''
   ) {
     super(adoc, alayer)
-    this.textStyle = <IApgCadSvgTextStyle>Uts.ApgUtsObj.DeepCopy(atextStyle);
+    this.textStyle = Uts.ApgUtsObj.DeepCopy(atextStyle) as Svg.IApgSvgTextStyle;
     this.arrowName = aarrowName;
     this.cssClass = acssClass;
     this._ready = true;
@@ -102,11 +101,11 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
     const textPosition = annotationLine.offsetPoint(annotationTextPosition, textHeight);
 
     // Start to create the svg element
-    const r = this.svgDoc.group()
-    r.childOf(this.layer);
+    const g = this._svgDoc.group()
+    g.childOf(this._layer);
 
     if (this.cssClass && this.cssClass !== '') {
-      r.class(this.cssClass);
+      g.class(this.cssClass);
     }
 
     let debugText = '';
@@ -122,14 +121,14 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
 
     const annotationText = atext + debugText;
     // Draw the svg Text
-    const text = this.svgDoc.text(textPosition.x, textPosition.y, annotationText)
-      .childOf(r)
-      .rotate(textOrientation, textPosition.x, textPosition.y);
-    this.applyTextStyle(text, this.textStyle);
+    const _text = this._svgDoc.text(textPosition.x, textPosition.y, annotationText)
+      .rotate(textOrientation, textPosition.x, textPosition.y)
+      .textStyle(this.textStyle)
+      .childOf(g);
 
-    this.svgDoc
+    this._svgDoc
       .line(annotationStartPosition.x, annotationStartPosition.y, annotationEndPosition.x, annotationEndPosition.y)
-      .childOf(r)
+      .childOf(g)
 
     // if the displacement allows to draw the ladder and the arrow
     const drawLadderAndArrow = (adisplacement.x === 0 && adisplacement.y === 0) ? false : true;
@@ -139,23 +138,24 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
       const arrowOrientation = ApgCadSvgUtils.getArrowOrientation(annotationLadderLine.angle);
 
       // Draw the arrow ladder
-      this.svgDoc
+      this._svgDoc
         .line(aorigin.x, aorigin.y, annotationStartPosition.x, annotationStartPosition.y)
-        .childOf(r);
+        .childOf(g);
 
       // Draw the underline
-      this.svgDoc
+      this._svgDoc
         .line(annotationStartPosition.x, annotationStartPosition.y, annotationEndPosition.x, annotationEndPosition.y)
-        .childOf(r);
+        .childOf(g);
 
       // Draw the arrow
-      this.svgDoc
+      this._svgDoc
         .use(aorigin.x, aorigin.y, this.arrowName)
-        .rotate(arrowOrientation, aorigin.x, aorigin.y);
+        .rotate(arrowOrientation, aorigin.x, aorigin.y)
+        .childOf(g);
 
     }
 
-    return r;
+    return g;
   }
 
 }

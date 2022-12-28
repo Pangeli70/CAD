@@ -12,7 +12,6 @@ import { Svg } from "../../../deps.ts";
 
 import {
   eApgCadSvgPrimitiveFactoryTypes,
-  IApgCadSvgTextStyle
 } from "../../../mod.ts";
 
 export class ApgCadSvgPrimitivesFactory {
@@ -21,44 +20,34 @@ export class ApgCadSvgPrimitivesFactory {
 
   protected _error = '';
 
-  type = eApgCadSvgPrimitiveFactoryTypes.undefined;
+  protected _type = eApgCadSvgPrimitiveFactoryTypes.undefined;
 
-  svgDoc: Svg.ApgSvgDoc;
+  protected _svgDoc: Svg.ApgSvgDoc;
 
-  layer!: Svg.ApgSvgNode;
+  protected _layer!: Svg.ApgSvgNode;
 
   public constructor(adoc: Svg.ApgSvgDoc, alayer: Svg.ApgSvgNode) {
-    this.svgDoc = adoc;
-    this.setLayer(alayer);
+    this._svgDoc = adoc;
+    this._setLayer(alayer);
   }
 
-  setLayer(alayer: Svg.ApgSvgNode) {
-    // TODO this is wrong we need an enumeration to check the type
-    if (alayer.type !== "Group") {
+  protected _setLayer(alayer: Svg.ApgSvgNode) {
+    if (alayer.type !== Svg.eApgSvgNodeTypes.Group) {
       throw new Error(
         `Trying to set an invalid Layer for the ApgSvgCad...Factory #${alayer.ID} type is "${alayer.type}" instead than "Group"`,
       );
     }
-    this.layer = alayer;
+    this._layer = alayer;
   }
 
-  applyTextStyle(
-    anode: Svg.ApgSvgNode,
-    atextStyle: IApgCadSvgTextStyle,
-  ) {
-    const ALLOWED_TAGS = "text|textPath";
-    anode.aheckTag("TextStyle", ALLOWED_TAGS);
-    anode.attrib("font-family", `${atextStyle.font}`);
-    anode.attrib("font-size", `${atextStyle.size}`);
-    anode.attrib("text-anchor", `${atextStyle.anchor}`);
-    if (atextStyle.italic) {
-      anode.attrib("font-style", "italic");
+  protected _setParent(anode: Svg.ApgSvgNode, aparent?: Svg.ApgSvgNode) {
+    if (aparent && aparent.type === Svg.eApgSvgNodeTypes.Group) {
+      anode.childOf(aparent);
     }
-    if (atextStyle.bold) {
-      anode.attrib("font-weight", "bold");
+    else {
+      anode.childOf(this._layer);
     }
-    anode.fill(`${atextStyle.fill}`);
-    anode.attrib("stroke", `${atextStyle.stroke}`);
-    return anode;
   }
+
+  
 }

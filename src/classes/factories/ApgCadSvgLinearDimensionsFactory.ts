@@ -26,7 +26,7 @@ import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
 export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory {
 
 
-  DEBUG_MODE = false;
+  readonly DEBUG_MODE = false;
 
   /** The font data */
   fontName = "";
@@ -44,7 +44,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
 
   public constructor(adoc: Svg.ApgSvgDoc, anode: Svg.ApgSvgNode) {
     super(adoc, anode);
-    this.type = eApgCadSvgPrimitiveFactoryTypes.linearDimensions;
+    this._type = eApgCadSvgPrimitiveFactoryTypes.linearDimensions;
   }
 
 
@@ -54,7 +54,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
     aarrowStyle: eApgCadDftDimArrowStyles,
     acss = ''
   ) {
-    this.layer = alayer;
+    this._layer = alayer;
     this.fontName = "...";
     this.charHeight = acharHeight;
     this.arrowStyle = aarrowStyle;
@@ -210,9 +210,9 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
     }
 
     //In arc dimensions displacement must be calculated properly
-    if (atype === eApgCadLinearDimensionTypes.Diameter) { 
+    if (atype === eApgCadLinearDimensionTypes.Diameter) {
       const radious = (p1.distanceFrom(p2) * Math.sign(adisplacement)) / 2;
-      adisplacement += radious; 
+      adisplacement += radious;
     }
 
     // 1st step: Prepare the starting and ending points
@@ -272,8 +272,10 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
     // ---------------------------------------------------------------------------------
 
     // Start to create the svg element
-    const r = this.svgDoc.group();
-    r.childOf(this.layer);
+    const r = this._svgDoc.group();
+    // TODO @1 APG 20221228 -- This could be wrong, we will use the factory to create a group and then it will be
+    // associated to a parent. This has to be changed on all factories. Maybe....
+    r.childOf(this._layer);
 
     // If specified adds the CSS class
     if (this.cssClass !== '') {
@@ -281,44 +283,44 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
     }
 
     // Draw the main line
-    this.svgDoc
+    this._svgDoc
       .line(arrow1Pos.x, arrow1Pos.y, arrow2Pos.x, arrow2Pos.y)
       .childOf(r);
 
     // Draw the arrow symbols
-    const arrowBlock = this.svgDoc.getFromDef(this.arrowStyle);
+    const arrowBlock = this._svgDoc.getFromDef(this.arrowStyle);
     if (arrowBlock) {
-      this.svgDoc
+      this._svgDoc
         .use(arrow1Pos.x, arrow1Pos.y, this.arrowStyle)
         .rotate(arrowOrientation, arrow1Pos.x, arrow1Pos.y)
         .childOf(r);
 
-      this.svgDoc
+      this._svgDoc
         .use(arrow2Pos.x, arrow2Pos.y, this.arrowStyle)
         .rotate(arrowOrientation + 180, arrow2Pos.x, arrow2Pos.y)
         .childOf(r);
     }
 
     // Draw the text
-    const textDef = this.svgDoc.text(textPoint.x, textPoint.y, dimension);
+    const textDef = this._svgDoc.text(textPoint.x, textPoint.y, dimension);
     textDef
-      .rotate(textOrientation +180, textPoint.x, textPoint.y)
-      .attrib("stroke","none")
+      .rotate(textOrientation + 180, textPoint.x, textPoint.y)
+      .stroke("none", 0)
       .childOf(r);
 
     // Draw the ladders
-    this.svgDoc
+    this._svgDoc
       .line(ladderStart1.x, ladderStart1.y, arrow1Pos.x, arrow1Pos.y)
       .childOf(r);
 
-    this.svgDoc
+    this._svgDoc
       .line(ladderStart2.x, ladderStart2.y, arrow2Pos.x, arrow2Pos.y)
       .childOf(r);
 
     // Draw debug elements
     if (this.DEBUG_MODE) {
 
-      const pf = new ApgCadSvgBasicShapesFactory(this.svgDoc, this.layer);
+      const pf = new ApgCadSvgBasicShapesFactory(this._svgDoc, this._layer);
 
       // First and last point
       pf.buildCircle(p1, 20);
