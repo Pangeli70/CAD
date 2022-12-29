@@ -10,18 +10,15 @@
  */
 
 import { Svg, A2D } from "../../../deps.ts";
+import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
 
-import {
-  ApgCadSvgPrimitivesFactory,
-  eApgCadSvgPrimitiveFactoryTypes
-} from "../../../mod.ts";
 
 export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
 
 
   public constructor(adoc: Svg.ApgSvgDoc, alayer: Svg.ApgSvgNode) {
-    super(adoc, alayer);
-    this._type = eApgCadSvgPrimitiveFactoryTypes.basicShapes;
+    super(adoc, alayer, eApgCadPrimitiveFactoryTypes.BASIC_SHAPES);
   }
 
 

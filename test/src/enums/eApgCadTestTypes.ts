@@ -6,15 +6,13 @@
  */
 
 /** 
- * Default Strike styles 
+ * Test types
  */
-export enum eApgCadDftStrokeStyles {
-  NONE = "None",
-  BACKGROUND = "Background",
-  AXIS = "Axis",
-  DEBUG = "Debug",
-  DEFAULT = "Default",
-  DIMENSIONS = "Dimensions",
-  HIDDEN = "Hidden",
-  MARKED_BLUE = "MarkedBlue"
+export enum eApgCadTestTypes {
+    DIRECT_SVG = "DirectSvg",
+    FEATURES = "Features",
+    FACTORIES = "Factories",
+    DEFAULTS = "Defaults",
+    INS_SET_GROUPS = "InsSetGroups",
+
 }

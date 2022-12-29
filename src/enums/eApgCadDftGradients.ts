@@ -6,15 +6,8 @@
  */
 
 /** 
- * Default Strike styles 
+ * Default Gredients 
  */
-export enum eApgCadDftStrokeStyles {
-  NONE = "None",
-  BACKGROUND = "Background",
-  AXIS = "Axis",
-  DEBUG = "Debug",
-  DEFAULT = "Default",
-  DIMENSIONS = "Dimensions",
-  HIDDEN = "Hidden",
-  MARKED_BLUE = "MarkedBlue"
+export enum eApgCadDftGradients {
+    NONE = "None",
 }

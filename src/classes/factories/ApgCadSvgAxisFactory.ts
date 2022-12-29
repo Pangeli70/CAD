@@ -10,13 +10,10 @@
  */
 
 import { A2D, Svg } from "../../../deps.ts";
-
-import {
-  ApgCadSvgPrimitivesFactory,
-  eApgCadOrientations,
-  eApgCadSvgPrimitiveFactoryTypes,
-  IApgCadSvgAxis,
-} from "../../../mod.ts";
+import { eApgCadOrientations } from "../../enums/eApgCadOrientations.ts";
+import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { IApgCadSvgAxis } from "../../interfaces/IApgCadSvgAxis.ts";
+import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
 
 
 interface IApgCadAxisTickData {
@@ -31,8 +28,7 @@ interface IApgCadAxisTickData {
 export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
 
   public constructor(adoc: Svg.ApgSvgDoc, anode: Svg.ApgSvgNode) {
-    super(adoc, anode);
-    this._type = eApgCadSvgPrimitiveFactoryTypes.axis;
+    super(adoc, anode, eApgCadPrimitiveFactoryTypes.AXISES);
   }
 
   build(
@@ -43,7 +39,7 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
     const r = this._svgDoc.group();
     r
       .stroke(asettings.axisStroke.color, asettings.axisStroke.width)
-      .childOf(alayer ? alayer : this._layer);
+      .childOf(alayer ? alayer : this._parent);
 
     const topLeft = this._svgDoc.topLeft();
     const bottomRight = this._svgDoc.bottomRight();

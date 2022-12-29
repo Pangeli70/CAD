@@ -7,11 +7,10 @@
  * -----------------------------------------------------------------------
  */
 import { A2D, Svg, Uts } from "../../../deps.ts";
-import {
-  ApgCadSvgBasicShapesFactory,
-  ApgCadSvgUtils,
-  eApgCadDftDimArrowStyles,
-} from "../../../mod.ts";
+import { eApgCadDftDimArrowStyles } from "../../enums/eApgCadDftDimArrowStyles.ts";
+import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
+import { ApgCadSvgBasicShapesFactory } from "./ApgCadSvgBasicShapesFactory.ts";
 import { ApgCadSvgPrimitivesFactory } from './ApgCadSvgPrimitivesFactory.ts';
 
 
@@ -32,7 +31,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
   cssClass: string;
 
   /** Line and interline height Ratio
-   * @todo_9 Maybe is better to get this value from the leading of the fontdata
+   * TODO @9 Maybe is better to get this value from the leading of the fontdata
    */
   readonly K_H_LINE_RATIO = 3 / 2;
 
@@ -57,7 +56,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
     aarrowWidth: number,
     acssClass: string = ''
   ) {
-    super(adoc, alayer);
+    super(adoc, alayer, eApgCadPrimitiveFactoryTypes.ANGULAR_DIMS);
 
     this.textStyle = Uts.ApgUtsObj.DeepCopy(atextStyle) as Svg.IApgSvgTextStyle;
     this.arrowName = aarrowName;
@@ -168,7 +167,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
       if (!afirstLine.isInTheSegment(arrowPoint1)) {
         const pts = arrow1Baseline.pointsOverLine(arrowPoint1, this.arrowWidth * this.K_ARROW_LINE);
         lpg = intersectionPoint.nearestIn(pts!);
-        // TODO this is the inner arrow line that is drawn over the arc -- APG 20221226
+        // TODO @3 APG 20221226 -- this is the inner arrow line that is drawn over the arc
         this._svgDoc
           .line(arrowPoint1.x, arrowPoint1.y, lpg.x, lpg.y)
           .childOf(r);
@@ -224,7 +223,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
         'M ' + arrowPoint1.x.toString() + ' ' + (arrowPoint1.y).toString()
         + ' A ' + aladderRadious.toString() + ' ' + aladderRadious.toString() + ' 0 1 0 ' + arrowPoint2.x.toString() + ' ' + (arrowPoint2.y).toString()
     }
-    // TODO explore the arc instruction instead than path -- APG 20221226
+    // TODO @4 APG 20221226 -- explore the arc instruction instead than path
     this._svgDoc
       .path(pathInstruction)
       .fill('none')
@@ -284,7 +283,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
     arrowPoint1: A2D.Apg2DPoint,
     arrowPoint2: A2D.Apg2DPoint
   ) {
-    const pf = new ApgCadSvgBasicShapesFactory(this._svgDoc, this._layer);
+    const pf = new ApgCadSvgBasicShapesFactory(this._svgDoc, this._parent);
 
     // First and last point first line
     pf.buildCircle(afirstLine.p1, 20);

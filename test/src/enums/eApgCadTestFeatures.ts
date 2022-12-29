@@ -5,16 +5,15 @@
  * -----------------------------------------------------------------------
  */
 
-/** 
- * Default Strike styles 
+/**
+ *  Test Cad Features
  */
-export enum eApgCadDftStrokeStyles {
-  NONE = "None",
-  BACKGROUND = "Background",
-  AXIS = "Axis",
-  DEBUG = "Debug",
-  DEFAULT = "Default",
-  DIMENSIONS = "Dimensions",
-  HIDDEN = "Hidden",
-  MARKED_BLUE = "MarkedBlue"
+
+export enum eApgCadTestFeatures {
+  LAYERS = "Layers",
+  STROKE_STYLES = "StrokeStyles",
+  FILL_STYLES = "FillStyles",
+  TEXT_STYLES = "TextStyles",
+  PATTERNS = "Patterns",
+  GRADIENTS = "Gradients"
 }

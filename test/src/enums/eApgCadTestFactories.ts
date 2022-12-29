@@ -1,27 +1,19 @@
 /** -----------------------------------------------------------------------
  * @module [CAD]
  * @author [APG] ANGELI Paolo Giusto
- * @version 0.9.2 [APG 2022/11/30] Github beta
- * @version 0.9.3 [APG 2022/12/18] Deno Deploy
+ * @version 0.9.3 [APG 2022/12/28] Deno Deploy
  * -----------------------------------------------------------------------
  */
 
-/** 
- * Default Line styles 
+/**
+ *  Test Cad Factories
  */
-export enum eApgCadTestNames {
-    POINTS = "Points",
-    LINES = "Lines",
-    POLYLINES = "PolyLines",
-    CIRCLES = "Circles",
-    ARCS = "Arcs",
-    LABELS = "Lables",
-
-    LAYERS = "Layers",
-    STROKE_STYLES = "StrokeStyles",
+export enum eApgCadTestFactories {
 
     BASIC_SHAPES = "BasicShapes",
-    
+
+    ANNOTATIONS = `Annotations`,
+
     HORIZONTAL_DIMS = `HorizontalDims`,
     VERTICAL_DIMS = `VerticalDims`,
     ALIGNED_DIMS = `AlignedDims`,
@@ -33,5 +25,4 @@ export enum eApgCadTestNames {
 
     DIM_STYLES = `DimStyles`,
 
-    INSTRUCTIONS_SETS = `InstructionsSets`
 }

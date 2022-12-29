@@ -1,7 +1,9 @@
-<% extends("/master/pico.html") %>
+[: extends("/master/pico.html") :]
 
-  <section>
-    
-    <% partial("/partials/home_menu.html") %>
+<section>
 
-  </section>
+  [: for (const item of menu){:]
+    [: partial("/partials/home_menu.html", [item]) :]
+  [: } :]
+  
+</section>

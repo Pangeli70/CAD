@@ -9,5 +9,9 @@
  * Default Fill styles 
  */
 export enum eApgCadDftFillStyles {
-
+    NONE = "None",
+    BACKGROUND = "Background",
+    DEBUG = "Debug",
+    HIDDEN = "Hidden",
+    DIMENSIONS = "Dimensions"
 }

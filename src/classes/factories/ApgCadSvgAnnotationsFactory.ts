@@ -9,12 +9,9 @@
  * -----------------------------------------------------------------------
  */
 import { A2D, Svg, Uts } from "../../../deps.ts";
-
-import {
-  ApgCadSvgPrimitivesFactory
-} from "../../../mod.ts";
-
+import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
 import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
+import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
 
 
 /** Factory that creates Annotations With arrows and ladders
@@ -48,7 +45,8 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
     aarrowName: string,
     acssClass = ''
   ) {
-    super(adoc, alayer)
+    super(adoc, alayer, eApgCadPrimitiveFactoryTypes.ANNOTATIONS)
+
     this.textStyle = Uts.ApgUtsObj.DeepCopy(atextStyle) as Svg.IApgSvgTextStyle;
     this.arrowName = aarrowName;
     this.cssClass = acssClass;
@@ -102,7 +100,7 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
 
     // Start to create the svg element
     const g = this._svgDoc.group()
-    g.childOf(this._layer);
+    g.childOf(this._parent);
 
     if (this.cssClass && this.cssClass !== '') {
       g.class(this.cssClass);

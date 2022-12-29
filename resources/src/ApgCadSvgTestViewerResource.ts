@@ -5,21 +5,29 @@
  * -----------------------------------------------------------------------
  */
 import { Drash, Tng } from "../../deps.ts";
-import { ApgCadSvgTesterService } from "../../src/classes/ApgCadSvgTesterService.ts";
-import { eApgCadTestNames } from "../../src/enums/eApgCadTestNames.ts";
+import { ApgCadSvgTester } from "../../test/src/classes/ApgCadSvgTester.ts";
+import { eApgCadTestSvg } from "../../test/src/enums/eApgCadTestSvg.ts";
+import { eApgCadTestTypes } from "../../test/src/enums/eApgCadTestTypes.ts";
 
-export class ApgCadSvgViewerResource extends Drash.Resource {
 
-    public override paths = ["/svg/viewer/:test"];
+export class ApgCadSvgTestViewerResource extends Drash.Resource {
+
+    public override paths = ["/test/:type/:test"];
 
     public async GET(request: Drash.Request, response: Drash.Response) {
 
-        const testName = request.pathParam("test") as eApgCadTestNames;
+        const testType = request.pathParam("type") as eApgCadTestTypes;
+        let svgContent = "";
+        switch (testType) {
+            case eApgCadTestTypes.DIRECT_SVG: {
+                const testName = request.pathParam("test") as eApgCadTestSvg;
+                svgContent = ApgCadSvgTester.RunTest(testName);
+            }
+        }
 
-        const svgContent = ApgCadSvgTesterService.RunTest(testName);
 
         const templateData = {
-            site: { 
+            site: {
                 name: "Apg-Cad",
                 title: "Apg Cad Tests"
             },

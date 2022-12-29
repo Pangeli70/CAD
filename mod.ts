@@ -19,7 +19,7 @@ export { eApgCadDftLineStyles } from "./src/enums/eApgCadDftLineStyles.ts";
 export { eApgCadDftTextStyles } from "./src/enums/eApgCadDftTextStyles.ts";
 export { eApgCadDftDimArrowStyles } from "./src/enums/eApgCadDftDimArrowStyles.ts";
 export { eApgCadInstructionTypes } from "./src/enums/eApgCadInstructionTypes.ts";
-export { eApgCadSvgPrimitiveFactoryTypes} from "./src/enums/eApgCadSvgPrimitiveFactoryTypes.ts";
+export { eApgCadPrimitiveFactoryTypes} from "./src/enums/eApgCadPrimitiveFactoryTypes.ts";
 
 export { ApgCadSvg } from "./src/classes/ApgCadSvg.ts";
 export { ApgCadSvgUtils } from "./src/classes/ApgCadSvgUtils.ts";

@@ -5,16 +5,9 @@
  * -----------------------------------------------------------------------
  */
 
-/** 
- * Default Strike styles 
+/**
+ * Groups of instructions sets for testing
  */
-export enum eApgCadDftStrokeStyles {
-  NONE = "None",
-  BACKGROUND = "Background",
-  AXIS = "Axis",
-  DEBUG = "Debug",
-  DEFAULT = "Default",
-  DIMENSIONS = "Dimensions",
-  HIDDEN = "Hidden",
-  MARKED_BLUE = "MarkedBlue"
+export enum eApgCadTestInsSetGroups { 
+    BASIC
 }

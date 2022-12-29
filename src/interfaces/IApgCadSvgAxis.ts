@@ -23,7 +23,7 @@ export interface IApgCadSvgAxis {
   bigTicksSize: number;
 
   drawBigTicksLables: boolean;
-  labelsStyleName: string;
+  labelsTextStyleName: string;
 
   labelsStyle?: Svg.IApgSvgTextStyle;
 }

@@ -6,12 +6,13 @@
  * @version 0.9.3 [APG 2022/12/18] Deno Deploy
  * -----------------------------------------------------------------------
  */
-export enum eApgCadSvgPrimitiveFactoryTypes {
-  undefined = "UNDEFINED",
-  basicShapes = "BASIC_SHAPES",
-  axis = "AXIS",
-  linearDimensions = "LINEAR_DIMS",
-  angularDimensions = "ANGULAR_DIMS",
-  radialDimensions = "RADIAL_DIMS",
-  annotations = "ANNOTATIONS"
+export enum eApgCadPrimitiveFactoryTypes {
+  UNDEFINED = "Undefined",
+  BASIC_SHAPES = "BasicShapes",
+  AXISES = "Axis",
+  GRIDS = "Grids",
+  LINEAR_DIMS = "LinearDims",
+  RADIAL_DIMS = "RadialDims",
+  ANGULAR_DIMS = "AngularDimensions",
+  ANNOTATIONS = "Annotations"
 }

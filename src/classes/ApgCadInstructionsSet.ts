@@ -13,27 +13,24 @@
 
 import { A2D, Lgr, Rst, Svg, Uts, Jsv } from "../../deps.ts";
 
-import {
-  ApgCadSvgBasicShapesFactory,
-  ApgCadSvgLinearDimensionsFactory,
-  ApgCadSvgAnnotationsFactory,
-  eApgCadInstructionTypes,
-  IApgCadSvgAxis,
-  IApgCadSvgBackground,
-  IApgCadSvgViewBox,
-  IApgCadInstruction,
-  ApgCadSvg,
-  eApgCadLinearDimensionTypes,
-  eApgCadSvgPrimitiveFactoryTypes,
-  eApgCadDftTextStyles
-} from "../../mod.ts";
-
 import { eApgCadIns_TypesSchema } from "../schemas/eApgCadInsTypesSchema.ts";
 import { ApgCadIns_GenericSchema } from "../schemas/ApgCadInsGenericSchema.ts";
 import { ApgCadIns_DrawLineSchema } from "../schemas/ApgCadInsDrawLineSchema.ts";
 import { ApgCadIns_SetNameSchema } from "../schemas/ApgCadInsSetNameSchema.ts";
 import { ApgCadIns_NewPointSchema } from "../schemas/ApgCadInsNewPointSchema.ts";
 import { IApgCadStyleOptions } from "../interfaces/IApgCadStyleOptions.ts";
+import { eApgCadInstructionTypes } from "../enums/eApgCadInstructionTypes.ts";
+import { ApgCadSvg } from "./ApgCadSvg.ts";
+import { IApgCadInstruction } from "../interfaces/IApgCadInstruction.ts";
+import { eApgCadDftTextStyles } from "../enums/eApgCadDftTextStyles.ts";
+import { eApgCadLinearDimensionTypes } from "../enums/eApgCadLinearDimensionTypes.ts";
+import { IApgCadSvgAxis } from "../interfaces/IApgCadSvgAxis.ts";
+import { IApgCadSvgBackground } from "../interfaces/IApgCadSvgBackground.ts";
+import { IApgCadSvgViewBox } from "../interfaces/IApgCadSvgViewBox.ts";
+import { ApgCadSvgAnnotationsFactory } from "./factories/ApgCadSvgAnnotationsFactory.ts";
+import { ApgCadSvgBasicShapesFactory } from "./factories/ApgCadSvgBasicShapesFactory.ts";
+import { ApgCadSvgLinearDimensionsFactory } from "./factories/ApgCadSvgLinearDimensionsFactory.ts";
+import { eApgCadPrimitiveFactoryTypes } from "../enums/eApgCadPrimitiveFactoryTypes.ts";
 
 
 const APG_SVG_INS_VALIDATORS = [
@@ -597,7 +594,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
     if (this.status.Ok) {
       const currentGroup = (this._cad.currentGroup) ? this._cad.currentGroup : this._cad.currentLayer;
-      const pf = <ApgCadSvgBasicShapesFactory>this._cad.getPrimitiveFactory(eApgCadSvgPrimitiveFactoryTypes.basicShapes)
+      const pf = <ApgCadSvgBasicShapesFactory>this._cad.getPrimitiveFactory(eApgCadPrimitiveFactoryTypes.BASIC_SHAPES)
       const e = pf.buildLine(pts[0], pts[1], currentGroup);
       e.fill('none');
       if (astrokeStyleName) {
@@ -665,7 +662,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     if (this.status.Ok && pts.length > 2) {
 
       const pf = this._cad.getPrimitiveFactory(
-        eApgCadSvgPrimitiveFactoryTypes.basicShapes
+        eApgCadPrimitiveFactoryTypes.BASIC_SHAPES
       ) as ApgCadSvgBasicShapesFactory;
       const e = pf.buildPolyLine(pts);
       e.fill('none');
@@ -738,7 +735,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       const fill = this.#checkFillStyle(afillStyleName);
       const strk = this.#checkStrokeStyle(astrokeStyleName);
       const pf = this._cad.getPrimitiveFactory(
-        eApgCadSvgPrimitiveFactoryTypes.basicShapes
+        eApgCadPrimitiveFactoryTypes.BASIC_SHAPES
       ) as ApgCadSvgBasicShapesFactory;
       pts.forEach(pt => {
         const e = pf.buildDot(pt, aradious);
@@ -768,11 +765,11 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
 
     const pf = this._cad.getPrimitiveFactory(
-      eApgCadSvgPrimitiveFactoryTypes.basicShapes
+      eApgCadPrimitiveFactoryTypes.BASIC_SHAPES
     ) as ApgCadSvgBasicShapesFactory;
 
     this._points.forEach((pt, name) => {
-      const g = pf.buildPoint(pt, aradious, name, atextStyle);
+      const _g = pf.buildPoint(pt, aradious, name, atextStyle);
     });
 
     this.logEnd();
@@ -803,7 +800,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       const fill = this.#checkFillStyle(afillStyleName);
 
       const pf = this._cad.getPrimitiveFactory(
-        eApgCadSvgPrimitiveFactoryTypes.basicShapes
+        eApgCadPrimitiveFactoryTypes.BASIC_SHAPES
       ) as ApgCadSvgBasicShapesFactory;
       const node = pf.buildClosedPolyLine(ppts);
 
@@ -853,7 +850,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       const fill = this.#checkFillStyle(afill);
 
       const pf = this._cad.getPrimitiveFactory(
-        eApgCadSvgPrimitiveFactoryTypes.basicShapes
+        eApgCadPrimitiveFactoryTypes.BASIC_SHAPES
       ) as ApgCadSvgBasicShapesFactory;
       const e = pf.buildClosedPolyLine(ppts);
 
@@ -894,7 +891,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     if (this.status.Ok) {
 
       const pf = this._cad.getPrimitiveFactory(
-        eApgCadSvgPrimitiveFactoryTypes.basicShapes
+        eApgCadPrimitiveFactoryTypes.BASIC_SHAPES
       ) as ApgCadSvgBasicShapesFactory;
 
       const e = pf.buildClosedPolyLine(pts);
@@ -942,7 +939,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
       if (this.status.Ok) {
         const pf = this._cad.getPrimitiveFactory(
-          eApgCadSvgPrimitiveFactoryTypes.annotations
+          eApgCadPrimitiveFactoryTypes.ANNOTATIONS
         ) as ApgCadSvgAnnotationsFactory;
         const g = pf.build(pts[0], pts[1], atext[0]);
         const textStyle = this.#checkTextStyle(atextStyleName);
@@ -973,9 +970,9 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
     if (this.status.Ok) {
       const pf = this._cad.getPrimitiveFactory(
-        eApgCadSvgPrimitiveFactoryTypes.annotations
+        eApgCadPrimitiveFactoryTypes.ANNOTATIONS
       ) as ApgCadSvgAnnotationsFactory;
-      // TODO this is a mess better to draw text without Annotations factory -- APG
+      // TODO @5 APG ... -- this is a mess better to draw text without Annotations factory
       const g = pf.build(origin, zero, this.name);
       const textStyle = this.#checkTextStyle(eApgCadDftTextStyles.TITLE);
       if (textStyle) {
@@ -1004,7 +1001,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
     if (this.status.Ok) {
       const pf = this._cad.getPrimitiveFactory(
-        eApgCadSvgPrimitiveFactoryTypes.annotations
+        eApgCadPrimitiveFactoryTypes.ANNOTATIONS
       ) as ApgCadSvgAnnotationsFactory;
 
       const disp = new A2D.Apg2DPoint(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
@@ -1033,7 +1030,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     if (this.status.Ok) {
 
       const pf = this._cad.getPrimitiveFactory(
-        eApgCadSvgPrimitiveFactoryTypes.linearDimensions
+        eApgCadPrimitiveFactoryTypes.LINEAR_DIMS
       ) as ApgCadSvgLinearDimensionsFactory;
       pf.build(eApgCadLinearDimensionTypes.Aligned, pts[0], pts[1], adisplacement, atext[0], atext[1]); // <=(X)
 
@@ -1045,7 +1042,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
   /** Parses the instructions set and builds the SVG drawing
    */
-  build(asettingsOnly = false): { svg: string, data: any } {
+  build(asettingsOnly = false) {
 
     this.logBegin(this.build.name);
 
@@ -1174,37 +1171,10 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
     this.logEnd();
 
-    const r: any = {};
-    r.svg = this._cad.svg.render();
-    r.data = this.#getData();
+    const r = this._cad.svg.render();
     return r;
   }
 
-
-  /** Builds the instructions set but only for getting back the svg object settings */
-  getSvgData(): any {
-    this.logBegin(this.getSvgData.name);
-
-    const r: any = this.build(true).data;
-
-    this.logEnd();
-
-    return r;
-  }
-
-  #getData() {
-    const r: any = {};
-    r.settings = this._cad.settings;
-    r.points = Uts.ApgUtsMap.ToArray(this._points);
-    r.fonts = Uts.ApgUtsMap.ToArray(this._cad.textStyles);
-    r.layers = Uts.ApgUtsMap.ToArray(this._cad.layers);
-    r.groups = Uts.ApgUtsMap.ToArray(this._cad.groupsDefs);
-    r.strokes = Uts.ApgUtsMap.ToArray(this._cad.strokeStyles);
-    r.fills = Uts.ApgUtsMap.ToArray(this._cad.fillStyles);
-    r.gradients = Uts.ApgUtsMap.ToArray(this._cad.gradients);
-    r.patterns = this._cad.patternsDefs;
-    return r;
-  }
 
   #checkStrokeStyle(astrokeStyleName?: string) {
     let r: Svg.IApgSvgStrokeStyle | undefined = undefined;

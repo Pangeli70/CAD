@@ -9,10 +9,8 @@
  * -----------------------------------------------------------------------
  */
 import { Svg } from "../../../deps.ts";
+import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
 
-import {
-  eApgCadSvgPrimitiveFactoryTypes,
-} from "../../../mod.ts";
 
 export class ApgCadSvgPrimitivesFactory {
 
@@ -20,24 +18,25 @@ export class ApgCadSvgPrimitivesFactory {
 
   protected _error = '';
 
-  protected _type = eApgCadSvgPrimitiveFactoryTypes.undefined;
+  protected _type = eApgCadPrimitiveFactoryTypes.UNDEFINED;
 
   protected _svgDoc: Svg.ApgSvgDoc;
 
-  protected _layer!: Svg.ApgSvgNode;
+  protected _parent!: Svg.ApgSvgNode;
 
-  public constructor(adoc: Svg.ApgSvgDoc, alayer: Svg.ApgSvgNode) {
+  public constructor(adoc: Svg.ApgSvgDoc, aparent: Svg.ApgSvgNode, atype: eApgCadPrimitiveFactoryTypes) {
     this._svgDoc = adoc;
-    this._setLayer(alayer);
+    this._type = atype;
+    this.changeParent(aparent);
   }
 
-  protected _setLayer(alayer: Svg.ApgSvgNode) {
-    if (alayer.type !== Svg.eApgSvgNodeTypes.Group) {
+  changeParent(aparent: Svg.ApgSvgNode) {
+    if(aparent.type !== Svg.eApgSvgNodeTypes.Group) {
       throw new Error(
-        `Trying to set an invalid Layer for the ApgSvgCad...Factory #${alayer.ID} type is "${alayer.type}" instead than "Group"`,
+        `Trying to set an invalid Layer for the ApgSvgCad...Factory #${aparent.ID} type is "${aparent.type}" instead than "Group"`
       );
     }
-    this._layer = alayer;
+    this._parent = aparent;
   }
 
   protected _setParent(anode: Svg.ApgSvgNode, aparent?: Svg.ApgSvgNode) {
@@ -45,7 +44,7 @@ export class ApgCadSvgPrimitivesFactory {
       anode.childOf(aparent);
     }
     else {
-      anode.childOf(this._layer);
+      anode.childOf(this._parent);
     }
   }
 

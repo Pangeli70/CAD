@@ -27,6 +27,7 @@ export * as Lgr from "https://raw.githubusercontent.com/Pangeli70/apg-lgr/master
 export * as Jsv from "../JSV/mod.ts";
 
 export * as Edr from "https://raw.githubusercontent.com/Pangeli70/apg-edr/master/mod.ts";
-export * as Tng from "https://raw.githubusercontent.com/Pangeli70/apg-tng/master/mod.ts";
+// export * as Tng from "https://raw.githubusercontent.com/Pangeli70/apg-tng/master/mod.ts";
+export * as Tng from "../TNG/mod.ts";
 
 

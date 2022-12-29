@@ -4,4 +4,4 @@
  * -----------------------------------------------------------------------
  */
 export * from "./src/ApgCadHomeResource.ts";
-export * from "./src/ApgCadSvgViewerResource.ts";
+export * from "./src/ApgCadSvgTestViewerResource.ts";

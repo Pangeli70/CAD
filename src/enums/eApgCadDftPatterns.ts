@@ -6,15 +6,12 @@
  */
 
 /** 
- * Default Strike styles 
+ * Default Patterns 
  */
-export enum eApgCadDftStrokeStyles {
-  NONE = "None",
-  BACKGROUND = "Background",
-  AXIS = "Axis",
-  DEBUG = "Debug",
-  DEFAULT = "Default",
-  DIMENSIONS = "Dimensions",
-  HIDDEN = "Hidden",
-  MARKED_BLUE = "MarkedBlue"
+export enum eApgCadDftPatterns {
+    CHESSBOARD = "Chessboard",
+    GRID1 = "Background",
+    GRID2 = "Grid2",
+    GRID3 = "Grid3",
+    GRID4 = "Grid4"
 }

@@ -1,7 +1,24 @@
-<% for (const item of menu) { %>
-    <span style="margin: 1rem;">
-        <a href="<% item.href %>" >
-            <% item.caption %>
-        </a>
-    </span>
-<% }%>
+<pre hidden>
+  [: arguments({
+    "#0": {
+      "title": "string", 
+      "links": [
+        { 
+          "href": "string", 
+          "caption": "string"
+        }
+      ]
+    }
+  }) :]
+</pre>
+
+<h1 style="margin-bottom:1rem; margin-top:2rem">
+  [: [#0].title :]
+</h1>
+[: for (const link of [#0].links) { :]
+<span style="margin: 1rem;">
+  <a href="[: link.href :]">
+    [: link.caption :]
+  </a>
+</span>
+[: } :]

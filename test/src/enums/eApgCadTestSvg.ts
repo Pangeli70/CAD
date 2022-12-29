@@ -5,16 +5,15 @@
  * -----------------------------------------------------------------------
  */
 
-/** 
- * Default Strike styles 
+/**
+ * Test Direct Svg
  */
-export enum eApgCadDftStrokeStyles {
-  NONE = "None",
-  BACKGROUND = "Background",
-  AXIS = "Axis",
-  DEBUG = "Debug",
-  DEFAULT = "Default",
-  DIMENSIONS = "Dimensions",
-  HIDDEN = "Hidden",
-  MARKED_BLUE = "MarkedBlue"
+export enum eApgCadTestSvg {
+  POINTS = "Points",
+  LINES = "Lines",
+  POLYLINES = "PolyLines",
+  CIRCLES = "Circles",
+  ARCS = "Arcs",
+  PATHS = "Paths",
+  LABELS = "Lables"
 }

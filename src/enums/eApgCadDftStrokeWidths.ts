@@ -6,15 +6,13 @@
  */
 
 /** 
- * Default Strike styles 
+ * Default Stroke Widths
  */
-export enum eApgCadDftStrokeStyles {
-  NONE = "None",
-  BACKGROUND = "Background",
-  AXIS = "Axis",
-  DEBUG = "Debug",
-  DEFAULT = "Default",
-  DIMENSIONS = "Dimensions",
-  HIDDEN = "Hidden",
-  MARKED_BLUE = "MarkedBlue"
-}
+export enum eApgCadDftStrokeWidths {
+    NONE = 0,
+    SLIGHT = 1,
+    THIN = 2,
+    MILD = 4,
+    MARKED = 6,
+    THICK = 8
+} 

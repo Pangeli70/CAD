@@ -9,16 +9,13 @@
  * -----------------------------------------------------------------------
  */
 import { A2D, Svg } from "../../../deps.ts";
-
-import {
-  ApgCadSvgPrimitivesFactory,
-  eApgCadSvgPrimitiveFactoryTypes,
-  eApgCadDftDimArrowStyles,
-  eApgCadLinearDimensionTypes,
-  ApgCadSvgBasicShapesFactory
-} from "../../../mod.ts";
+import { eApgCadDftDimArrowStyles } from "../../enums/eApgCadDftDimArrowStyles.ts";
+import { eApgCadLinearDimensionTypes } from "../../enums/eApgCadLinearDimensionTypes.ts";
+import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
 
 import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
+import { ApgCadSvgBasicShapesFactory } from "./ApgCadSvgBasicShapesFactory.ts";
+import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
 
 
 /** Apg Svg : Factory for CAD Linear dimensions with arrows and ladders
@@ -38,13 +35,12 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
   cssClass = "";
 
   /** Line and interline height Ratio
-   * @todo_9 Maybe is better to get this value from the leading of the fontdata
+   * TODO @9 Maybe is better to get this value from the leading of the fontdata
    */
   readonly K_H_LINE_RATIO = 3 / 2;
 
   public constructor(adoc: Svg.ApgSvgDoc, anode: Svg.ApgSvgNode) {
-    super(adoc, anode);
-    this._type = eApgCadSvgPrimitiveFactoryTypes.linearDimensions;
+    super(adoc, anode,eApgCadPrimitiveFactoryTypes.LINEAR_DIMS);
   }
 
 
@@ -54,7 +50,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
     aarrowStyle: eApgCadDftDimArrowStyles,
     acss = ''
   ) {
-    this._layer = alayer;
+    this._parent = alayer;
     this.fontName = "...";
     this.charHeight = acharHeight;
     this.arrowStyle = aarrowStyle;
@@ -275,7 +271,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
     const r = this._svgDoc.group();
     // TODO @1 APG 20221228 -- This could be wrong, we will use the factory to create a group and then it will be
     // associated to a parent. This has to be changed on all factories. Maybe....
-    r.childOf(this._layer);
+    r.childOf(this._parent);
 
     // If specified adds the CSS class
     if (this.cssClass !== '') {
@@ -320,7 +316,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory
     // Draw debug elements
     if (this.DEBUG_MODE) {
 
-      const pf = new ApgCadSvgBasicShapesFactory(this._svgDoc, this._layer);
+      const pf = new ApgCadSvgBasicShapesFactory(this._svgDoc, this._parent);
 
       // First and last point
       pf.buildCircle(p1, 20);
