@@ -1011,7 +1011,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
       const pf = this._cad.getPrimitiveFactory(eApgCadPrimitiveFactoryTypes.LINEAR_DIMS) as ApgCadSvgLinearDimensionsFactory;
       const node = pf
-        .build(eApgCadLinearDimensionTypes.Aligned, pts[0], pts[1], adisplacement, atext[0], atext[1]);
+        .build(eApgCadLinearDimensionTypes.ALIGNED, pts[0], pts[1], adisplacement, atext[0], atext[1]);
 
       this.#setParent(node!);
 

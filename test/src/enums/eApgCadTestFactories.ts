@@ -14,12 +14,16 @@ export enum eApgCadTestFactories {
 
     ANNOTATIONS = `Annotations`,
 
-    HORIZONTAL_DIMS = `HorizontalDims`,
-    VERTICAL_DIMS = `VerticalDims`,
-    ALIGNED_DIMS = `AlignedDims`,
+    HORIZONTAL_LIN_DIMS = `HorizontalDims`,
+    VERTICAL_LIN_DIMS = `VerticalDims`,
+    ALIGNED_LIN_DIMS = `AlignedDims`,
 
-    DIAMETER_DIMS = `DiameterDims`,
-    RADIOUS_DIMS = `RadiousDims`,
+    IN_DIAMETER_ARC_DIMS = `InnerDiameterDims`,
+    IN_RADIOUS_ARC_DIMS = `InnerRadiousDims`,
+    OUT_DIAMETER_DIMS = `OuterDiameterDims`,
+    OUT_RADIOUS_ARC_DIMS = `OuterRadiousDims`,
+    HORIZONTAL_ARC_DIMS = `ArcHorizontalDims`,
+    VERTICAL_ARC_DIMS = `ArcVerticalDims`,
 
     ANGULAR_DIMS = 'AngularDims',
 

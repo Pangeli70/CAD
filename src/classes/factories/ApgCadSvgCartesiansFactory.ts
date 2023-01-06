@@ -38,13 +38,13 @@ export class ApgCadSvgCartesiansFactory extends ApgCadSvgPrimitivesFactory {
     atype: eApgCadOrientations,
     asettings: IApgCadSvgCartesians,
   ) {
-    const r = this._cad.svg
+    const r = this.cad.svg
       .group()
       .stroke(asettings.axisStroke.color, asettings.axisStroke.width)
       .childOf(aparent);
 
-    const topLeft = this._cad.svg.bottomLeft();
-    const bottomRight = this._cad.svg.topRight();
+    const topLeft = this.cad.svg.bottomLeft();
+    const bottomRight = this.cad.svg.topRight();
 
     let p1, p2: A2D.Apg2DPoint;
     if (atype == eApgCadOrientations.horizontal) {
@@ -55,7 +55,7 @@ export class ApgCadSvgCartesiansFactory extends ApgCadSvgPrimitivesFactory {
       p2 = new A2D.Apg2DPoint(0, bottomRight.y);
     }
 
-    this._cad.svg
+    this.cad.svg
       .line(p1.x, p1.y, p2.x, p2.y)
       .childOf(r);
 
@@ -72,8 +72,8 @@ export class ApgCadSvgCartesiansFactory extends ApgCadSvgPrimitivesFactory {
     let firstTick: number;
     let lastTick: number;
     let ticksNum: number;
-    const topLeft = this._cad.svg.bottomLeft();
-    const bottomRight = this._cad.svg.topRight();
+    const topLeft = this.cad.svg.bottomLeft();
+    const bottomRight = this.cad.svg.topRight();
 
     if (atype == eApgCadOrientations.horizontal) {
 
@@ -88,11 +88,11 @@ export class ApgCadSvgCartesiansFactory extends ApgCadSvgPrimitivesFactory {
       ticksNum = (lastTick - firstTick) / aaxis.ticksStep;
     }
 
-    const ticksG = this._cad.svg
+    const ticksG = this.cad.svg
       .group()
       .childOf(aparent);
 
-    const labelsG = this._cad.svg
+    const labelsG = this.cad.svg
       .group()
       .childOf(aparent);
 
@@ -141,7 +141,7 @@ export class ApgCadSvgCartesiansFactory extends ApgCadSvgPrimitivesFactory {
   ) {
     if (aaxis.drawTicks) {
 
-      this._cad.svg
+      this.cad.svg
         .line(atickData.p1.x, atickData.p1.y, atickData.p2.x, atickData.p2.y)
         .childOf(aparent);
     }
@@ -167,7 +167,7 @@ export class ApgCadSvgCartesiansFactory extends ApgCadSvgPrimitivesFactory {
           }
         }
 
-        const _label = this._cad.svg
+        const _label = this.cad.svg
           .text(labelPoint.x, labelPoint.y, atickData.tickValue.toString(), 0)
           .childOf(aparent);
       }

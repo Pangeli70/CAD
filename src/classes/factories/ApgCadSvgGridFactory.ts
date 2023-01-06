@@ -31,7 +31,7 @@ export class ApgCadSvgGridFactory extends ApgCadSvgPrimitivesFactory {
   ) {
 
     const gridData = this.#getData(agridSettings);
-    const r = this._cad.svg
+    const r = this.cad.svg
       .group()
       .stroke(agridSettings.gridStroke.color, agridSettings.gridStroke.width)
       .childOf(aparent);
@@ -47,7 +47,7 @@ export class ApgCadSvgGridFactory extends ApgCadSvgPrimitivesFactory {
 
   #drawGridLines(alinesData: IApgCadGridData[], r: Svg.ApgSvgNode, agridSettings: IApgCadSvgGrid) {
     for (const adata of alinesData) {
-      const l = this._cad.svg
+      const l = this.cad.svg
         .line(adata.p1.x, adata.p1.y, adata.p2.x, adata.p2.y)
         .childOf(r);
       if (adata.isMajor) {
@@ -59,8 +59,8 @@ export class ApgCadSvgGridFactory extends ApgCadSvgPrimitivesFactory {
   #getData(
     agrid: IApgCadSvgGrid
   ) {
-    const bottomLeft = this._cad.svg.bottomLeft();
-    const topRight = this._cad.svg.topRight();
+    const bottomLeft = this.cad.svg.bottomLeft();
+    const topRight = this.cad.svg.topRight();
 
     const left = Math.trunc(bottomLeft.x / agrid.gridStep) * agrid.gridStep;
     const bottom = Math.trunc(bottomLeft.y / agrid.gridStep) * agrid.gridStep;

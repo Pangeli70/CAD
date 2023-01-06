@@ -48,7 +48,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
     this.textStyle = Uts.ApgUtsObj.DeepCopy(atextStyle) as Svg.IApgSvgTextStyle;
     this.arrowStyle = aarrowStyle;
     this.cssClass = acssClass;
-    this._ready = true;
+    this.ready = true;
   }
 
   /** Builds a Cad Angular Dimension with the ladders
@@ -71,13 +71,13 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
   ) {
 
     // Start to create the svg element
-    const r = this._cad.svg.group();
+    const r = this.cad.svg.group();
 
     // A) Preliminary checks
 
     // If the straight lines are 'almost' parallel returns
     if (Math.abs(afirstLine.slope - asecondLine.slope) < this.K_MIN_SLOPE_DIFF) {
-      this._messages.push('The two segments are parallel');
+      this.messages.push('The two segments are parallel');
       return r;
     }
 
@@ -127,19 +127,19 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
       r.class(this.cssClass);
     }
 
-    this._cad.svg
+    this.cad.svg
       .use(this.arrowStyle, arrowPoint1.x, arrowPoint1.y)
       .rotate(arrow1Orientation, arrowPoint1.x, arrowPoint1.y)
       .childOf(r);
 
-    this._cad.svg
+    this.cad.svg
       .use(this.arrowStyle, arrowPoint2.x, arrowPoint2.y)
       .rotate(arrow2Orientation, arrowPoint2.x, arrowPoint2.y)
       .childOf(r);
 
 
     // Draw the svg Text
-    this._cad.svg
+    this.cad.svg
       .text(textPoint!.x, textPoint!.y, dimText, this.textStyle.size * 1.2)
       .rotate(textOrientation, textPoint!.x, textPoint!.y)
       .stroke('none', 0)
@@ -152,7 +152,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
         const pts = arrow1Baseline.pointsOverLine(arrowPoint1, 100 * this.K_ARROW_LINE);
         lpg = intersectionPoint.nearestIn(pts!);
         // TODO @3 APG 20221226 -- this is the inner arrow line that is drawn over the arc
-        this._cad.svg
+        this.cad.svg
           .line(arrowPoint1.x, arrowPoint1.y, lpg.x, lpg.y)
           .childOf(r);
 
@@ -161,7 +161,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
       if (!asecondLine.isInTheSegment(arrowPoint1)) {
         const pts = arrow2Baseline.pointsOverLine(arrowPoint1, 100 * this.K_ARROW_LINE);
         lpg = intersectionPoint.nearestIn(pts!);
-        this._cad.svg
+        this.cad.svg
           .line(arrowPoint1.x, arrowPoint1.y, lpg.x, lpg.y)
           .childOf(r);
       }
@@ -171,7 +171,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
       if (!asecondLine.isInTheSegment(arrowPoint2)) {
         const pts = arrow1Baseline.pointsOverLine(arrowPoint2, 100 * this.K_ARROW_LINE);
         lpg = intersectionPoint.nearestIn(pts);
-        this._cad.svg
+        this.cad.svg
           .line(arrowPoint2.x, arrowPoint2.y, lpg.x, lpg.y)
           .childOf(r);
       }
@@ -179,7 +179,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
       if (!afirstLine.isInTheSegment(arrowPoint2)) {
         const pts = arrow2Baseline.pointsOverLine(arrowPoint2, 100 * this.K_ARROW_LINE);
         lpg = intersectionPoint.nearestIn(pts);
-        this._cad.svg
+        this.cad.svg
           .line(arrowPoint2.x, arrowPoint2.y, lpg.x, lpg.y)
           .childOf(r);
       }
@@ -208,7 +208,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
         + ' A ' + aladderRadious.toString() + ' ' + aladderRadious.toString() + ' 0 1 0 ' + arrowPoint2.x.toString() + ' ' + (arrowPoint2.y).toString()
     }
     // TODO @4 APG 20221226 -- explore the arc instruction instead than path
-    this._cad.svg
+    this.cad.svg
       .path(pathInstruction)
       .fill('none')
       .childOf(r);
@@ -269,54 +269,54 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
   ) {
     const DOT_SIZE = 10;
 
-    const pf = new ApgCadSvgBasicShapesFactory(this._cad);
-    this._cad.setCurrentLayer(eApgCadDftLayers.DEBUG);
+    const pf = new ApgCadSvgBasicShapesFactory(this.cad);
+    this.cad.setCurrentLayer(eApgCadDftLayers.DEBUG);
 
     // First and last point first line
     pf
       .buildCircle(afirstLine.p1, DOT_SIZE)
-      .childOf(this._cad.currentLayer);
+      .childOf(this.cad.currentLayer);
     pf
       .buildCircle(afirstLine.p2, DOT_SIZE)
-      .childOf(this._cad.currentLayer);
+      .childOf(this.cad.currentLayer);
     
     // First line
     pf
       .buildLine(afirstLine.p1, afirstLine.p2)
-      .childOf(this._cad.currentLayer);
+      .childOf(this.cad.currentLayer);
     
     // First and last point second line
     pf
       .buildDot(asecondLine.p1, DOT_SIZE)
-      .childOf(this._cad.currentLayer);
+      .childOf(this.cad.currentLayer);
     pf
       .buildDot(asecondLine.p2, DOT_SIZE)
-      .childOf(this._cad.currentLayer);
+      .childOf(this.cad.currentLayer);
     
     // Second line
     pf
       .buildLine(asecondLine.p1, asecondLine.p2)
-      .childOf(this._cad.currentLayer);
+      .childOf(this.cad.currentLayer);
     
     // Intersection
     pf
       .buildDot(intersectionPoint, DOT_SIZE)
-      .childOf(this._cad.currentLayer);
+      .childOf(this.cad.currentLayer);
     
     // Bisector line
     pf
       .buildLine(intersectionPoint, bisectorPoint)
-      .childOf(this._cad.currentLayer);
+      .childOf(this.cad.currentLayer);
 
     // Text origin
     pf
       .buildCircle(textPoint!, DOT_SIZE)
-      .childOf(this._cad.currentLayer);
+      .childOf(this.cad.currentLayer);
     
     // Line between arrowpoints
     pf
       .buildLine(arrowPoint1, arrowPoint2)
-      .childOf(this._cad.currentLayer);
+      .childOf(this.cad.currentLayer);
   }
 
   #getArrowPoints(

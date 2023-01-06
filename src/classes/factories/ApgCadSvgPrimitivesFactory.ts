@@ -16,18 +16,18 @@ import { ApgCadSvg } from "../ApgCadSvg.ts";
 
 export class ApgCadSvgPrimitivesFactory {
 
-  protected _ready = false;
+  protected ready = false;
 
-  protected _messages: string[] = [];
+  protected messages: string[] = [];
 
-  protected _type = eApgCadPrimitiveFactoryTypes.UNDEFINED;
+  protected type = eApgCadPrimitiveFactoryTypes.UNDEFINED;
 
-  protected _cad: ApgCadSvg;
+  protected cad: ApgCadSvg;
 
 
   public constructor(acad: ApgCadSvg, atype: eApgCadPrimitiveFactoryTypes) {
-    this._cad = acad;
-    this._type = atype;
+    this.cad = acad;
+    this.type = atype;
   }
 
  

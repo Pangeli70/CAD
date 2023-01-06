@@ -52,7 +52,7 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
     this.textStyle = Uts.ApgUtsObj.DeepCopy(atextStyle) as Svg.IApgSvgTextStyle;
     this.arrowStyle = aarrowName;
     this.cssClass = acssClass;
-    this._ready = true;
+    this.ready = true;
   }
 
   /** Builds a Cad Annotation with the ladder and arrow
@@ -73,7 +73,7 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
     aorientation = 0
   ) {
 
-    if (!this._ready) { return undefined; }
+    if (!this.ready) { return undefined; }
 
     const charAverageHeightWidthRatio = this.textStyle.aspectRatio || 0.5;
 
@@ -114,7 +114,7 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
 
     // Start to create the svg element
 
-    const g = this._cad.svg.group();
+    const g = this.cad.svg.group();
     g.childOf(aparent);
 
     if (this.cssClass && this.cssClass !== '') {
@@ -124,13 +124,13 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
 
     const annotationText = atext;
     // Draw the svg Text
-    const _text = this._cad.svg
+    const _text = this.cad.svg
       .text(textPosition.x, textPosition.y, annotationText, textLineHeight)
       .rotate(textOrientation)//, textPosition.x, textPosition.y)
       .textStyle(this.textStyle)
       .childOf(g);
 
-    this._cad.svg
+    this.cad.svg
       .line(annotationStartPosition.x, annotationStartPosition.y, annotationEndPosition.x, annotationEndPosition.y)
       .childOf(g)
 
@@ -142,31 +142,29 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
       const arrowOrientation = annotationLadderLine.angle % 360;
 
       // Draw the arrow ladder
-      this._cad.svg
+      this.cad.svg
         .line(aorigin.x, aorigin.y, annotationStartPosition.x, annotationStartPosition.y)
         .childOf(g);
 
       // Draw the underline
-      this._cad.svg
+      this.cad.svg
         .line(annotationStartPosition.x, annotationStartPosition.y, annotationEndPosition.x, annotationEndPosition.y)
         .childOf(g);
 
       // Draw the arrow
-      this._cad.svg
+      this.cad.svg
         .use(this.arrowStyle, aorigin.x, aorigin.y)
         .rotate(arrowOrientation, aorigin.x, aorigin.y)
         .childOf(g);
 
     }
 
-    if (ApgCadSvgUtils.DEBUG_MODE) {
-      const currLayer = this._cad.currentLayer;
-      const currGroup = this._cad.currentGroup;
+    if (this.cad.settings.debug) {
+      const currLayer = this.cad.currentLayer;
+      const currGroup = this.cad.currentGroup;
 
-      this._cad.setCurrentLayer(eApgCadDftLayers.DEBUG);
-      const leyerDef = this._cad.layerDefs.get(eApgCadDftLayers.DEBUG);
-
-
+      this.cad.setCurrentLayer(eApgCadDftLayers.DEBUG);
+      const leyerDef = this.cad.layerDefs.get(eApgCadDftLayers.DEBUG);
 
       const debugText = '\n\n'
         + 'o1:' + aorientation.toFixed(2) + '° - o2:' + annotationLine.angle.toFixed(2) + '°\n'
@@ -180,19 +178,19 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
       const textLineHeight = (textStyle.size * (textStyle.leading || 1.1));
       
       // Draw the debug info
-      const _debugText = this._cad.svg
+      const _debugText = this.cad.svg
         .text(annotationStartPosition.x, annotationStartPosition.y, debugText, textLineHeight)
         //.rotate(textOrientation)//, textPosition.x, textPosition.y)
         .textStyle(textStyle)
-        .childOf(this._cad.currentLayer);
+        .childOf(this.cad.currentLayer);
 
       // Draw text position
-      this._cad.svg
+      this.cad.svg
         .circle(textPosition.x, textPosition.y, 5)
-        .childOf(this._cad.currentLayer)
+        .childOf(this.cad.currentLayer)
 
-      this._cad.currentGroup = currGroup;
-      this._cad.currentLayer = currLayer;
+      this.cad.currentGroup = currGroup;
+      this.cad.currentLayer = currLayer;
     }
 
     return g;

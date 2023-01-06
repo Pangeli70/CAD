@@ -12,7 +12,7 @@ export enum eApgCadPrimitiveFactoryTypes {
   CARTESIANS = "Axis",
   GRIDS = "Grids",
   LINEAR_DIMS = "LinearDims",
-  RADIAL_DIMS = "RadialDims",
+  ARC_DIMS = "RadialDims",
   ANGULAR_DIMS = "AngularDimensions",
   ANNOTATIONS = "Annotations"
 }

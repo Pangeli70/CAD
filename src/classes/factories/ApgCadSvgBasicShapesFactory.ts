@@ -27,7 +27,7 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
     afirstPoint: A2D.Apg2DPoint,
     asecondPoint: A2D.Apg2DPoint,
   ) {
-    const r = this._cad.svg
+    const r = this.cad.svg
       .line(afirstPoint.x, afirstPoint.y, asecondPoint.x, asecondPoint.y)
 
     return r;
@@ -44,7 +44,7 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
       pts.push(pts[0]); //to close the polyline
     }
 
-    const r = this._cad.svg
+    const r = this.cad.svg
       .polyline(apoints)
 
     return r;
@@ -56,7 +56,7 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
     awidth: number,
     aheight: number,
   ) {
-    const r = this._cad.svg
+    const r = this.cad.svg
       .rect(apoint.x, apoint.y, awidth, aheight)
 
     return r;
@@ -69,7 +69,7 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
   ) {
     const lwidth = asecondPoint.x - afirstPoint.x;
     const lheight = asecondPoint.y - afirstPoint.y;
-    const r = this._cad.svg
+    const r = this.cad.svg
       .rect(afirstPoint.x, afirstPoint.y, lwidth, lheight)
 
     return r;
@@ -94,7 +94,7 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
       pts.push(p);
     }
 
-    const r = this._cad.svg
+    const r = this.cad.svg
       .polygon(pts)
       .rotate(arotDeg, acenter.x, acenter.y);
 
@@ -106,7 +106,7 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
     acenter: A2D.Apg2DPoint,
     aradious: number,
   ) {
-    const r = this._cad.svg
+    const r = this.cad.svg
       .circle(acenter.x, acenter.y, aradious)
     return r;
   }
@@ -116,7 +116,7 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
     acenter: A2D.Apg2DPoint,
     aradious: number,
   ) {
-    const r = this._cad.svg
+    const r = this.cad.svg
       .circle(acenter.x, acenter.y, aradious)
 
     return r;
@@ -129,17 +129,17 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
     aname: string,
     atextStyle: Svg.IApgSvgTextStyle,
   ) {
-    const r = this._cad.svg
+    const r = this.cad.svg
       .group()
 
-    const _c = this._cad.svg
+    const _c = this.cad.svg
       .circle(acenter.x, acenter.y, aradious)
       .childOf(r);
 
     const tx = acenter.x + atextStyle.size * atextStyle.aspectRatio;
     const ty = acenter.y - atextStyle.size;
     const text = ` ${aname}: ${acenter.x},${acenter.y}`;
-    const _t = this._cad.svg
+    const _t = this.cad.svg
       .text(tx, ty, text, 0)
       .textStyle(atextStyle)
       .childOf(r);

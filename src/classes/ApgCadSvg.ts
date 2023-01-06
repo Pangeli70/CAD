@@ -81,9 +81,11 @@ export class ApgCadSvg {
 
 
 
-  static GetDefaultSettings(aisBlackBakground: boolean): IApgCadSvgSettings {
-
-    const blackBackground = aisBlackBakground;
+  static GetDefaultSettings(
+    ablackBackground = false,
+    adotGrid = false,
+    adebug = false
+  ): IApgCadSvgSettings {
 
     const viewBox: IApgCadSvgViewBox = {
       canvasWidth: 1000,
@@ -98,14 +100,14 @@ export class ApgCadSvg {
       draw: true,
       strokeWidth: eApgCadDftStrokeWidths.MILD,
       strokeColor: eApgCadStdColors.GRAY,
-      fillColor: blackBackground ? eApgCadStdColors.BLACK : eApgCadStdColors.WHITE,
+      fillColor: ablackBackground ? eApgCadStdColors.BLACK : eApgCadStdColors.WHITE,
     }
 
     const foreGround: IApgCadSvgGround = {
       draw: true,
       strokeWidth: eApgCadDftStrokeWidths.MILD,
-      strokeColor: blackBackground ? eApgCadStdColors.WHITE : eApgCadStdColors.BLACK,
-      fillColor: blackBackground ? eApgCadStdColors.WHITE : eApgCadStdColors.BLACK,
+      strokeColor: ablackBackground ? eApgCadStdColors.WHITE : eApgCadStdColors.BLACK,
+      fillColor: ablackBackground ? eApgCadStdColors.WHITE : eApgCadStdColors.BLACK,
     }
 
     const grid: IApgCadSvgGrid = {
@@ -115,7 +117,7 @@ export class ApgCadSvg {
       drawMajors: true,
       majorEvery: 1000,
       majorGridStroke: { color: eApgCadStdColors.CYAN, width: 2 },
-      asDots: false
+      asDots: adotGrid
     }
 
     const cartesians: IApgCadSvgCartesians = {
@@ -135,31 +137,30 @@ export class ApgCadSvg {
     const r: IApgCadSvgSettings = {
 
       name: "APG-CAD-SVG",
-      blackBackground,
       viewBox,
       background,
       foreGround,
       grid,
-      cartesians
+      cartesians,
+      debug: adebug
     };
 
     return r;
   }
 
 
-  constructor(aisBlackBack = false, aset?: IApgCadSvgSettings) {
-    // Set defaults
-    if (!aset) {
-      this.#resetDefaults(aisBlackBack);
-    } else {
-      this.settings = aset;
-    }
+  constructor(ahasBlackBack = false, ahasDottedGrid = false, adebug = false) {
+
+    this.settings = ApgCadSvg.GetDefaultSettings(ahasBlackBack, ahasDottedGrid, adebug);
 
     this.#init();
   }
 
-  #resetDefaults(aisBlackBack: boolean) {
-    this.settings = ApgCadSvg.GetDefaultSettings(aisBlackBack);
+  setup(asettings: IApgCadSvgSettings) {
+
+    this.settings = asettings;
+
+    this.#init();
   }
 
 

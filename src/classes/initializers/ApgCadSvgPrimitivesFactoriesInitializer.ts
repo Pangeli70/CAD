@@ -14,6 +14,7 @@ import { ApgCadSvgCartesiansFactory } from "../factories/ApgCadSvgCartesiansFact
 import { ApgCadSvgBasicShapesFactory } from "../factories/ApgCadSvgBasicShapesFactory.ts";
 import { ApgCadSvgBaseInitializer } from "./ApgCadSvgBaseInitializer.ts";
 import { ApgCadSvgGridFactory } from "../factories/ApgCadSvgGridFactory.ts";
+import { ApgCadSvgArcDimensionsFactory } from "../factories/ApgCadSvgArcDimensionsFactory.ts";
 
 
 /** 
@@ -45,10 +46,18 @@ export class ApgCadSvgPrimitivesFactoriesInitializer extends ApgCadSvgBaseInitia
         const linearDims = new ApgCadSvgLinearDimensionsFactory(
             this._cad,
             dimensionsTextStyle!,
-            eApgCadDftDimArrowStyles.MECHANICAL
+            eApgCadDftDimArrowStyles.MECHANICAL,
+            4
         )
         this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.LINEAR_DIMS, linearDims,);
 
+        const arcDims = new ApgCadSvgArcDimensionsFactory(
+            this._cad,
+            dimensionsTextStyle!,
+            eApgCadDftDimArrowStyles.MECHANICAL,
+            4
+        )
+        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.ARC_DIMS, arcDims,);
 
         const angulardDims = new ApgCadSvgAngularDimensionsFactory(
             this._cad,

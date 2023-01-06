@@ -6,372 +6,481 @@
  * @version 0.8.0 [APG 2022/04/03] Porting to Deno
  * @version 0.9.2 [APG 2022/11/30] Github beta
  * @version 0.9.3 [APG 2022/12/18] Deno Deploy
+ * @version 0.9.4 [APG 2023/01/06] Deno Deploy Beta
  * -----------------------------------------------------------------------
  */
-import { A2D, Svg } from "../../../deps.ts";
-import { eApgCadDftDimArrowStyles } from "../../enums/eApgCadDftDimArrowStyles.ts";
+import { A2D, Svg, Uts } from "../../../deps.ts";
+
 import { eApgCadDftLayers } from "../../enums/eApgCadDftLayers.ts";
-import { eApgCadLinearDimensionTypes } from "../../enums/eApgCadLinearDimensionTypes.ts";
+import { eApgCadArcDimensionTypes } from "../../enums/eApgCadArcDimensionTypes.ts";
 import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
-import { ApgCadSvg } from "../ApgCadSvg.ts";
+import { IApgCadDimensionData } from "../../interfaces/IApgCadDimensionData.ts";
 
 import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
+
 import { ApgCadSvgBasicShapesFactory } from "./ApgCadSvgBasicShapesFactory.ts";
-import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
+import { ApgCadSvgBaseDimensionsFactory } from "./ApgCadSvgBaseDimensionsFactory.ts";
 
 
-/** Apg Svg : Factory for CAD Linear dimensions with arrows and ladders
+/** Apg Svg : Factory for CAD Arc dimensions with arrows and ladders
  */
-export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgPrimitivesFactory {
-
-  /** text style */
-  textStyle: Svg.IApgSvgTextStyle;
-  /** Arrow Block name*/
-  arrowStyle: string = eApgCadDftDimArrowStyles.UNDEFINED;
-  /** Additional class for the annotations */
-  cssClass = "";
+export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgBaseDimensionsFactory {
 
 
-  public constructor(
-    acad: ApgCadSvg,
-    atextStyle: Svg.IApgSvgTextStyle,
-    aarrowStyle: string,
-    acssClass = ''
-  ) {
-    super(acad, eApgCadPrimitiveFactoryTypes.LINEAR_DIMS);
-    this.textStyle = atextStyle;
-    this.arrowStyle = aarrowStyle;
-    this.cssClass = acssClass;
-    this._ready = true;
-  }
-
-
-  /** Reconditions the original points and type accordingly with the ladder 
-   * lenght and the real dimension type
-   */
-  #isNecessaryToSwapPoints(
-    afirst: A2D.Apg2DPoint,
-    asecond: A2D.Apg2DPoint,
-    adisplacement: number,
-    atype: eApgCadLinearDimensionTypes
-  ): boolean {
-    let r = false;
-
-    // If the segment is diagonal
-    if ((afirst.x !== asecond.x) && (afirst.y !== asecond.y)) {
-
-      // Segment diagonal type vertical
-      if (atype === eApgCadLinearDimensionTypes.Vertical) {
-
-        if (afirst.x > asecond.x && adisplacement > 0) {
-          asecond.x = afirst.x; // ok
-        }
-
-        else if (afirst.x > asecond.x && adisplacement < 0) {
-          afirst.x = asecond.x;
-          if (asecond.y > afirst.y) {
-            r = true; // ok
-          }
-        }
-
-        else if (afirst.x < asecond.x && adisplacement > 0) {
-          afirst.x = asecond.x;
-          if (asecond.y > afirst.y) {
-            r = true; // ok
-          }
-        }
-
-        else { // (p1.x < p2.x && alg < 0) {
-          asecond.x = afirst.x; // ok
-        }
-
-      }
-      // Segment diagonal type horizontal
-      else if (atype === eApgCadLinearDimensionTypes.Horizontal) {
-
-        if (afirst.y > asecond.y && adisplacement > 0) {
-          asecond.y = afirst.y; // ok
-        }
-
-        else if (afirst.y > asecond.y && adisplacement < 0) {
-          afirst.y = asecond.y;
-          if (afirst.x > asecond.x) {
-            r = true; // ok
-          }
-        }
-        else if (afirst.y < asecond.y && adisplacement > 0) {
-          afirst.y = asecond.y;
-          if (afirst.x > asecond.x) {
-            r = true; // ok
-          }
-        }
-        else { // (p1.x < p2.x && alg < 0) {
-          asecond.y = afirst.y;
-          if (afirst.x > asecond.x) {
-            r = true; // ok
-          }
-        }
-
-      }
-      // Segment diagonal type diagonal
-      else {
-        if (afirst.x > asecond.x) {
-          r = true; // ok
-        }
-      }
-    }
-    // Segment is horizontal
-    else if (afirst.y === asecond.y) {
-
-      if (afirst.x > asecond.x) {
-        r = true;
-      }
-
-    }
-    // Segment is vertical
-    else if (afirst.x === asecond.x) {
-
-      if (asecond.y > afirst.y) {
-        r = true; // ok
-      }
-
-    }
-
-    return r;
-  }
-
-  /** Builds a Cad Linear Dimension with the ladders*/
+  /** Builds a Cad Arc Dimension with the ladders*/
   build(
-    atype: eApgCadLinearDimensionTypes,
-    afirstPoint: A2D.Apg2DPoint,
-    asecondPoint: A2D.Apg2DPoint,
+    atype: eApgCadArcDimensionTypes,
+    acenterPoint: A2D.Apg2DPoint,
+    a2ndPoint: A2D.Apg2DPoint,
     adisplacement: number,
     atextBef = '',
-    atextAft = ''
+    atextAft = '',
   ) {
+    const r = this.cad.svg.group();
 
-    const EPSILON = 0.00001;
+    const data: IApgCadDimensionData = {
+      firstP: acenterPoint,
+      secondP: a2ndPoint,
+      p1: A2D.Apg2DPoint.Clone(acenterPoint),
+      p2: A2D.Apg2DPoint.Clone(a2ndPoint),
+      value: acenterPoint.distanceFrom(a2ndPoint),
+      dimension: ""
+    };
 
-    // Copy the points
-    const p1 = A2D.Apg2DPoint.Clone(afirstPoint);
-    const p2 = A2D.Apg2DPoint.Clone(asecondPoint);
-
-    // Preliminary checks
+    // step 1) Preliminary checks
     // ------------------------------------------------------------------------------
 
-    // If the two points are coincident exits without doing nothing
-    if (p1.y === p2.y && p1.x === p2.x) {
-      this._messages.push('The two points are coincident');
-      p2.x += EPSILON;
-      p2.y += EPSILON;
+    // The two points are coincident
+    const dx = Math.abs(data.p1.x - data.p2.x);
+    const dy = Math.abs(data.p1.y - data.p2.y);
+    if (dx == 0 && dy == 0) {
+      this.messages.push('The two points are coincident');
+      return r;
     }
 
-    // Vertical dimensions cannot be horizontal
-    if (p1.x === p2.x && atype === eApgCadLinearDimensionTypes.Horizontal) {
-      this._messages.push('Changed the dimension type from horizontal to vertical');
-      atype = eApgCadLinearDimensionTypes.Vertical;
+    // The two points are almost coincident in the current digits precision
+    const signicativeDx = Uts.ApgUtsMath.RoundToSignificant(dx, this.digits);
+    const signicativeDy = Uts.ApgUtsMath.RoundToSignificant(dy, this.digits);
+    if (signicativeDx == 0 && signicativeDy == 0) {
+      this.messages.push('The two points are almost coincident accordingly with the current digits setting');
+      return r;
     }
 
-    // Horizontal dimensions cannot be vertical
-    if (p1.y === p2.y && atype === eApgCadLinearDimensionTypes.Vertical) {
-      this._messages.push('Changed the dimension type from vertical to horizontal');
-      atype = eApgCadLinearDimensionTypes.Horizontal;
-    }
+    // Verify if the type in correct
+    atype = this.#checkType(data, atype);
 
-    // The aligned dimensions must be forced to become vertical or horizontal if necessary
-    if (atype === eApgCadLinearDimensionTypes.Aligned) {
-      if (p1.x === p2.x) {
-        this._messages.push('Changed the dimension type from aligned to vertical');
-        atype = eApgCadLinearDimensionTypes.Vertical;
-      }
-      if (p1.y === p2.y) {
-        this._messages.push('Changed the dimension type from aligned to horizontal');
-        atype = eApgCadLinearDimensionTypes.Horizontal;
-      }
-    }
-
-    //In arc dimensions displacement must be calculated properly
-    if (atype === eApgCadLinearDimensionTypes.Diameter) {
-      const radious = (p1.distanceFrom(p2) * Math.sign(adisplacement)) / 2;
-      adisplacement += radious;
-    }
-
-    // 1st step: Prepare the starting and ending points
+    // step 2) Prepare the starting and ending points
     // Eg. this is necessary if the segment is diagonal but we need an horizontal or vertical dimension
     // --------------------------------------------------------------------------------------------
 
-    // Copy the original points into the Intial Ladder Points.
-    const ladderStart1 = A2D.Apg2DPoint.Clone(p1);
-    const ladderStart2 = A2D.Apg2DPoint.Clone(p2);
+    // If necessary modifies the points accordingly with type and orientation
+    this.#adaptPointsByType(data, atype);
 
-    const swap = this.#isNecessaryToSwapPoints(p1, p2, adisplacement, atype);
+    // Verify if displacement value is correct accordingly with type and orientation
+    data.displacement = this.#adaptDisplacementByType(data, atype, adisplacement);
 
-    if (swap) {
-      p1.swapWith(p2);
-      ladderStart1.swapWith(ladderStart2);
-    }
-
-    // 2nd step: perform calculations
+    //  step 3) perform calculations
     // --------------------------------------------------------------------------------------------
 
-    const pointsLine = new A2D.Apg2DLine(p1, p2);
-    const arrow1Pos = pointsLine.offsetPoint(p1, adisplacement);
-    const arrow2Pos = pointsLine.offsetPoint(p2, adisplacement);
-    const dimLine = new A2D.Apg2DLine(arrow1Pos, arrow2Pos);
+    const { value, approx } = this.#calculate(data, atype);
 
-    const textBasePoint = arrow1Pos.halfwayFrom(arrow2Pos);
+    data.dimension =
+      ((atextBef !== '') ? atextBef + ' ' : '') +
+      ((approx) ? '~' : '') +
+      value.toString() +
+      ((atextAft !== '') ? ' ' + atextAft : '')
 
-    const textDirections = ApgCadSvgUtils.getTextDirection(dimLine.angle);
-    const textOrientation = ApgCadSvgUtils.getTextOrientation(dimLine.angle);
-    const arrowOrientation = ApgCadSvgUtils.getArrowOrientation(dimLine.angle);
+    this.#calculateText(data, atype);
 
-    const textHeight = this.textStyle.size * (this.textStyle.leading || 1.2);
-
-    /** (T)ext (P)osition related to the medium point */
-    const textPoint = dimLine.offsetPoint(textBasePoint, textHeight);
-
-
-    let debugText = '';
-    if (ApgCadSvgUtils.DEBUG_MODE) {
-      debugText += '\n'
-        + 't: ' + atype + '\n'
-        + 'p1: ' + p1.x.toFixed(2) + ',' + p1.y.toFixed(2) + '\n'
-        + 'p2: ' + p2.x.toFixed(2) + ',' + p2.y.toFixed(2) + '\n'
-        + 'p3: ' + arrow1Pos.x.toFixed(2) + ',' + arrow1Pos.y.toFixed(2) + '\n'
-        + 'p4: ' + arrow2Pos.x.toFixed(2) + ',' + arrow2Pos.y.toFixed(2) + '\n'
-        + 'o: ' + dimLine.angle.toFixed(2) + '°\n'
-        + 'll: ' + adisplacement.toFixed(2);
-    }
-
-    const dimension =
-      (atextBef !== '' ? atextBef + ' ' : '')
-      + dimLine.length.toFixed(2)
-      + (atextAft !== '' ? ' ' + atextAft : '')
-
-    // 3rd step: draw the svg
+    // step 4: draw the svg
     // ---------------------------------------------------------------------------------
 
-    // Start to create the svg element
-    const r = this.#draw(
-      arrow1Pos, arrow2Pos, arrowOrientation,
-      textPoint, dimension, textOrientation,
-      ladderStart1, ladderStart2
-    );
+    // Create the svg element
+    this.#draw(data, atype, r);
 
     // Draw debug elements
-    if (ApgCadSvgUtils.DEBUG_MODE) {
-      this.#drawDebug(afirstPoint, asecondPoint, textPoint, debugText, textOrientation);
+    if (this.cad.settings.debug) {
+      const debugText = this.#debugText(data, atype);
+      this.#drawDebug(data, debugText);
     }
     return r;
 
+  }
 
+
+  #calculate(adata: IApgCadDimensionData, atype: eApgCadArcDimensionTypes) {
+
+    const r = {
+      value: adata.value, //radious;
+      approx: false
+    }
+
+    let v = adata.value;
+
+    adata.pointsLine = new A2D.Apg2DLine(adata.p1, adata.p2);
+
+    switch (atype) {
+      case eApgCadArcDimensionTypes.HORIZONTAL:
+      case eApgCadArcDimensionTypes.VERTICAL:
+      case eApgCadArcDimensionTypes.OUTER_DIAMETER:
+        {
+          adata.arrow1Pos = adata.pointsLine.offsetPoint(adata.p1, adata.displacement!);
+          adata.arrow2Pos = adata.pointsLine.offsetPoint(adata.p2, adata.displacement!);
+          v *= 2;
+        }
+        break;
+      case eApgCadArcDimensionTypes.INNER_DIAMETER:
+        {
+          adata.arrow1Pos = A2D.Apg2DPoint.Clone(adata.p1);
+          adata.arrow2Pos = A2D.Apg2DPoint.Clone(adata.p2);
+          v *= 2;
+        }
+        break;
+      case eApgCadArcDimensionTypes.INNER_RADIOUS:
+      case eApgCadArcDimensionTypes.OUTER_RADIOUS:
+        {
+          adata.arrow1Pos = A2D.Apg2DPoint.Clone(adata.firstP);
+          adata.arrow2Pos = A2D.Apg2DPoint.Clone(adata.secondP);
+        }
+        break;
+    }
+
+    adata.dimLine = new A2D.Apg2DLine(adata.arrow1Pos, adata.arrow2Pos);
+    r.value = Uts.ApgUtsMath.RoundToSignificant(v, this.digits);
+    if ((r.value - v) !== 0) r.approx = true;
+    return r
+  }
+
+
+
+  #calculateText(adata: IApgCadDimensionData, atype: eApgCadArcDimensionTypes) {
+
+    const atextWidth = adata.dimension.length * this.textStyle.size * this.textStyle.aspectRatio;
+
+    adata.textOrientation = ApgCadSvgUtils.GetTextOrientation(adata.dimLine!.angle);
+    adata.arrowOrientation = adata.dimLine!.angle % 360;
+
+    adata.textLineSpacing = this.textStyle.size * ((this.textStyle.leading || 1.1) - 1);
+
+    switch (atype) {
+      case eApgCadArcDimensionTypes.HORIZONTAL:
+      case eApgCadArcDimensionTypes.VERTICAL:
+      case eApgCadArcDimensionTypes.OUTER_DIAMETER:
+      case eApgCadArcDimensionTypes.INNER_DIAMETER:
+      case eApgCadArcDimensionTypes.INNER_RADIOUS:
+        {
+          adata.textBasePoint = adata.arrow1Pos!.halfwayFrom(adata.arrow2Pos!);
+          adata.textPoint = adata.dimLine!.offsetPoint(adata.textBasePoint, adata.textLineSpacing);
+        }
+        break;
+      case eApgCadArcDimensionTypes.OUTER_RADIOUS:
+        {
+          adata.ladderStart1 = A2D.Apg2DPoint.Clone(adata.secondP!);
+          adata.ladderStart2 = adata.dimLine!.pointAtDistanceFromPoint(adata.firstP!, adata.displacement!);
+          adata.ladderAdditional = A2D.Apg2DPoint.Clone(adata.ladderStart2!);
+          const sign = (adata.dimLine!.angle >= 90 && adata.dimLine!.angle < 270) ? -1 : 1;
+
+          adata.ladderAdditional.x += atextWidth * sign;
+          adata.textBasePoint = A2D.Apg2DPoint.Clone(adata.ladderStart2!);
+          adata.textBasePoint.x += (atextWidth / 2) * sign;
+          adata.textPoint = A2D.Apg2DPoint.Clone(adata.textBasePoint);
+          adata.textPoint.y += adata.textLineSpacing;
+          adata.textOrientation = 0;
+        }
+        break;
+    }
+
+  }
+
+
+  #checkType(data: IApgCadDimensionData, atype: eApgCadArcDimensionTypes) {
+
+    return atype;
+  }
+
+
+  #adaptPointsByType(
+    adata: IApgCadDimensionData,
+    atype: eApgCadArcDimensionTypes,
+  ) {
+
+    const radious = adata.value;
+    const ladderline = new A2D.Apg2DLine(adata.firstP, adata.secondP);
+
+    adata.ladderStart1 = ladderline.pointAtDistanceFromPoint(adata.firstP, radious);
+    adata.ladderStart2 = ladderline.pointAtDistanceFromPoint(adata.firstP, -radious);
+
+    // If the segment is diagonal
+    if ((adata.firstP.x !== adata.ladderStart1!.x) && (adata.firstP.y !== adata.ladderStart1!.y)) {
+      // Segment diagonal type vertical
+      if (atype === eApgCadArcDimensionTypes.VERTICAL) {
+        const sign = (
+          (ladderline.angle >= 0 && ladderline.angle < 90) ||
+          (ladderline.angle >= 270 && ladderline.angle < 360)
+        ) ? 1 : -1;
+        adata.ladderStart1!.x = adata.firstP.x;
+        adata.ladderStart1!.y = adata.firstP.y + radious * sign;
+        adata.ladderStart2!.x = adata.firstP.x;
+        adata.ladderStart2!.y = adata.firstP.y - radious * sign;
+      }
+      // Segment diagonal type horizontal
+      else if (atype === eApgCadArcDimensionTypes.HORIZONTAL) {
+        const sign = (ladderline.angle >= 0 && ladderline.angle < 180) ? 1 : -1;
+        adata.ladderStart1!.x = adata.firstP.x - radious * sign;
+        adata.ladderStart1!.y = adata.firstP.y;
+        adata.ladderStart2!.x = adata.firstP.x + radious * sign;
+        adata.ladderStart2!.y = adata.firstP.y;
+      }
+    }
+
+    adata.p1 = A2D.Apg2DPoint.Clone(adata.ladderStart1!);
+    adata.p2 = A2D.Apg2DPoint.Clone(adata.ladderStart2!);
+  }
+
+
+  #adaptDisplacementByType(
+    adata: IApgCadDimensionData,
+    atype: eApgCadArcDimensionTypes,
+    adisplacement: number
+  ) {
+
+    const radious = adata.value;
+
+    let r = adisplacement;
+    // If the segment is diagonal
+    if ((adata.p1.x !== adata.p2.x) && (adata.p1.y !== adata.p2.y)) {
+      // Segment diagonal type vertical
+      if (atype === eApgCadArcDimensionTypes.VERTICAL) {
+        if (adata.p1.x < adata.p2.x && adata.p2.y > adata.p1.y) {
+          r *= -1;
+        }
+        if (adata.p1.x > adata.p2.x && adata.p2.y < adata.p1.y) {
+          r *= -1;
+        }
+      }
+      // Segment diagonal type horizontal
+      else if (atype === eApgCadArcDimensionTypes.HORIZONTAL) {
+        if (adata.p1.y > adata.p2.y && adata.p2.x > adata.p1.x) {
+          r *= -1;
+        }
+        if (adata.p1.y < adata.p2.y && adata.p2.x < adata.p1.x) {
+          r *= -1;
+        }
+      }
+    }
+
+    const sign = Math.sign(r);
+
+    switch (atype) {
+      case eApgCadArcDimensionTypes.HORIZONTAL:
+      case eApgCadArcDimensionTypes.VERTICAL:
+      case eApgCadArcDimensionTypes.OUTER_DIAMETER:
+        {
+          r += (radious * sign);
+        }
+        break;
+      case eApgCadArcDimensionTypes.OUTER_RADIOUS:
+        {
+          r += (radious);
+        }
+        break;
+      case eApgCadArcDimensionTypes.INNER_DIAMETER:
+      case eApgCadArcDimensionTypes.INNER_RADIOUS:
+        {
+          r = 0;
+        }
+        break;
+    }
+
+    return r;
   }
 
 
   #draw(
-    arrow1Pos: A2D.Apg2DPoint,
-    arrow2Pos: A2D.Apg2DPoint,
-    arrowOrientation: number,
-    textPoint: A2D.Apg2DPoint,
-    dimension: string,
-    textOrientation: number,
-    ladderStart1: A2D.Apg2DPoint,
-    ladderStart2: A2D.Apg2DPoint
+    adata: IApgCadDimensionData,
+    atype: eApgCadArcDimensionTypes,
+    ar: Svg.ApgSvgNode
   ) {
-    const r = this._cad.svg.group();
 
     // If specified adds the CSS class
     if (this.cssClass !== '') {
-      r.class(this.cssClass);
+      ar.class(this.cssClass);
     }
 
     // Draw the main line
-    this._cad.svg
-      .line(arrow1Pos.x, arrow1Pos.y, arrow2Pos.x, arrow2Pos.y)
-      .childOf(r);
+    this.cad.svg
+      .line(adata.arrow1Pos!.x, adata.arrow1Pos!.y, adata.arrow2Pos!.x, adata.arrow2Pos!.y)
+      .childOf(ar);
 
     // Draw the arrow symbols
-    const arrowBlock = this._cad.svg
+    const arrowBlock = this.cad.svg
       .getFromDef(this.arrowStyle);
 
     if (arrowBlock) {
-      this._cad.svg
-        .use(this.arrowStyle, arrow1Pos.x, arrow1Pos.y)
-        .attrib("transform-origin", "left , middle")
-        .rotate(arrowOrientation, arrow1Pos.x, arrow1Pos.y)
-        .childOf(r);
 
-      this._cad.svg
-        .use(this.arrowStyle, arrow2Pos.x, arrow2Pos.y)
-        .attrib("transform-origin", "left , middle")
-        .scale(-1, 1)
-        .rotate(arrowOrientation + 180)
-        .childOf(r);
+      switch (atype) {
+        case eApgCadArcDimensionTypes.HORIZONTAL:
+        case eApgCadArcDimensionTypes.VERTICAL:
+        case eApgCadArcDimensionTypes.OUTER_DIAMETER:
+        case eApgCadArcDimensionTypes.INNER_DIAMETER:
+          {
+            this.cad.svg
+              .use(this.arrowStyle, adata.arrow1Pos!.x, adata.arrow1Pos!.y)
+              .rotate(adata.arrowOrientation!, adata.arrow1Pos!.x, adata.arrow1Pos!.y)
+              .childOf(ar);
+
+            this.cad.svg
+              .use(this.arrowStyle, adata.arrow2Pos!.x, adata.arrow2Pos!.y)
+              .rotate(adata.arrowOrientation! + 180, adata.arrow2Pos!.x, adata.arrow2Pos!.y)
+              .childOf(ar);
+          }
+          break;
+        case eApgCadArcDimensionTypes.INNER_RADIOUS:
+          {
+            this.cad.svg
+              .use(this.arrowStyle, adata.secondP!.x, adata.secondP!.y)
+              .rotate(adata.arrowOrientation! + 180, adata.secondP!.x, adata.secondP!.y)
+              .childOf(ar);
+          }
+          break;
+        case eApgCadArcDimensionTypes.OUTER_RADIOUS:
+          {
+            this.cad.svg
+              .use(this.arrowStyle, adata.secondP!.x, adata.secondP!.y)
+              .rotate(adata.arrowOrientation!, adata.secondP!.x, adata.secondP!.y)
+              .childOf(ar);
+          }
+          break;
+      }
+
     }
 
     // Draw the text
-    const _textDef = this._cad.svg
-      .text(textPoint.x, textPoint.y, dimension, this.textStyle.leading || 1.2)
-      .rotate(textOrientation)
+    const _textDef = this.cad.svg
+      .text(adata.textPoint!.x, adata.textPoint!.y, adata.dimension, this.textStyle.leading || 1.1)
+      .rotate(adata.textOrientation!)
       .stroke("none", 0)
-      .childOf(r);
+      .childOf(ar);
 
     // Draw the ladders
-    this._cad.svg
-      .line(ladderStart1.x, ladderStart1.y, arrow1Pos.x, arrow1Pos.y)
-      .childOf(r);
+    switch (atype) {
+      case eApgCadArcDimensionTypes.HORIZONTAL:
+      case eApgCadArcDimensionTypes.VERTICAL:
+      case eApgCadArcDimensionTypes.OUTER_DIAMETER:
+        {
+          this.cad.svg
+            .line(adata.ladderStart1!.x, adata.ladderStart1!.y, adata.arrow1Pos!.x, adata.arrow1Pos!.y)
+            .childOf(ar);
 
-    this._cad.svg
-      .line(ladderStart2.x, ladderStart2.y, arrow2Pos.x, arrow2Pos.y)
-      .childOf(r);
-    return r;
+          this.cad.svg
+            .line(adata.ladderStart2!.x, adata.ladderStart2!.y, adata.arrow2Pos!.x, adata.arrow2Pos!.y)
+            .childOf(ar);
+        }
+        break;
+      case eApgCadArcDimensionTypes.INNER_DIAMETER:
+      case eApgCadArcDimensionTypes.INNER_RADIOUS:
+        {
+          // do nothing
+        }
+        break;
+      case eApgCadArcDimensionTypes.OUTER_RADIOUS:
+        {
+          this.cad.svg
+            .line(adata.ladderStart1!.x, adata.ladderStart1!.y, adata.ladderStart2!.x, adata.ladderStart2!.y)
+            .childOf(ar);
+
+          this.cad.svg
+            .line(adata.ladderStart2!.x, adata.ladderStart2!.y, adata.ladderAdditional!.x, adata.ladderAdditional!.y)
+            .childOf(ar);
+        }
+        break;
+    }
+
+    return ar;
   }
 
-  #drawDebug(
-    ap1: A2D.Apg2DPoint,
-    ap2: A2D.Apg2DPoint,
-    atextPoint: A2D.Apg2DPoint,
-    adebugText: string,
-    atextOrientation: number
-  ) {
-    const currLayer = this._cad.currentLayer;
-    const currGroup = this._cad.currentGroup;
 
-    this._cad.setCurrentLayer(eApgCadDftLayers.DEBUG);
-    const leyerDef = this._cad.layerDefs.get(eApgCadDftLayers.DEBUG);
+  #debugText(adata: IApgCadDimensionData, atype: eApgCadArcDimensionTypes) {
+    let debugText = '';
+    if (this.cad.settings.debug) {
+
+      const t1stP = ApgCadSvgUtils.GetPointAsString('1stP', adata.firstP);
+      const t2ndP = ApgCadSvgUtils.GetPointAsString('2ndP', adata.secondP);
+      const tP1 = ApgCadSvgUtils.GetPointAsString('P1', adata.p1);
+      const tP2 = ApgCadSvgUtils.GetPointAsString('P2', adata.p2);
+      const taP1 = ApgCadSvgUtils.GetPointAsString('ap1', adata.arrow1Pos!);
+      const taP2 = ApgCadSvgUtils.GetPointAsString('ap2', adata.arrow2Pos!);
+      const ttbp = ApgCadSvgUtils.GetPointAsString('tbp', adata.textBasePoint!);
+      const ttp = ApgCadSvgUtils.GetPointAsString('tp', adata.textPoint!);
+      debugText += '\n\n'
+        + 'type: ' + atype + " val: " + adata.value.toString() + '\n'
+        + `${t1stP} - ${t2ndP}\n`
+        + `${tP1} - ${tP2}\n`
+        + 'disp: ' + adata.displacement!.toFixed(0) + '\n'
+        + `${taP1} - ${taP2}\n`
+        + `${ttbp} - ${ttp}\n`
+        + 'tlsp: ' + adata.textLineSpacing!.toFixed(0) + '\n'
+        + 'dla: ' + adata.dimLine!.angle.toFixed(2) + '° ' + 'aro: ' + adata.arrowOrientation!.toFixed(2) + '°\n'
+        + 'll: ' + adata.displacement!.toFixed(0);
+    }
+    return debugText;
+  }
+
+
+  #drawDebug(
+    adata: IApgCadDimensionData,
+    adebugText: string
+  ) {
+    const currLayer = this.cad.currentLayer;
+    const currGroup = this.cad.currentGroup;
+
+    this.cad.setCurrentLayer(eApgCadDftLayers.DEBUG);
+    const leyerDef = this.cad.layerDefs.get(eApgCadDftLayers.DEBUG);
 
     const DOT_SIZE = 10;
-    const pf = this._cad.getPrimitiveFactory(eApgCadPrimitiveFactoryTypes.BASIC_SHAPES) as ApgCadSvgBasicShapesFactory;
+    const pf = this.cad.getPrimitiveFactory(eApgCadPrimitiveFactoryTypes.BASIC_SHAPES) as ApgCadSvgBasicShapesFactory;
 
     // First and last point
     pf
-      .buildDot(ap1, DOT_SIZE)
-      .childOf(this._cad.currentLayer);
+      .buildDot(adata.firstP, DOT_SIZE * 2)
+      .childOf(this.cad.currentLayer);
 
     pf
-      .buildDot(ap2, DOT_SIZE)
-      .childOf(this._cad.currentLayer);
+      .buildDot(adata.secondP, DOT_SIZE)
+      .childOf(this.cad.currentLayer);
 
     // Text origin
     pf
-      .buildDot(atextPoint, DOT_SIZE)
-      .childOf(this._cad.currentLayer);
+      .buildDot(adata.textPoint!, DOT_SIZE)
+      .childOf(this.cad.currentLayer);
 
-    // Line between points
+    // Line between original points
     pf
-      .buildLine(ap1, ap2)
-      .childOf(this._cad.currentLayer);
+      .buildLine(adata.firstP, adata.secondP)
+      .childOf(this.cad.currentLayer);
+
+    // Line between dimension points
+    pf
+      .buildLine(adata.p1, adata.p2)
+      .childOf(this.cad.currentLayer);
+
+    // Circle 
+    pf
+      .buildCircle(adata.firstP, adata.value)
+      .fill("none")
+      .childOf(this.cad.currentLayer);
 
     const textStyle = leyerDef!.textStyle;
     const textLineHeight = (textStyle.size * (textStyle.leading || 1.1));
 
     // Draw the debug info
-    const _debugText = this._cad.svg
-      .text(atextPoint.x, atextPoint.y, adebugText, textLineHeight)
-      .rotate(atextOrientation)//, textPosition.x, textPosition.y)
-//      .childOf(this._cad.currentLayer);
+    const _debugText = this.cad.svg
+      .text(adata.textPoint!.x, adata.textPoint!.y, adebugText, textLineHeight)
+      .rotate(adata.textOrientation!)
+      .textStyle(textStyle)
+      .childOf(this.cad.currentLayer);
 
-    this._cad.currentGroup = currGroup;
-    this._cad.currentLayer = currLayer;
+    this.cad.currentGroup = currGroup;
+    this.cad.currentLayer = currLayer;
   }
 }

@@ -6,6 +6,7 @@
  * @version 0.8.0 [APG 2022/04/03] Porting to Deno
  * @version 0.9.2 [APG 2022/11/30] Github beta
  * @version 0.9.3 [APG 2022/12/18] Deno Deploy
+ * @version 0.9.3 [APG 2023/01/06] Deno Deploy beta
  * -----------------------------------------------------------------------
  */
 
@@ -18,8 +19,6 @@ import { IApgCadSvgGrid } from "./IApgCadSvgGrid.ts";
 export interface IApgCadSvgSettings {
   /** Name of the SVG object */
   name: string;
-  // Drawing has black background
-  blackBackground: boolean
   /** ViewBox settings */
   viewBox: IApgCadSvgViewBox;
   /** Background settings */
@@ -29,5 +28,7 @@ export interface IApgCadSvgSettings {
   /** Axis settings */
   cartesians: IApgCadSvgCartesians;
   /** grids settings */
-  grid : IApgCadSvgGrid;
+  grid: IApgCadSvgGrid;
+  /** Debug */
+  debug: boolean;
 }

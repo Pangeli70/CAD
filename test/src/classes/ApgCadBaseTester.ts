@@ -24,9 +24,9 @@ interface DefaultTesterOptions {
 export abstract class ApgCadBaseTester {
 
   private static _minRange = 0;
-  private static _maxRange = 4000;
-  private static _minN = 3;
-  private static _maxN = 20;
+  private static _maxRange = 5000;
+  private static _minN = 2;
+  private static _maxN = 5;
 
 
   static SetMinMaxN(amin: number, amax: number) {

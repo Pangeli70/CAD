@@ -11,13 +11,14 @@ import { A2D } from '../../../deps.ts';
 import { ApgCadSvg } from "../../../src/classes/ApgCadSvg.ts";
 import { ApgCadSvgAngularDimensionsFactory } from "../../../src/classes/factories/ApgCadSvgAngularDimensionsFactory.ts";
 import { ApgCadSvgAnnotationsFactory } from "../../../src/classes/factories/ApgCadSvgAnnotationsFactory.ts";
+import { ApgCadSvgArcDimensionsFactory } from "../../../src/classes/factories/ApgCadSvgArcDimensionsFactory.ts";
 import { ApgCadSvgBasicShapesFactory } from "../../../src/classes/factories/ApgCadSvgBasicShapesFactory.ts";
 import { ApgCadSvgLinearDimensionsFactory } from "../../../src/classes/factories/ApgCadSvgLinearDimensionsFactory.ts";
+import { eApgCadArcDimensionTypes } from "../../../src/enums/eApgCadArcDimensionTypes.ts";
 import { eApgCadDftDimArrowStyles } from "../../../src/enums/eApgCadDftDimArrowStyles.ts";
 import { eApgCadDftLayers } from "../../../src/enums/eApgCadDftLayers.ts";
 import { eApgCadDftTextStyles } from "../../../src/enums/eApgCadDftTextStyles.ts";
 import { eApgCadLinearDimensionTypes } from "../../../src/enums/eApgCadLinearDimensionTypes.ts";
-import { eApgCadStdColors } from "../../../src/enums/eApgCadStdColors.ts";
 import { eApgCadTestFactories } from "../enums/eApgCadTestFactories.ts";
 import { eApgCadTestLayers } from "../enums/eApgCadTestLayers.ts";
 import { ApgCadBaseTester } from "./ApgCadBaseTester.ts";
@@ -28,34 +29,60 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
 
 
 
-  static RunTest(atest: eApgCadTestFactories, isBlackBack = false) {
+  static RunTest(atest: eApgCadTestFactories,
+    aisBlackBack = false,
+    aisDotGrid = false,
+    aisRandom = false,
+    adebug = false,
+  ) {
 
     let r = "";
     switch (atest) {
 
       case eApgCadTestFactories.BASIC_SHAPES:
-        r = this.testBasicShapes(isBlackBack);
+        r = this.testBasicShapes(aisBlackBack);
         break;
       case eApgCadTestFactories.ANNOTATIONS:
-        r = this.testAnnotations(isBlackBack);
+        r = this.testAnnotations(aisBlackBack, aisDotGrid, aisRandom, adebug);
         break;
-      case eApgCadTestFactories.HORIZONTAL_DIMS:
-        r = this.testHorizontalDims(isBlackBack);
+      case eApgCadTestFactories.HORIZONTAL_LIN_DIMS:
+        r = this.#testLinearDims(
+          eApgCadLinearDimensionTypes.HORIZONTAL, aisBlackBack, aisDotGrid, aisRandom, adebug);
         break;
-      case eApgCadTestFactories.VERTICAL_DIMS:
-        r = this.testVerticalDims(isBlackBack);
+      case eApgCadTestFactories.VERTICAL_LIN_DIMS:
+        r = this.#testLinearDims(
+          eApgCadLinearDimensionTypes.VERTICAL, aisBlackBack, aisDotGrid, aisRandom, adebug);
         break;
-      case eApgCadTestFactories.ALIGNED_DIMS:
-        r = this.testAlignedDims(isBlackBack);
+      case eApgCadTestFactories.ALIGNED_LIN_DIMS:
+        r = this.#testLinearDims(
+          eApgCadLinearDimensionTypes.ALIGNED, aisBlackBack, aisDotGrid, aisRandom, adebug);
         break;
-      case eApgCadTestFactories.DIAMETER_DIMS:
-        r = this.testDiameterDims(isBlackBack);
+      case eApgCadTestFactories.IN_DIAMETER_ARC_DIMS:
+        r= this.#testArcDims(
+          eApgCadArcDimensionTypes.INNER_DIAMETER, aisBlackBack, aisDotGrid, aisRandom, adebug);
         break;
-      case eApgCadTestFactories.RADIOUS_DIMS:
-        r = this.testRadiousDims(isBlackBack);
+      case eApgCadTestFactories.IN_RADIOUS_ARC_DIMS:
+        r = this.#testArcDims(
+          eApgCadArcDimensionTypes.INNER_RADIOUS, aisBlackBack, aisDotGrid, aisRandom, adebug);
+        break;
+      case eApgCadTestFactories.OUT_DIAMETER_DIMS:
+        r = this.#testArcDims(
+          eApgCadArcDimensionTypes.OUTER_DIAMETER, aisBlackBack, aisDotGrid, aisRandom, adebug);
+        break;
+      case eApgCadTestFactories.OUT_RADIOUS_ARC_DIMS:
+        r = this.#testArcDims(
+          eApgCadArcDimensionTypes.OUTER_RADIOUS, aisBlackBack, aisDotGrid, aisRandom, adebug);
+        break;
+      case eApgCadTestFactories.HORIZONTAL_ARC_DIMS:
+        r = this.#testArcDims(
+          eApgCadArcDimensionTypes.HORIZONTAL, aisBlackBack, aisDotGrid, aisRandom, adebug);
+        break;
+      case eApgCadTestFactories.VERTICAL_ARC_DIMS:
+        r = this.#testArcDims(
+          eApgCadArcDimensionTypes.VERTICAL, aisBlackBack, aisDotGrid, aisRandom, adebug);
         break;
       case eApgCadTestFactories.ANGULAR_DIMS:
-        r = this.testAngularDims(isBlackBack);
+        r = this.testAngularDims(aisBlackBack);
         break;
     }
 
@@ -129,9 +156,14 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
     return cad.svg.render();
   }
 
-  static testAnnotations(isBlackBack = false) {
+  static testAnnotations(
+    isBlackBack = false,
+    aisDotGrid = false,
+    aisRandom = false,
+    aisDebug = false,
+  ) {
 
-    const cad = new ApgCadSvg(isBlackBack);
+    const cad = new ApgCadSvg(isBlackBack, aisDotGrid, aisDebug);
     cad.svg.title = `Test Annotations`;
     cad.svg.description = "Apg Svg Cad";
 
@@ -197,10 +229,15 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
     }
 */
 
-  static #testLinearDims(atype: eApgCadLinearDimensionTypes, isBlackBack = false) {
+  static #testLinearDims(
+    atype: eApgCadLinearDimensionTypes,
+    isBlackBack = false,
+    aisDotGrid = false,
+    aisRandom = false,
+    aisDebug = false
+  ) {
 
-    const RANDOM = true;
-    const cad = new ApgCadSvg(isBlackBack);
+    const cad = new ApgCadSvg(isBlackBack, aisDotGrid, aisDebug);
     cad.svg.title = `Test Linear dims (${atype})`;
     cad.svg.description = "Apg Svg Cad";
     // const textStyle: IApgSvgTextStyle = { size: 30, stroke: { color: "none", width: 0 }, aspectRatio: 0.5 }
@@ -208,11 +245,12 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
     const dimFact = new ApgCadSvgLinearDimensionsFactory(
       cad,
       textStyle!,
-      eApgCadDftDimArrowStyles.SIMPLE
+      eApgCadDftDimArrowStyles.SIMPLE,
+      4
     );
 
     const pts: A2D.Apg2DPoint[] = [];
-    if (RANDOM) {
+    if (aisRandom) {
       for (let i = 0; i < this.randomInN(); i++) {
         const p1 = this.randomPointInRange();
         pts.push(p1);
@@ -220,7 +258,7 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
         pts.push(p2);
       }
     }
-    else { 
+    else {
       pts.push(new A2D.Apg2DPoint(1000, 0));
       pts.push(new A2D.Apg2DPoint(2000, 1000));
       pts.push(new A2D.Apg2DPoint(3000, 1000));
@@ -230,16 +268,16 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
       pts.push(new A2D.Apg2DPoint(4000, 3000));
       pts.push(new A2D.Apg2DPoint(3000, 4000));
     }
-      
+
 
     const maxD = 500;
     const minD = 100;
 
-    
-    for (let i = 0; i < pts.length; i+=2) {
+
+    for (let i = 0; i < pts.length; i += 2) {
 
       const p1 = pts[i];
-      const p2 = pts[i+1];
+      const p2 = pts[i + 1];
       const d = this.randomInt(minD, maxD);
       //const d = 500;
 
@@ -254,77 +292,69 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
 
   }
 
-  static testHorizontalDims(isBlackBack = false) {
-    return this.#testLinearDims(
-      eApgCadLinearDimensionTypes.Horizontal, isBlackBack);
-  }
-  static testVerticalDims(isBlackBack = false) {
-    return this.#testLinearDims(
-      eApgCadLinearDimensionTypes.Vertical, isBlackBack);
-  }
-  static testAlignedDims(isBlackBack = false) {
-    return this.#testLinearDims(
-      eApgCadLinearDimensionTypes.Aligned, isBlackBack);
-  }
 
+  static #testArcDims(
+    atype: eApgCadArcDimensionTypes,
+    isBlackBack = false,
+    aisDotGrid = false,
+    aisRandom = false,
+    aisDebug = false,
+  ) {
+     
 
-  static #testArcDims(atype: eApgCadLinearDimensionTypes, isBlackBack = false) {
-
-    const cad = new ApgCadSvg(isBlackBack);
+    const cad = new ApgCadSvg(isBlackBack, aisDotGrid, aisDebug);
     cad.svg.title = `Test Arc dims (${atype})`;
     cad.svg.description = "Apg Svg Cad";
     const layers = this.buildTestLayers(cad);
     cad.setCurrentLayer(eApgCadDftLayers.DIMENSIONS);
     const textStyle = cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS)
-    const dimFact = new ApgCadSvgLinearDimensionsFactory(
+    const dimFact = new ApgCadSvgArcDimensionsFactory(
       cad,
       textStyle!,
-      eApgCadDftDimArrowStyles.SIMPLE
+      eApgCadDftDimArrowStyles.SIMPLE,
+      3
     );
 
-    const maxR = 400;
-    const minR = 10;
 
-    for (let i = 0; i < this.randomInN(); i++) {
-      const centerPoint = this.randomPointInRange();
-      const ladderPoint = this.randomPointInRange();
-      const radious = this.randomInt(minR, maxR);
-      const ladderline = new A2D.Apg2DLine(centerPoint, ladderPoint);
-      const pc1 = ladderline.pointAtDistanceFromPoint(centerPoint, radious);
-      const pc2 = ladderline.pointAtDistanceFromPoint(centerPoint, -radious);
+    const maxD = 500;
+    const minD = 200;
+    let displacement = 200;
 
-      cad.setCurrentLayer(layers[4].ID);
-      cad.svg
-        .circle(centerPoint.x, centerPoint.y, radious)
-        .fill(eApgCadStdColors.NONE)
-        .childOf(cad.currentLayer);
+    const pts: A2D.Apg2DPoint[] = [];
+    if (aisRandom) {
+      for (let i = 0; i < this.randomInN(); i++) {
+        const p1 = this.randomPointInRange();
+        pts.push(p1);
+        const p2 = this.randomPointInRange();
+        pts.push(p2);
+      }
+      displacement = this.randomInt(minD, maxD);
+    }
+    else {
+      pts.push(new A2D.Apg2DPoint(1000, 0));
+      pts.push(new A2D.Apg2DPoint(2000, 1000));
+      pts.push(new A2D.Apg2DPoint(3000, 1000));
+      pts.push(new A2D.Apg2DPoint(4000, 0));
+      pts.push(new A2D.Apg2DPoint(2000, 4000));
+      pts.push(new A2D.Apg2DPoint(1000, 3000));
+      pts.push(new A2D.Apg2DPoint(4000, 3000));
+      pts.push(new A2D.Apg2DPoint(3000, 4000));
+    }
 
-      cad.setCurrentLayer(layers[1].ID);
-      cad.svg
-        .line(centerPoint.x, centerPoint.y, ladderPoint.x, ladderPoint.y)
-        .childOf(cad.currentLayer);
 
-      cad.setCurrentLayer(layers[2].ID);
-      cad.svg
-        .line(pc1!.x, pc1!.y, pc2!.x, pc2!.y)
-        .childOf(cad.currentLayer);
+    for (let i = 0; i < pts.length; i += 2) {
 
-      dimFact
-        .build(atype, pc1!, pc2!, 50)
+      const centerPoint = pts[i];
+      const ladderPoint = pts[i + 1];
+
+       dimFact
+         .build(atype, centerPoint, ladderPoint, displacement)
         ?.childOf(cad.currentLayer)
     }
     this.cartouche(cad);
     return cad.svg.render();
   }
 
-  static testDiameterDims(isBlackBack = false) {
-    return this.#testArcDims(
-      eApgCadLinearDimensionTypes.Diameter, isBlackBack);
-  }
-  static testRadiousDims(isBlackBack = false) {
-    return this.#testArcDims(
-      eApgCadLinearDimensionTypes.Radious, isBlackBack);
-  }
 
 
 

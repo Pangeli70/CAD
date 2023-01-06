@@ -33,11 +33,16 @@ export class ApgCadInsSetsTester extends ApgCadBaseTester {
     }
 
 
-    static RunTest(aname: string, isBlackBack = false) {
-        
+    static RunTest(
+        aname: string,
+        isBlackBack = false,
+        aisDotGrid = false,
+        aisDebug = false,
+    ) {
+
         if (!this._ready) this.init();
 
-        const cad = new ApgCadSvg(isBlackBack);
+        const cad = new ApgCadSvg(isBlackBack, aisDotGrid, aisDebug);
         cad.svg.title = `Test instructions set`;
         cad.svg.description = "Apg Svg Cad";
 
