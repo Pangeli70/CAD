@@ -7,8 +7,8 @@
  * -----------------------------------------------------------------------
  */
 
-import { eApgSvgTextAnchor, IApgSvgTextStyle } from "../../../../SVG/mod.ts";
-import { A2D } from '../../../deps.ts';
+
+import { A2D, Svg } from '../../../deps.ts';
 import { ApgCadSvg } from "../../../src/classes/ApgCadSvg.ts";
 import { eApgCadStdColors } from "../../../src/enums/eApgCadStdColors.ts";
 import { eApgCadTestSvg } from "../enums/eApgCadTestSvg.ts";
@@ -181,7 +181,7 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
     ];
 
     const testTextStyle = this.getTestTextStyle(cad);
-    testTextStyle.anchor = eApgSvgTextAnchor.middle;
+    testTextStyle.anchor = Svg.eApgSvgTextAnchor.middle;
 
     for (let i = 0; i < this.randomInN(); i++) {
 
@@ -224,7 +224,7 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
     let currY = START;
 
     const testTextStyle = this.getTestTextStyle(cad);
-    testTextStyle.anchor = eApgSvgTextAnchor.start;
+    testTextStyle.anchor = Svg.eApgSvgTextAnchor.start;
 
     for (let i = 0; i < styles.length; i++) {
       const style = styles[i];
@@ -238,7 +238,7 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
       const textLineHeight = (ts.size * (ts.leading || 1.2));
       const totalW = START + rulerWidth;
 
-      const tx = (ts!.anchor && ts.anchor == eApgSvgTextAnchor.middle) ?
+      const tx = (ts!.anchor && ts.anchor == Svg.eApgSvgTextAnchor.middle) ?
         START + rulerWidth/2 :
         START
       

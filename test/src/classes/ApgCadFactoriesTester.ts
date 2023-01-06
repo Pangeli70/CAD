@@ -7,10 +7,8 @@
  * -----------------------------------------------------------------------
  */
 
-import { IApgSvgTextStyle } from "../../../../SVG/mod.ts";
 import { A2D } from '../../../deps.ts';
 import { ApgCadSvg } from "../../../src/classes/ApgCadSvg.ts";
-import { ApgCadSvgUtils } from "../../../src/classes/ApgCadSvgUtils.ts";
 import { ApgCadSvgAngularDimensionsFactory } from "../../../src/classes/factories/ApgCadSvgAngularDimensionsFactory.ts";
 import { ApgCadSvgAnnotationsFactory } from "../../../src/classes/factories/ApgCadSvgAnnotationsFactory.ts";
 import { ApgCadSvgBasicShapesFactory } from "../../../src/classes/factories/ApgCadSvgBasicShapesFactory.ts";
