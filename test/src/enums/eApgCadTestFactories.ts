@@ -23,6 +23,4 @@ export enum eApgCadTestFactories {
 
     ANGULAR_DIMS = 'AngularDims',
 
-    DIM_STYLES = `DimStyles`,
-
 }

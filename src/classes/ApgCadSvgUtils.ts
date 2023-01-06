@@ -9,20 +9,22 @@
  * -----------------------------------------------------------------------
  */
 
+import { A2D } from "../../deps.ts";
+
 
 /** Utility class for SVG-CAD with static members and methods
  */
 export class ApgCadSvgUtils {
 
   /** Static flag that enables or disables the debuggin features of the library */
-  static DEBUG_MODE = false;
+  static readonly DEBUG_MODE = true;
 
 
   /** Calculate the lenght in characters of the the longest row in a multirow text
    * @param {string} amrt multirow text to check
    * @returns {number} number of characters of the longest row
    */
-  static MultilineMaxRowLenght(amrt: string): number {
+  static GetMaxRowLenghtOfMultilineText(amrt: string): number {
 
     const as = amrt.split('\n');
 
@@ -43,33 +45,12 @@ export class ApgCadSvgUtils {
    *
    * @param adeg Inclination of the text in degrees
    */
-  static getTextDirection(adeg: number): number {
+  static GetTextFlip(adeg: number): number {
 
-    let r = 0;
+    let r = 1;
 
-    if (adeg > 0 && adeg < 90) {
-      r = 1;            // ok
-    }
-    else if (adeg === 90) {
-      r = 1;            // ok
-    }
-    else if (adeg > 90 && adeg < 180) {
+    if (adeg > 90 && adeg <= 270) {
       r = -1;
-    }
-    else if (adeg === 180) {
-      r = -1;           // ok
-    }
-    else if (adeg > 180 && adeg < 270) {
-      r = -1;           // ok
-    }
-    else if (adeg === 270) {
-      r = -1;           // ok
-    }
-    else if (adeg > 270 && adeg < 360) {
-      r = 1;            // ok
-    }
-    else {
-      r = 1;
     }
 
     return r;
@@ -80,74 +61,21 @@ export class ApgCadSvgUtils {
    *
    * @param adeg Inclination of the text in degrees
    */
-  static getTextOrientation(adeg: number): number {
+  static GetTextOrientation(adeg: number): number {
 
-    let r = 0;
+    let r = adeg % 360;
 
-    if (adeg > 0 && adeg < 90) {
-      r = 360 - adeg;   // ok
-    }
-    else if (adeg === 90) {
-      r = adeg + 180;   // ok
-    }
-    else if (adeg > 90 && adeg < 180) {
-      r = 180 - adeg;
-    }
-    else if (adeg === 180) {
-      r = adeg + 180;   // ok
-    }
-    else if (adeg > 180 && adeg < 270) {
-      r = 180 - adeg;   // ok
-    }
-    else if (adeg === 270) {
-      r = adeg;         // ok
-    }
-    else if (adeg > 270 && adeg < 360) {
-      r = 360 - adeg;   // ok
-    }
-    else {
-      r = adeg;
-    }
-
-    return r;
-  }
-
-
-  /** Similar to text orientation, given an inclination return the orientation for the arrow
-   *
-   * @param adeg Inclination of the arrow in degrees
-   */
-  static getArrowOrientation(adeg: number): number {
-
-    let r = 0;
-
-    if (adeg > 0 && adeg < 90) {
-      r = 180 - adeg;   // ok
-    }
-    else if (adeg === 90) {
-      r = adeg;         // ok
-    }
-    else if (adeg > 90 && adeg < 180) {
-      r = 180 - adeg;
-    }
-    else if (adeg === 180) {
-      r = adeg + 180;   // ok
-    }
-    else if (adeg > 180 && adeg < 270) {
-      r = 180 - adeg;   // ok
-    }
-    else if (adeg === 270) {
-      r = adeg;         // ok
-    }
-    else if (adeg > 270 && adeg < 360) {
-      r = 180 - adeg;   // ok
-    }
-    else {
+    if (adeg > 90 && adeg <= 270) {
       r = adeg + 180;
     }
 
     return r;
   }
 
+
+
+  static GetPointAsString(aname: string, apoint: A2D.Apg2DPoint, adigits = 0) {
+    return `${aname}: ${apoint.x.toFixed(adigits)}, ${apoint.y.toFixed(adigits)}`;
+  }
 
 }

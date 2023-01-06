@@ -11,7 +11,7 @@ import { eApgCadInstructionTypes } from "../enums/eApgCadInstructionTypes.ts";
 
 const rawSchema: Jsv.IApgJsvEnum = {
     $schema: "http://json-schema.org/schema#",
-    $id: "eApgCadInsTypes#",
+    $id: "eApgCadIns_Types#",
     definitions: {
         enumType: {
             type: "string",

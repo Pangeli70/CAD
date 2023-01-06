@@ -29,8 +29,14 @@ export class ApgCadSvgFillStylesInitializer extends ApgCadSvgBaseInitializer {
         };
         this._cad.newFillStyle(eApgCadDftFillStyles.BACKGROUND, bkg);
 
+        const fgd = <Svg.IApgSvgFillStyle>{
+            color: this._cad.settings.foreGround.fillColor,
+            opacity: eApgCadDftFillOpacities.OPAQUE,
+        };
+        this._cad.newFillStyle(eApgCadDftFillStyles.FOREGROUND, fgd);
+
         const dbg = <Svg.IApgSvgFillStyle>{
-            color: eApgCadStdColors.GREEN,
+            color: eApgCadStdColors.MAGENTA,
             opacity: eApgCadDftFillOpacities.OPAQUE,
         };
         this._cad.newFillStyle(eApgCadDftFillStyles.DEBUG, dbg);
@@ -46,5 +52,18 @@ export class ApgCadSvgFillStylesInitializer extends ApgCadSvgBaseInitializer {
             opacity: eApgCadDftFillOpacities.OPAQUE,
         };
         this._cad.newFillStyle(eApgCadDftFillStyles.DIMENSIONS, dim);
+
+        const annot = <Svg.IApgSvgFillStyle>{
+            color: eApgCadStdColors.ORANGE,
+            opacity: eApgCadDftFillOpacities.OPAQUE,
+        };
+        this._cad.newFillStyle(eApgCadDftFillStyles.ANNOTATIONS, annot);
+   
+        const cart = <Svg.IApgSvgFillStyle>{
+            color: this._cad.settings.foreGround.fillColor,
+            opacity: eApgCadDftFillOpacities.OPAQUE,
+        };
+        this._cad.newFillStyle(eApgCadDftFillStyles.CARTOUCHE, cart);
+
     }
 }

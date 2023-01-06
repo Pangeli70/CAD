@@ -6,13 +6,10 @@
  */
 
 import { IApgCadInstruction } from "../../../src/interfaces/IApgCadInstruction.ts";
-import { eApgCadTestInsSetGroups } from "../enums/eApgCadTestInsSetGroups.ts";
+import { eApgCadTestInsSets } from "../enums/eApgCadTestInsSets.ts";
 
 export interface IApgCadInsSetTest { 
-
-    group: eApgCadTestInsSetGroups
-
-    name: string;
+    name: eApgCadTestInsSets;
     description: string;
     instructions: IApgCadInstruction[]
 }

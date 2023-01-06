@@ -11,60 +11,54 @@
 
 import { Svg, A2D } from "../../../deps.ts";
 import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { ApgCadSvg } from "../ApgCadSvg.ts";
 import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
 
 
 export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
 
 
-  public constructor(adoc: Svg.ApgSvgDoc, alayer: Svg.ApgSvgNode) {
-    super(adoc, alayer, eApgCadPrimitiveFactoryTypes.BASIC_SHAPES);
+  public constructor(adoc: ApgCadSvg) {
+    super(adoc, eApgCadPrimitiveFactoryTypes.BASIC_SHAPES);
   }
-
 
 
   buildLine(
     afirstPoint: A2D.Apg2DPoint,
     asecondPoint: A2D.Apg2DPoint,
-    aparent?: Svg.ApgSvgNode
   ) {
-    const r = this._svgDoc
+    const r = this._cad.svg
       .line(afirstPoint.x, afirstPoint.y, asecondPoint.x, asecondPoint.y)
-    this._setParent(r, aparent);
+
     return r;
   }
+
 
   buildPolyLine(
     apoints: A2D.Apg2DPoint[],
-    aparent?: Svg.ApgSvgNode
+    aclosed = false
   ) {
-    const r = this._svgDoc.polyline(apoints)
-    this._setParent(r, aparent);
+
+    const pts = [...apoints];
+    if (aclosed) {
+      pts.push(pts[0]); //to close the polyline
+    }
+
+    const r = this._cad.svg
+      .polyline(apoints)
+
     return r;
   }
 
 
-  buildClosedPolyLine(
-    apoints: A2D.Apg2DPoint[],
-    aparent?: Svg.ApgSvgNode
-  ) {
-    const pts = [apoints];
-    pts.push(pts[0]); //to close the polyline
-
-    const r = this._svgDoc.polyline(apoints)
-    this._setParent(r, aparent);
-    return r;
-  }
-
-
-  buildRectWH(
+  buildRect(
     apoint: A2D.Apg2DPoint,
     awidth: number,
     aheight: number,
-    aparent?: Svg.ApgSvgNode
   ) {
-    const r = this._svgDoc.rect(apoint.x, apoint.y, awidth, aheight)
-    this._setParent(r, aparent);
+    const r = this._cad.svg
+      .rect(apoint.x, apoint.y, awidth, aheight)
+
     return r;
   }
 
@@ -72,12 +66,12 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
   buildRect2P(
     afirstPoint: A2D.Apg2DPoint,
     asecondPoint: A2D.Apg2DPoint,
-    aparent?: Svg.ApgSvgNode
   ) {
     const lwidth = asecondPoint.x - afirstPoint.x;
     const lheight = asecondPoint.y - afirstPoint.y;
-    const r = this._svgDoc.rect(afirstPoint.x, afirstPoint.y, lwidth, lheight)
-    this._setParent(r, aparent);
+    const r = this._cad.svg
+      .rect(afirstPoint.x, afirstPoint.y, lwidth, lheight)
+
     return r;
   }
 
@@ -87,7 +81,6 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
     aradious: number,
     asides: number,
     arotDeg: number,
-    aparent?: Svg.ApgSvgNode
   ) {
 
     const pts: A2D.Apg2DPoint[] = [];
@@ -101,10 +94,10 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
       pts.push(p);
     }
 
-    const r = this._svgDoc
+    const r = this._cad.svg
       .polygon(pts)
-      .rotate(arotDeg, acenter.x, acenter.y)
-    this._setParent(r, aparent);
+      .rotate(arotDeg, acenter.x, acenter.y);
+
     return r;
   }
 
@@ -112,10 +105,9 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
   buildCircle(
     acenter: A2D.Apg2DPoint,
     aradious: number,
-    aparent?: Svg.ApgSvgNode
   ) {
-    const r = this._svgDoc.circle(acenter.x, acenter.y, aradious)
-    this._setParent(r, aparent);
+    const r = this._cad.svg
+      .circle(acenter.x, acenter.y, aradious)
     return r;
   }
 
@@ -123,10 +115,10 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
   buildDot(
     acenter: A2D.Apg2DPoint,
     aradious: number,
-    aparent?: Svg.ApgSvgNode
   ) {
-    const r = this._svgDoc.circle(acenter.x, acenter.y, aradious)
-    this._setParent(r, aparent);
+    const r = this._cad.svg
+      .circle(acenter.x, acenter.y, aradious)
+
     return r;
   }
 
@@ -136,18 +128,19 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
     aradious: number,
     aname: string,
     atextStyle: Svg.IApgSvgTextStyle,
-    aparent?: Svg.ApgSvgNode,
   ) {
-    const r = this._svgDoc.group()
-    this._setParent(r, aparent);
+    const r = this._cad.svg
+      .group()
 
-    const _c = this._svgDoc
+    const _c = this._cad.svg
       .circle(acenter.x, acenter.y, aradious)
       .childOf(r);
 
-    const text = `${aname}:${acenter.x},${acenter.y}`;
-    const _t = this._svgDoc
-      .text(acenter.x, acenter.y, text)
+    const tx = acenter.x + atextStyle.size * atextStyle.aspectRatio;
+    const ty = acenter.y - atextStyle.size;
+    const text = ` ${aname}: ${acenter.x},${acenter.y}`;
+    const _t = this._cad.svg
+      .text(tx, ty, text, 0)
       .textStyle(atextStyle)
       .childOf(r);
 

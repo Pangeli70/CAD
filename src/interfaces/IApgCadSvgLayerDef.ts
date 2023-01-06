@@ -9,7 +9,12 @@
  * -----------------------------------------------------------------------
  */
 
+import { Svg } from "../../deps.ts";
+
 export interface IApgCadSvgLayerDef {
-  strokeName: string;
-  fillName?: string;
+
+  name: string;
+  fill: Svg.IApgSvgFillStyle;
+  stroke: Svg.IApgSvgStrokeStyle;
+  textStyle: Svg.IApgSvgTextStyle;
 }

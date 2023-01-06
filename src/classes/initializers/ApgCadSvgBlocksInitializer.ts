@@ -16,8 +16,8 @@ import { ApgCadSvgBaseInitializer } from "./ApgCadSvgBaseInitializer.ts";
 export class ApgCadSvgBlocksInitializer extends ApgCadSvgBaseInitializer {
 
     override build() {
-        const size = 20;
-        const ratio = 0.25;
+        const size = this._cad.standardSize;
+        const ratio = 1 / 4;
 
         const mechPts: A2D.Apg2DPoint[] = [
             new A2D.Apg2DPoint(0, 0),
@@ -29,18 +29,15 @@ export class ApgCadSvgBlocksInitializer extends ApgCadSvgBaseInitializer {
             .stroke(eApgCadStdColors.NONE, 0);
         this._cad.newBlock(mechArrow);
 
-        const simpleArrow = this._cad.svg.group(eApgCadDftDimArrowStyles.SIMPLE);
-        this._cad.svg
-            .line(mechPts[0].x, mechPts[0].y, mechPts[1].x, mechPts[1].y)
-            .childOf(simpleArrow);
-        this._cad.svg
-            .line(mechPts[0].x, mechPts[0].y, mechPts[2].x, mechPts[2].y)
-            .childOf(simpleArrow);
+        const pts = [mechPts[1], mechPts[0], mechPts[2]]
+        const simpleArrow = this._cad.svg
+            .polyline(pts, eApgCadDftDimArrowStyles.SIMPLE)
+            .fill(eApgCadStdColors.NONE)
         this._cad.newBlock(simpleArrow);
 
         const archPts: A2D.Apg2DPoint[] = [
-            new A2D.Apg2DPoint(-size * ratio / 2, -size / 2),
-            new A2D.Apg2DPoint(size * ratio / 2, size / 2),
+            new A2D.Apg2DPoint(-size * ratio / 1, -size / 2),
+            new A2D.Apg2DPoint(size * ratio / 1, size / 2),
         ];
         const archArrow = this._cad.svg
             .line(archPts[0].x, archPts[0].y, archPts[1].x, archPts[1].y, eApgCadDftDimArrowStyles.ARCHITECTURAL);

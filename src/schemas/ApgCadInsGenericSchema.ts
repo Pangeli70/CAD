@@ -8,7 +8,7 @@ import { Uts, Jsv } from '../../deps.ts'
 
 const rawSchema: Jsv.IApgJsvInterface = {
     $schema: 'http://json-schema.org/schema#',
-    $id: 'IApgSvgInstruction#',
+    $id: 'IApgCadSvg_Generic#',
     title: 'Defines all the possible properties for preliminary validation',
     type: 'object',
     properties: {
@@ -16,7 +16,7 @@ const rawSchema: Jsv.IApgJsvInterface = {
             type: 'integer'
         },
         type: {
-            $ref: 'eApgCadInsTypes#/definitions/enumType'
+            $ref: 'eApgCadIns_Types#/definitions/enumType'
         },
         name: {
             type: 'string'

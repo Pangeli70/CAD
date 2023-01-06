@@ -11,7 +11,10 @@
 export enum eApgCadDftFillStyles {
     NONE = "None",
     BACKGROUND = "Background",
+    FOREGROUND = "Foreground",
     DEBUG = "Debug",
     HIDDEN = "Hidden",
-    DIMENSIONS = "Dimensions"
+    DIMENSIONS = "Dimensions",
+    ANNOTATIONS = "Annotations",
+    CARTOUCHE = "Cartouche"
 }

@@ -24,85 +24,17 @@ import { ApgCadSvg } from "./ApgCadSvg.ts";
 import { IApgCadInstruction } from "../interfaces/IApgCadInstruction.ts";
 import { eApgCadDftTextStyles } from "../enums/eApgCadDftTextStyles.ts";
 import { eApgCadLinearDimensionTypes } from "../enums/eApgCadLinearDimensionTypes.ts";
-import { IApgCadSvgAxis } from "../interfaces/IApgCadSvgAxis.ts";
-import { IApgCadSvgBackground } from "../interfaces/IApgCadSvgBackground.ts";
+import { IApgCadSvgCartesians } from "../interfaces/IApgCadSvgCartesians.ts";
+import { IApgCadSvgGround } from "../interfaces/IApgCadSvgGround.ts";
 import { IApgCadSvgViewBox } from "../interfaces/IApgCadSvgViewBox.ts";
 import { ApgCadSvgAnnotationsFactory } from "./factories/ApgCadSvgAnnotationsFactory.ts";
 import { ApgCadSvgBasicShapesFactory } from "./factories/ApgCadSvgBasicShapesFactory.ts";
 import { ApgCadSvgLinearDimensionsFactory } from "./factories/ApgCadSvgLinearDimensionsFactory.ts";
 import { eApgCadPrimitiveFactoryTypes } from "../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { ApgCadIns_SetLayerSchema } from "../schemas/ApgCadInsSetLayerSchema.ts";
+import { ApgCadInsValidators } from "../data/ApgCadInsValidators.ts";
 
 
-const APG_SVG_INS_VALIDATORS = [
-  {
-    type: eApgCadInstructionTypes.TYPES,
-    schema: 'eApgCadInsTypes',
-    jsonSchema: eApgCadIns_TypesSchema,
-  },
-  {
-    type: eApgCadInstructionTypes.GENERIC,
-    schema: 'IApgCadInsGeneric',
-    jsonSchema: ApgCadIns_GenericSchema,
-    dependencies: ['eApgCadInsTypes']
-  }, {
-    type: eApgCadInstructionTypes.SET_NAME,
-    schema: 'IApgCadInsSetName',
-    jsonSchema: ApgCadIns_SetNameSchema,
-  }, {
-    //   type: eApgCadInstructionTypes.SET_VIEWBOX,
-    //   schema: 'IApgCadSvgInsSetViewbox'
-    // }, {
-    //   type: eApgCadInstructionTypes.SET_AXIS,
-    //   schema: 'IApgCadSvgInsSetAxis'
-    // }, {
-    //   type: eApgCadInstructionTypes.SET_BACKGROUND,
-    //   schema: 'IApgCadSvgInsSetBackground'
-    // }, {
-    //   type: eApgCadInstructionTypes.SET_LAYER,
-    //   schema: 'IApgCadSvgInsSetLayer'
-    // }, {
-    type: eApgCadInstructionTypes.NEW_POINT,
-    schema: 'IApgCadInsNewPoint',
-    jsonSchema: ApgCadIns_NewPointSchema,
-  }, {
-    //   type: eApgCadInstructionTypes.NEW_POINT_DELTA,
-    //   schema: 'IApgCadSvgInsNewPointDelta'
-    // }, {
-    //   type: eApgCadInstructionTypes.DRAW_POINTS,
-    //   schema: 'IApgCadSvgInsDrawPoints'
-    // }, {
-    //   type: eApgCadInstructionTypes.DRAW_ALL_POINTS,
-    //   schema: 'IApgCadSvgInsDrawAllPoints'
-    // }, {
-    //   type: eApgCadInstructionTypes.DRAW_ARC,
-    //   schema: 'IApgCadSvgInsDrawArc'
-    // }, {
-    //   type: eApgCadInstructionTypes.DRAW_CIRCLE,
-    //   schema: 'IApgCadSvgInsDrawCircle'
-    // }, {
-    type: eApgCadInstructionTypes.DRAW_LINE,
-    schema: 'IApgCadInsDrawLine',
-    jsonSchema: ApgCadIns_DrawLineSchema,
-    // }, {
-    //   type: eApgCadInstructionTypes.DRAW_POLYLINE,
-    //   schema: 'IApgCadSvgInsDrawPolyline'
-    // }, {
-    //   type: eApgCadInstructionTypes.DRAW_RECTANGLE_POINTS,
-    //   schema: 'IApgCadSvgInsDrawRectanglePoints'
-    // }, {
-    //   type: eApgCadInstructionTypes.DRAW_RECTANGLE_SIZE,
-    //   schema: 'IApgCadSvgInsDrawRectangleSize'
-    // }, {
-    //   type: eApgCadInstructionTypes.DRAW_POLYGON,
-    //   schema: 'IApgCadSvgInsDrawPolygon'
-    // }, {
-    //   type: eApgCadInstructionTypes.DRAW_TEXT,
-    //   schema: 'IApgCadSvgInsDrawText'
-    // }, {
-    //   type: eApgCadInstructionTypes.DRAW_NAME,
-    //   schema: 'IApgCadSvgInsDrawName'
-  }
-];
 
 
 /** Apg Svg Instruction set Manager
@@ -160,7 +92,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
     const validatorService = new Jsv.ApgJsvService(this._logger);
 
-    APG_SVG_INS_VALIDATORS.forEach(element => {
+    ApgCadInsValidators.forEach(element => {
       if (r.Ok && element.jsonSchema) {
         const deps = element.dependencies ? element.dependencies : [];
         r = validatorService.addValidator(element.jsonSchema, deps);
@@ -372,7 +304,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
    */
   #setAxis(
     ainstructionId: number,
-    aaxis: IApgCadSvgAxis
+    aaxis: IApgCadSvgCartesians
   ) {
     this.logBegin(this.#setAxis.name);
     this.logTrace(`${ainstructionId}`);
@@ -401,7 +333,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
  */
   #setBackground(
     ainstructionId: number,
-    abckg: IApgCadSvgBackground
+    abckg: IApgCadSvgGround
   ) {
     this.logBegin(this.#setBackground.name);
     this.logTrace(`${ainstructionId}`);
@@ -535,7 +467,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     if (group) {
       this.status = Rst.ApgRstErrors.AlreadyExists(
         "",
-        `Group name [%1] already exists . Use setGroup instead.`,
+        `Group name [%1] already exists . Use openGroup instead.`,
         [agroupName]
       )
     }
@@ -556,13 +488,13 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   }
 
 
-  /** Sets the current group
+  /** Opens the already created and named group
    */
-  #setGroup(
+  #beginGroup(
     ainstructionId: number,
     agroupName: string
   ) {
-    this.logBegin(this.#setGroup.name);
+    this.logBegin(this.#beginGroup.name);
     this.logTrace(`${ainstructionId}`);
 
     const group: Svg.ApgSvgNode | undefined = this._cad.setCurrentGroup(agroupName);
@@ -580,6 +512,29 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   }
 
 
+  /** Sets the current group
+ */
+  #closeGroup(
+    ainstructionId: number,
+  ) {
+    this.logBegin(this.#closeGroup.name);
+    this.logTrace(`${ainstructionId}`);
+
+    this._cad.unSetCurrentGroup();
+
+    this.logEnd(this.status);
+    return this.status;
+  }
+
+
+  #setParent(anode: Svg.ApgSvgNode) {
+
+    const currentGroup = (this._cad.currentGroup) ? this._cad.currentGroup : this._cad.currentLayer;
+    anode.childOf(currentGroup);
+
+  }
+
+
   /** Draws a line between the given points
    */
   #drawLine(
@@ -593,21 +548,27 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     const pts = this.#get2PointsByNames(apointsNames);
 
     if (this.status.Ok) {
-      const currentGroup = (this._cad.currentGroup) ? this._cad.currentGroup : this._cad.currentLayer;
+
       const pf = <ApgCadSvgBasicShapesFactory>this._cad.getPrimitiveFactory(eApgCadPrimitiveFactoryTypes.BASIC_SHAPES)
-      const e = pf.buildLine(pts[0], pts[1], currentGroup);
-      e.fill('none');
+      const node = pf
+        .buildLine(pts[0], pts[1])
+        .fill('none');
+
       if (astrokeStyleName) {
         const strokeStyle = this.#checkStrokeStyle(astrokeStyleName);
         if (strokeStyle) {
-          e.stroke(strokeStyle.color, strokeStyle.width);
+          node.stroke(strokeStyle.color, strokeStyle.width);
         }
       }
+
+      this.#setParent(node);
     }
 
     this.logEnd();
     return this.status;
   }
+
+
 
 
   #get2PointsByNames(apointsNames: string[]) {
@@ -664,14 +625,18 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       const pf = this._cad.getPrimitiveFactory(
         eApgCadPrimitiveFactoryTypes.BASIC_SHAPES
       ) as ApgCadSvgBasicShapesFactory;
-      const e = pf.buildPolyLine(pts);
-      e.fill('none');
+      const node = pf
+        .buildPolyLine(pts)
+        .fill('none');
+
       if (astrokeStyleName) {
         const strk = this.#checkStrokeStyle(astrokeStyleName);
         if (strk) {
-          e.stroke(strk.color, strk.width);
+          node.stroke(strk.color, strk.width);
         }
       }
+
+      this.#setParent(node);
     }
 
     this.logEnd();
@@ -738,13 +703,17 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
         eApgCadPrimitiveFactoryTypes.BASIC_SHAPES
       ) as ApgCadSvgBasicShapesFactory;
       pts.forEach(pt => {
-        const e = pf.buildDot(pt, aradious);
+        const node = pf
+          .buildDot(pt, aradious)
+
         if (strk) {
-          e.stroke(strk.color, strk.width);
+          node.stroke(strk.color, strk.width);
         }
         if (fill) {
-          e.fill(fill.color);
+          node.fill(fill.color);
         }
+
+        this.#setParent(node);
       });
     }
 
@@ -769,7 +738,10 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     ) as ApgCadSvgBasicShapesFactory;
 
     this._points.forEach((pt, name) => {
-      const _g = pf.buildPoint(pt, aradious, name, atextStyle);
+      const node = pf
+        .buildPoint(pt, aradious, name, atextStyle);
+
+      this.#setParent(node);
     });
 
     this.logEnd();
@@ -802,7 +774,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       const pf = this._cad.getPrimitiveFactory(
         eApgCadPrimitiveFactoryTypes.BASIC_SHAPES
       ) as ApgCadSvgBasicShapesFactory;
-      const node = pf.buildClosedPolyLine(ppts);
+      const node = pf.buildPolyLine(ppts, true);
 
       if (strk) {
         node.stroke(strk.color, strk.width);
@@ -810,6 +782,9 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       if (fill) {
         node.fill(fill.color);
       }
+
+      this.#setParent(node);
+
     }
     this.logEnd();
     return this.status;
@@ -852,14 +827,16 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       const pf = this._cad.getPrimitiveFactory(
         eApgCadPrimitiveFactoryTypes.BASIC_SHAPES
       ) as ApgCadSvgBasicShapesFactory;
-      const e = pf.buildClosedPolyLine(ppts);
+      const node = pf.buildPolyLine(ppts, true)
 
       if (strk) {
-        e.stroke(strk.color, strk.width);
+        node.stroke(strk.color, strk.width);
       }
       if (fill) {
-        e.fill(fill.color);
+        node.fill(fill.color);
       }
+
+      this.#setParent(node);
     }
     this.logEnd(this.status);
     return this.status;
@@ -894,17 +871,20 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
         eApgCadPrimitiveFactoryTypes.BASIC_SHAPES
       ) as ApgCadSvgBasicShapesFactory;
 
-      const e = pf.buildClosedPolyLine(pts);
+      const node = pf
+        .buildPolyLine(pts, true)
 
       const strk = this.#checkStrokeStyle(astrk);
       if (strk) {
-        e.stroke(strk.color, strk.width);
+        node.stroke(strk.color, strk.width);
       }
 
       const fill = this.#checkFillStyle(afill);
       if (fill) {
-        e.fill(fill.color);
+        node.fill(fill.color);
       }
+
+      this.#setParent(node);
 
     }
     this.logEnd(this.status);
@@ -941,7 +921,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
         const pf = this._cad.getPrimitiveFactory(
           eApgCadPrimitiveFactoryTypes.ANNOTATIONS
         ) as ApgCadSvgAnnotationsFactory;
-        const g = pf.build(pts[0], pts[1], atext[0]);
+        const g = pf.build(this._cad.currentLayer, pts[0], pts[1], atext[0]);
         const textStyle = this.#checkTextStyle(atextStyleName);
         if (textStyle) {
           g?.textStyle(textStyle);
@@ -973,7 +953,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
         eApgCadPrimitiveFactoryTypes.ANNOTATIONS
       ) as ApgCadSvgAnnotationsFactory;
       // TODO @5 APG ... -- this is a mess better to draw text without Annotations factory
-      const g = pf.build(origin, zero, this.name);
+      const g = pf.build(this._cad.currentLayer, origin, zero, this.name);
       const textStyle = this.#checkTextStyle(eApgCadDftTextStyles.TITLE);
       if (textStyle) {
         g?.textStyle(textStyle);
@@ -1006,7 +986,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
       const disp = new A2D.Apg2DPoint(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
 
-      const _g = pf.build(pts[0], disp, atext[0], aangle);
+      const _g = pf.build(this._cad.currentLayer, pts[0], disp, atext[0], aangle);
     }
     this.logEnd();
     return this.status;
@@ -1029,10 +1009,11 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
     if (this.status.Ok) {
 
-      const pf = this._cad.getPrimitiveFactory(
-        eApgCadPrimitiveFactoryTypes.LINEAR_DIMS
-      ) as ApgCadSvgLinearDimensionsFactory;
-      pf.build(eApgCadLinearDimensionTypes.Aligned, pts[0], pts[1], adisplacement, atext[0], atext[1]); // <=(X)
+      const pf = this._cad.getPrimitiveFactory(eApgCadPrimitiveFactoryTypes.LINEAR_DIMS) as ApgCadSvgLinearDimensionsFactory;
+      const node = pf
+        .build(eApgCadLinearDimensionTypes.Aligned, pts[0], pts[1], adisplacement, atext[0], atext[1]);
+
+      this.#setParent(node!);
 
     }
     this.logEnd();
@@ -1047,132 +1028,223 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     this.logBegin(this.build.name);
 
     /** Current Instruction Index */
-    let lcii = 0;
+    let index = 0;
 
     this.instructions.forEach((ainstruction: IApgCadInstruction) => {
       if (this.status.Ok) {
         switch (ainstruction.type) {
           case eApgCadInstructionTypes.SET_NAME: {
-            this.#setName(lcii, ainstruction.name!); // 2018/12/02 *
+            this.#setName(
+              index,
+              ainstruction.name!
+            ); //
             break;
           }
           case eApgCadInstructionTypes.SET_VIEWBOX: {
-            this.#setViewBox(lcii, ainstruction.payload!); // 2018/12/02 *
+            this.#setViewBox(
+              index,
+              ainstruction.payload!
+            ); // 
             break;
           }
           case eApgCadInstructionTypes.SET_AXIS: {
-            this.#setAxis(lcii, ainstruction.payload!); // 2018/12/08 *
+            this.#setAxis(
+              index,
+              ainstruction.payload!
+            ); // 
             break;
           }
           case eApgCadInstructionTypes.SET_BACKGROUND: {
-            this.#setBackground(lcii, ainstruction.payload!); // 2018/12/08 *
+            this.#setBackground(
+              index,
+              ainstruction.payload!
+            ); // 
             break;
           }
           case eApgCadInstructionTypes.NEW_POINT: {
-            this.#newPoint(lcii, ainstruction.x!, ainstruction.y!, ainstruction.name); // 2017/11/25 *
+            this.#newPoint(
+              index,
+              ainstruction.x!,
+              ainstruction.y!,
+              ainstruction.name
+            ); // 2023/01/04 
             break;
           }
           case eApgCadInstructionTypes.NEW_POINT_DELTA: {
-            this.#newPointByDelta(lcii, ainstruction.origin!, ainstruction.x!, ainstruction.y!, ainstruction.name); // 2017/11/25 *
+            this.#newPointByDelta(
+              index,
+              ainstruction.origin!,
+              ainstruction.x!,
+              ainstruction.y!,
+              ainstruction.name
+            ); // 2023/01/04 **
             break;
           }
           case eApgCadInstructionTypes.NEW_STROKE_STYLE: {
-            this._cad.newStrokeStyle(ainstruction.name!, ainstruction.payload!);
+            this._cad.newStrokeStyle(
+              ainstruction.name!,
+              ainstruction.payload!
+            );
             break;
           }
           case eApgCadInstructionTypes.NEW_FILL_STYLE: {
-            this._cad.newFillStyle(ainstruction.name!, ainstruction.payload!);
+            this._cad.newFillStyle(
+              ainstruction.name!,
+              ainstruction.payload!
+            );
             break;
           }
           case eApgCadInstructionTypes.SET_LAYER: {
-            this.#currentLayer(lcii, ainstruction.name!); // 2017/11/26
+            this.#currentLayer(
+              index,
+              ainstruction.name!
+            ); // 2023/01/04 **
             break;
           }
           case eApgCadInstructionTypes.NEW_GROUP: {
             const options: IApgCadStyleOptions = { strokeName: ainstruction.stroke, fillName: ainstruction.fill }
-            this.#newGroup(lcii, ainstruction.name!, options); // 2017/11/26
+            this.#newGroup(
+              index,
+              ainstruction.name!,
+              options
+            ); // 
             break;
           }
           case eApgCadInstructionTypes.SET_GROUP: {
-            this.#setGroup(lcii, ainstruction.name!); // 2017/11/26
+            this.#beginGroup(
+              index,
+              ainstruction.name!
+            ); // 
             break;
           }
           case eApgCadInstructionTypes.DRAW_POINTS: {
             if (!asettingsOnly) {
-              this.#drawPoints(lcii, ainstruction.points!, ainstruction.radious!, <string>ainstruction.stroke, <string>ainstruction.fill); // 2017/11/26 *
+              this.#drawPoints(
+                index,
+                ainstruction.points!,
+                ainstruction.radious!,
+                <string>ainstruction.stroke,
+                <string>ainstruction.fill
+              ); // 
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_ALL_POINTS: {
             if (!asettingsOnly) {
               const textStyle = this.#checkTextStyle(eApgCadDftTextStyles.MONO)
-              this.#drawAllpoints(lcii, ainstruction.radious!, textStyle!); // 2017/11/26 *
+              this.#drawAllpoints(
+                index,
+                ainstruction.radious!,
+                textStyle!
+              ); // 2023/01/04 **
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_LINE: {
             if (!asettingsOnly) {
-              this.#drawLine(lcii, ainstruction.points!, <string>ainstruction.stroke); // 2017/11/26 *
+              this.#drawLine(
+                index,
+                ainstruction.points!,
+                <string>ainstruction.stroke
+              ); // 2023/01/04
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_POLYLINE: {
             if (!asettingsOnly) {
-              this.#drawPolyLine(lcii, ainstruction.points!, <string>ainstruction.stroke); // 2017/11/25 *
+              this.#drawPolyLine(
+                index,
+                ainstruction.points!,
+                <string>ainstruction.stroke
+              ); // 
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_RECTANGLE_POINTS: {
             if (!asettingsOnly) {
-              this.#drawRectanglePoints(lcii, ainstruction.points!, <string>ainstruction.stroke, <string>ainstruction.fill); // 2018/12/08 *
+              this.#drawRectanglePoints(
+                index,
+                ainstruction.points!,
+                <string>ainstruction.stroke,
+                <string>ainstruction.fill
+              ); // 
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_RECTANGLE_SIZE: {
             if (!asettingsOnly) {
-              this.#drawRectangleWH(lcii, ainstruction.origin!, ainstruction.x!, ainstruction.y!, <string>ainstruction.stroke, <string>ainstruction.fill); // 2018/12/08 *
+              this.#drawRectangleWH(
+                index,
+                ainstruction.origin!,
+                ainstruction.x!,
+                ainstruction.y!,
+                <string>ainstruction.stroke,
+                <string>ainstruction.fill
+              ); // 
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_POLYGON: {
             if (!asettingsOnly) {
-              this.#drawClosedPolyline(lcii, ainstruction.points!, <string>ainstruction.stroke, <string>ainstruction.fill); // 2018/12/08 *
+              this.#drawClosedPolyline(
+                index,
+                ainstruction.points!,
+                <string>ainstruction.stroke,
+                <string>ainstruction.fill
+              ); // 
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_TEXT: {
             if (!asettingsOnly) {
-              this.#drawText(lcii, ainstruction.text!, ainstruction.origin!, <string>ainstruction.font);
+              this.#drawText(
+                index,
+                ainstruction.text!,
+                ainstruction.origin!,
+                <string>ainstruction.font
+              ); // 
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_NAME: {
             if (!asettingsOnly) {
-              this.#drawTitle(lcii, ainstruction.x!, ainstruction.y!);
+              this.#drawTitle(
+                index,
+                ainstruction.x!,
+                ainstruction.y!
+              );
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_ANNOTATION: {
             if (!asettingsOnly) {
-              this.#drawAnnotation(lcii, ainstruction.points!, ainstruction.text!, ainstruction.angle);
+              this.#drawAnnotation(
+                index,
+                ainstruction.points!,
+                ainstruction.text!,
+                ainstruction.angle
+              );
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_LIN_DIM: {
             if (!asettingsOnly) {
-              this.#drawLinearDim(lcii, ainstruction.points!, ainstruction.radious!, ainstruction.text!);
+              this.#drawLinearDim(
+                index,
+                ainstruction.points!,
+                ainstruction.radious!,
+                ainstruction.text!
+              );
             }
           }
 
         }
       }
-      lcii++;
+      index++;
     }, this);
 
     this.logEnd();
 
-    const r = this._cad.svg.render();
-    return r;
   }
 
 

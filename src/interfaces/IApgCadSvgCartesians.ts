@@ -11,12 +11,13 @@
 import { Svg } from "../../deps.ts";
 
 
-export interface IApgCadSvgAxis {
+export interface IApgCadSvgCartesians {
+  /** Flag that controls if the cartesian axises has to be drawn */
+  draw: boolean,
   axisStroke: Svg.IApgSvgStrokeStyle;
-
   drawTicks: boolean;
   tickStroke: Svg.IApgSvgStrokeStyle;
-  ticksDistance: number;
+  ticksStep: number;
   ticksSize: number;
   drawBigTicks: boolean;
   bigTicksEvery: number;

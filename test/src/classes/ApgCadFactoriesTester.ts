@@ -7,12 +7,16 @@
  * -----------------------------------------------------------------------
  */
 
+import { IApgSvgTextStyle } from "../../../../SVG/mod.ts";
 import { A2D } from '../../../deps.ts';
 import { ApgCadSvg } from "../../../src/classes/ApgCadSvg.ts";
+import { ApgCadSvgUtils } from "../../../src/classes/ApgCadSvgUtils.ts";
 import { ApgCadSvgAngularDimensionsFactory } from "../../../src/classes/factories/ApgCadSvgAngularDimensionsFactory.ts";
+import { ApgCadSvgAnnotationsFactory } from "../../../src/classes/factories/ApgCadSvgAnnotationsFactory.ts";
 import { ApgCadSvgBasicShapesFactory } from "../../../src/classes/factories/ApgCadSvgBasicShapesFactory.ts";
 import { ApgCadSvgLinearDimensionsFactory } from "../../../src/classes/factories/ApgCadSvgLinearDimensionsFactory.ts";
 import { eApgCadDftDimArrowStyles } from "../../../src/enums/eApgCadDftDimArrowStyles.ts";
+import { eApgCadDftLayers } from "../../../src/enums/eApgCadDftLayers.ts";
 import { eApgCadDftTextStyles } from "../../../src/enums/eApgCadDftTextStyles.ts";
 import { eApgCadLinearDimensionTypes } from "../../../src/enums/eApgCadLinearDimensionTypes.ts";
 import { eApgCadStdColors } from "../../../src/enums/eApgCadStdColors.ts";
@@ -25,10 +29,46 @@ import { ApgCadBaseTester } from "./ApgCadBaseTester.ts";
 export class ApgCadFactoriesTester extends ApgCadBaseTester {
 
 
-  static testBasicShapes() {
-    const cad = new ApgCadSvg();
-    cad.svg.title = "Test Random Points";
-    cad.svg.description = "Apg Svg Cad";
+
+  static RunTest(atest: eApgCadTestFactories, isBlackBack = false) {
+
+    let r = "";
+    switch (atest) {
+
+      case eApgCadTestFactories.BASIC_SHAPES:
+        r = this.testBasicShapes(isBlackBack);
+        break;
+      case eApgCadTestFactories.ANNOTATIONS:
+        r = this.testAnnotations(isBlackBack);
+        break;
+      case eApgCadTestFactories.HORIZONTAL_DIMS:
+        r = this.testHorizontalDims(isBlackBack);
+        break;
+      case eApgCadTestFactories.VERTICAL_DIMS:
+        r = this.testVerticalDims(isBlackBack);
+        break;
+      case eApgCadTestFactories.ALIGNED_DIMS:
+        r = this.testAlignedDims(isBlackBack);
+        break;
+      case eApgCadTestFactories.DIAMETER_DIMS:
+        r = this.testDiameterDims(isBlackBack);
+        break;
+      case eApgCadTestFactories.RADIOUS_DIMS:
+        r = this.testRadiousDims(isBlackBack);
+        break;
+      case eApgCadTestFactories.ANGULAR_DIMS:
+        r = this.testAngularDims(isBlackBack);
+        break;
+    }
+
+    return r;
+  }
+
+
+  static testBasicShapes(aisBlackBack = false) {
+    const cad = new ApgCadSvg(aisBlackBack);
+    cad.svg.title = "Test Basic Shapes";
+    cad.svg.description = "Apg Svg Cad Factory";
     const layers = this.buildTestLayers(cad);
     const layId = this.getLayerName(eApgCadTestLayers.GREEN);
     cad.setCurrentLayer(layId);
@@ -38,107 +78,117 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
     const maxSides = 8;
     const minSides = 3;
 
-    const shapeFact = new ApgCadSvgBasicShapesFactory(cad.svg, layers[0]);
+    const shapeFact = new ApgCadSvgBasicShapesFactory(cad,);
 
     for (let i = 0; i < this.randomInN(); i++) {
       const cp = this.randomPointInRange();
       const r = this.randomInt(minR, maxR);
-      const circle = shapeFact.buildCircle(cp, r);
-      circle.fill("none");
+      shapeFact
+        .buildCircle(cp, r)
+        .fill("none")
+        .childOf(layers[0]);
     }
 
     for (let i = 0; i < this.randomInN(); i++) {
       const cp = this.randomPointInRange();
       const r = this.randomInt(minR, maxR);
-      shapeFact.buildDot(cp, r, layers[1]);
+      shapeFact
+        .buildDot(cp, r)
+        .childOf(layers[1]);
     }
 
     for (let i = 0; i < this.randomInN(); i++) {
       const p1 = this.randomPointInRange();
       const p2 = this.randomPointInRange();
-      shapeFact.buildLine(p1, p2, layers[2]);
+      shapeFact
+        .buildLine(p1, p2)
+        .childOf(layers[2]);
     }
 
     for (let i = 0; i < this.randomInN(); i++) {
       const p1 = this.randomPointInRange();
       const w = this.randomInt(minR, maxR);
       const h = this.randomInt(minR, maxR);
-      const rect = shapeFact.buildRectWH(p1, w, h, layers[3]);
-      rect.attrib("fill", "none");
+      shapeFact
+        .buildRect(p1, w, h)
+        .fill("none")
+        .childOf(layers[3]);
     }
 
     for (let i = 0; i < this.randomInN(); i++) {
       const cp = this.randomPointInRange();
       const r = this.randomInt(minR, maxR);
       const sides = this.randomInt(minSides, maxSides);
-      const rect = shapeFact.buildPolygon(cp, r, sides, 360 / sides / 2, layers[4]);
-      rect.fill("none");
-      shapeFact.buildDot(cp, 4);
+      shapeFact
+        .buildPolygon(cp, r, sides, 360 / sides / 2)
+        .fill("none")
+        .childOf(layers[4]);
+      shapeFact
+        .buildDot(cp, 4)
+        .childOf(layers[4]);
+    }
+    this.cartouche(cad);
+    return cad.svg.render();
+  }
+
+  static testAnnotations(isBlackBack = false) {
+
+    const cad = new ApgCadSvg(isBlackBack);
+    cad.svg.title = `Test Annotations`;
+    cad.svg.description = "Apg Svg Cad";
+
+    cad.setCurrentLayer(eApgCadDftLayers.ANNOTATIONS);
+    //const textStyle: IApgSvgTextStyle = { size: 30, stroke: { color: "none", width: 0 }, aspectRatio: 0.5, leading:30 }
+    const textStyle = cad.getTextStyle(eApgCadDftTextStyles.ANNOTATIONS)
+    const annotFact = new ApgCadSvgAnnotationsFactory(
+      cad,
+      textStyle!,
+      eApgCadDftDimArrowStyles.MECHANICAL
+    );
+
+    const strings = [
+      'APG CAD Manual test',
+      'APG CAD, we love it!',
+      'APG CAD is fun \n and is easy',
+      'APG CAD don\'t lie',
+      'APG CAD\nNow multiline!',
+      'APG CAD\nNow even more\nmultiline!',
+    ];
+
+    const maxD = 500;
+    const minD = 100;
+    const ncases = this.randomInN() + 1;
+    const cases = [{
+      stringId: 0,
+      orientation: 0,
+      p1: new A2D.Apg2DPoint(1000, 1000),
+      dispP: new A2D.Apg2DPoint(500, 500),
+    }]
+
+    for (let i = 1; i < ncases; i++) {
+      const dispX = this.randomInt(minD, maxD);
+      const dispY = this.randomInt(minD, maxD);
+
+      cases.push({
+        stringId: this.randomInt(1, strings.length - 1),
+        orientation: this.randomInt(0, 90),
+        p1: this.randomPointInRange(),
+        dispP: new A2D.Apg2DPoint(dispX, dispY)
+      })
     }
 
+    for (const c of cases) {
+      const g = annotFact.build(cad.currentLayer, c.p1, c.dispP, strings[c.stringId], c.orientation)
+      g?.childOf(cad.currentLayer);
+    }
+
+    this.cartouche(cad);
     return cad.svg.render();
+
   }
 
 
-  static testLayers() {
-    const cad = new ApgCadSvg();
 
-    cad.newStrokeStyle('ContinuousGreen4', {
-      color: eApgCadStdColors.GREEN,
-      width: 4
-    });
-
-    cad.newLayer('1', 'ContinuousGreen4');
-    cad.setCurrentLayer('1');
-    cad.svg.line(0, 0, 200, 200)
-      .childOf(cad.currentLayer);
-
-    cad.newStrokeStyle('DottedRed8', {
-      color: eApgCadStdColors.RED,
-      width: 8,
-      dashPattern: [8, 8]
-    });
-
-    cad.newLayer('2', 'DottedRed8');
-    cad.setCurrentLayer('2');
-    cad.svg.line(0, 40, 200, 240)
-      .childOf(cad.currentLayer);
-
-    return cad.svg.render();
-  }
-
-
-  static testLineStyles() {
-    const cad = new ApgCadSvg();
-    cad.svg.title = "Test Line Styles";
-    cad.svg.description = "Apg Eds";
-
-    cad.newStrokeStyle('MyDASHDOT', {
-      color: eApgCadStdColors.GREEN,
-      width: 10,
-      dashPattern: [50, 10, 10, 10]
-    });
-
-    cad.newLayer('1', 'MyDASHDOT');
-    cad.setCurrentLayer('1');
-    cad.svg
-      .line(0, 0, 200, 200)
-      .childOf(cad.currentLayer);
-
-    cad.newStrokeStyle('MyDOT', {
-      color: eApgCadStdColors.BLUE,
-      width: 20,
-      dashPattern: [20, 20]
-    });
-
-    cad.newLayer('2', 'MyDOT');
-    cad.setCurrentLayer('2');
-    cad.svg
-      .line(0, 200, 200, 400)
-      .childOf(cad.currentLayer);
-
-    return cad.svg.render();
-  }
 
   /*  
     private _testDimStyles() {
@@ -149,61 +199,90 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
     }
 */
 
-  static #testLinearDims(atype: eApgCadLinearDimensionTypes) {
+  static #testLinearDims(atype: eApgCadLinearDimensionTypes, isBlackBack = false) {
 
-    const cad = new ApgCadSvg();
+    const RANDOM = true;
+    const cad = new ApgCadSvg(isBlackBack);
     cad.svg.title = `Test Linear dims (${atype})`;
     cad.svg.description = "Apg Svg Cad";
-    const layers = this.buildTestLayers(cad);
-    const layId = this.getLayerName(eApgCadTestLayers.GREEN);
-    cad.setCurrentLayer(layId);
-    const dimFact = new ApgCadSvgLinearDimensionsFactory(cad.svg, layers[eApgCadTestLayers.RED]);
-    dimFact.setup(layers[0], 20, eApgCadDftDimArrowStyles.ARCHITECTURAL);
+    // const textStyle: IApgSvgTextStyle = { size: 30, stroke: { color: "none", width: 0 }, aspectRatio: 0.5 }
+    const textStyle = cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS)
+    const dimFact = new ApgCadSvgLinearDimensionsFactory(
+      cad,
+      textStyle!,
+      eApgCadDftDimArrowStyles.SIMPLE
+    );
 
-
-    const maxD = 100;
-    const minD = 10;
-
-    for (let i = 0; i < this.randomInN(); i++) {
-      const p1 = this.randomPointInRange();
-      const p2 = this.randomPointInRange();
-      const d = this.randomInt(minD, maxD);
-      dimFact.build(atype, p1, p2, d, "<", ">");
-
-      cad.setCurrentLayer(layers[1].ID);
-      cad.svg
-        .line(p1.x, p1.y, p2.x, p2.y)
-        .childOf(cad.currentLayer);
+    const pts: A2D.Apg2DPoint[] = [];
+    if (RANDOM) {
+      for (let i = 0; i < this.randomInN(); i++) {
+        const p1 = this.randomPointInRange();
+        pts.push(p1);
+        const p2 = this.randomPointInRange();
+        pts.push(p2);
+      }
     }
+    else { 
+      pts.push(new A2D.Apg2DPoint(1000, 0));
+      pts.push(new A2D.Apg2DPoint(2000, 1000));
+      pts.push(new A2D.Apg2DPoint(3000, 1000));
+      pts.push(new A2D.Apg2DPoint(4000, 0));
+      pts.push(new A2D.Apg2DPoint(2000, 4000));
+      pts.push(new A2D.Apg2DPoint(1000, 3000));
+      pts.push(new A2D.Apg2DPoint(4000, 3000));
+      pts.push(new A2D.Apg2DPoint(3000, 4000));
+    }
+      
+
+    const maxD = 500;
+    const minD = 100;
+
+    
+    for (let i = 0; i < pts.length; i+=2) {
+
+      const p1 = pts[i];
+      const p2 = pts[i+1];
+      const d = this.randomInt(minD, maxD);
+      //const d = 500;
+
+      cad.setCurrentLayer(eApgCadDftLayers.DIMENSIONS);
+      dimFact
+        .build(atype, p1, p2, d, "<", ">")
+        ?.childOf(cad.currentLayer)
+
+    }
+    this.cartouche(cad);
     return cad.svg.render();
 
   }
 
-  static testHorizontalDims() {
+  static testHorizontalDims(isBlackBack = false) {
     return this.#testLinearDims(
-      eApgCadLinearDimensionTypes.Horizontal);
+      eApgCadLinearDimensionTypes.Horizontal, isBlackBack);
   }
-  static testVerticalDims() {
+  static testVerticalDims(isBlackBack = false) {
     return this.#testLinearDims(
-      eApgCadLinearDimensionTypes.Vertical);
+      eApgCadLinearDimensionTypes.Vertical, isBlackBack);
   }
-  static testAlignedDims() {
+  static testAlignedDims(isBlackBack = false) {
     return this.#testLinearDims(
-      eApgCadLinearDimensionTypes.Aligned);
+      eApgCadLinearDimensionTypes.Aligned, isBlackBack);
   }
 
 
-  static #testArcDims(atype: eApgCadLinearDimensionTypes) {
+  static #testArcDims(atype: eApgCadLinearDimensionTypes, isBlackBack = false) {
 
-    const cad = new ApgCadSvg();
+    const cad = new ApgCadSvg(isBlackBack);
     cad.svg.title = `Test Arc dims (${atype})`;
     cad.svg.description = "Apg Svg Cad";
     const layers = this.buildTestLayers(cad);
-    const layId = this.getLayerName(eApgCadTestLayers.GREEN);
-    cad.setCurrentLayer(layId);
-    const dimFact = new ApgCadSvgLinearDimensionsFactory(cad.svg, layers[eApgCadTestLayers.YELLOW]);
-    dimFact.setup(layers[0], 20, eApgCadDftDimArrowStyles.SIMPLE);
-
+    cad.setCurrentLayer(eApgCadDftLayers.DIMENSIONS);
+    const textStyle = cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS)
+    const dimFact = new ApgCadSvgLinearDimensionsFactory(
+      cad,
+      textStyle!,
+      eApgCadDftDimArrowStyles.SIMPLE
+    );
 
     const maxR = 400;
     const minR = 10;
@@ -232,19 +311,21 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
         .line(pc1!.x, pc1!.y, pc2!.x, pc2!.y)
         .childOf(cad.currentLayer);
 
-      dimFact.build(atype, pc1!, pc2!, 50);
+      dimFact
+        .build(atype, pc1!, pc2!, 50)
+        ?.childOf(cad.currentLayer)
     }
-
+    this.cartouche(cad);
     return cad.svg.render();
   }
 
-  static testDiameterDims() {
+  static testDiameterDims(isBlackBack = false) {
     return this.#testArcDims(
-      eApgCadLinearDimensionTypes.Diameter);
+      eApgCadLinearDimensionTypes.Diameter, isBlackBack);
   }
-  static testRadiousDims() {
+  static testRadiousDims(isBlackBack = false) {
     return this.#testArcDims(
-      eApgCadLinearDimensionTypes.Radious);
+      eApgCadLinearDimensionTypes.Radious, isBlackBack);
   }
 
 
@@ -258,8 +339,8 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
     return delta + min;
   }
 
-  static testAngularDims() {
-    const cad = new ApgCadSvg();
+  static testAngularDims(isBlackBack = false) {
+    const cad = new ApgCadSvg(isBlackBack);
     cad.svg.title = `Test Angular dims`;
     cad.svg.description = "Apg Svg Cad";
     const textStyle = cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS)
@@ -267,15 +348,10 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
     const layId = this.getLayerName(eApgCadTestLayers.GREEN);
     cad.setCurrentLayer(layId);
     const dimFact = new ApgCadSvgAngularDimensionsFactory(
-      cad.svg,
-      layers[eApgCadTestLayers.RED],
+      cad,
       textStyle!,
       eApgCadDftDimArrowStyles.MECHANICAL,
-      20
     );
-
-
-
 
     for (let i = 0; i < this.randomInN(); i++) {
       const p1 = this.randomPointInRange()
@@ -298,47 +374,14 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
       const l2 = new A2D.Apg2DLine(p3, p4);
 
       cad.setCurrentLayer('2');
-      dimFact.build(l1, l2, 50, A2D.eApg2DQuadrant.posXposY, "##", "##");
+      dimFact.build(cad.currentLayer, l1, l2, 50, A2D.eApg2DQuadrant.posXposY, "##", "##");
     }
-
+    this.cartouche(cad);
     return cad.svg.render();
   }
 
 
 
-  static RunTest(atest: eApgCadTestFactories) {
-
-    let r = "";
-    switch (atest) {
-     
-      case eApgCadTestFactories.BASIC_SHAPES:
-        r = this.testBasicShapes();
-        break;
-      case eApgCadTestFactories.DIM_STYLES:
-        //r = this.testDimStyles();
-        break;
-      case eApgCadTestFactories.HORIZONTAL_DIMS:
-        r = this.testHorizontalDims();
-        break;
-      case eApgCadTestFactories.VERTICAL_DIMS:
-        r = this.testVerticalDims();
-        break;
-      case eApgCadTestFactories.ALIGNED_DIMS:
-        r = this.testAlignedDims();
-        break;
-      case eApgCadTestFactories.DIAMETER_DIMS:
-        r = this.testDiameterDims();
-        break;
-      case eApgCadTestFactories.RADIOUS_DIMS:
-        r = this.testRadiousDims();
-        break;
-      case eApgCadTestFactories.ANGULAR_DIMS:
-        r = this.testAngularDims();
-        break;
-    }
-
-    return r;
-  }
 
 }
 

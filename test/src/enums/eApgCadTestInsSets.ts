@@ -6,8 +6,8 @@
  */
 
 /**
- * Groups of instructions sets for testing
+ * Groups of instructions for testing
  */
-export enum eApgCadTestInsSetGroups { 
-    BASIC
+export enum eApgCadTestInsSets { 
+    BASIC = "Basic"
 }

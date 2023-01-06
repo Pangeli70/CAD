@@ -12,9 +12,12 @@
  */
 export enum eApgCadDftLayers {
   BACKGROUND = 'Background',
-  AXISES = 'Axis',
+  GRIDS = 'Grids',
+  CARTESIANS = 'Axis',
+  ANNOTATIONS = 'Annotations',
   DIMENSIONS = 'Dimensions',
   DEBUG = 'Debug',
   HIDDEN = 'Hidden',
   ZERO = '0',
+  CARTOUCHE = "Cartouche",
 }

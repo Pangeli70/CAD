@@ -1,7 +1,13 @@
 [: extends("/master/pico.html") :]
 
 <section>
-
-  [: partial("/partials/svg_pan_zoom_inline_viewer.html") :]
-
+    [: if(testLogger.hasErrors){ :]
+    <p>
+        <code>
+            [: JSON.stringify(testLogger,undefined, '  ').replaceAll('\n','<br>').replaceAll(' ', '&nbsp;') :]
+        </code>
+    </p>
+    [: } else { :]
+        [: partial("/partials/svg_pan_zoom_inline_viewer.html") :]
+    [: } :]
 </section>

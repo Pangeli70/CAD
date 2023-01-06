@@ -17,53 +17,102 @@ import { ApgCadSvgBaseInitializer } from "./ApgCadSvgBaseInitializer.ts";
 export class ApgCadSvgStrokeStylesInitializer extends ApgCadSvgBaseInitializer {
 
     override build() {
-        const none = <Svg.IApgSvgStrokeStyle>{
+        const none: Svg.IApgSvgStrokeStyle = {
             color: eApgCadStdColors.NONE,
             width: eApgCadDftStrokeWidths.NONE,
         };
         this._cad.newStrokeStyle(eApgCadDftStrokeStyles.NONE, none);
 
-        const bkg = <Svg.IApgSvgStrokeStyle>{
-            color: this._cad.settings.background.borderColor,
-            width: this._cad.settings.background.borderWidth,
+        const bkg: Svg.IApgSvgStrokeStyle = {
+            color: this._cad.settings.background.strokeColor,
+            width: this._cad.settings.background.strokeWidth,
         };
         this._cad.newStrokeStyle(eApgCadDftStrokeStyles.BACKGROUND, bkg);
 
-        const axis = <Svg.IApgSvgStrokeStyle>{
-            color: this._cad.settings.axis.axisStroke.color,
-            width: this._cad.settings.axis.axisStroke.width,
+        const fgd: Svg.IApgSvgStrokeStyle = {
+            color: this._cad.settings.foreGround.strokeColor,
+            width: this._cad.settings.foreGround.strokeWidth,
         };
-        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.AXIS, axis);
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.FOREGROUND, fgd);
 
-        const dbg = <Svg.IApgSvgStrokeStyle>{
+        const grids: Svg.IApgSvgStrokeStyle = {
+            color: this._cad.settings.grid.gridStroke.color,
+            width: this._cad.settings.grid.gridStroke.width,
+        };
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.GRIDS, grids);
+
+        const cartesian: Svg.IApgSvgStrokeStyle = {
+            color: this._cad.settings.cartesians.axisStroke.color,
+            width: this._cad.settings.cartesians.axisStroke.width,
+        };
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.CARTESIAN, cartesian);
+
+        const dbg: Svg.IApgSvgStrokeStyle = {
             color: eApgCadStdColors.MAGENTA,
             width: eApgCadDftStrokeWidths.MARKED,
         };
         this._cad.newStrokeStyle(eApgCadDftStrokeStyles.DEBUG, dbg);
 
-        const dft = <Svg.IApgSvgStrokeStyle>{
-            color: eApgCadStdColors.GRAY,
-            width: eApgCadDftStrokeWidths.MILD,
-        };
-        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.DEFAULT, dft);
-
-        const dims = <Svg.IApgSvgStrokeStyle>{
-            color: eApgCadStdColors.RED,
+        const annots: Svg.IApgSvgStrokeStyle = {
+            color: eApgCadStdColors.ORANGE,
             width: eApgCadDftStrokeWidths.THIN,
+        };
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.ANNOTATIONS, annots);
+
+        const dims: Svg.IApgSvgStrokeStyle = {
+            color: eApgCadStdColors.RED,
+            width: eApgCadDftStrokeWidths.MILD,
         };
         this._cad.newStrokeStyle(eApgCadDftStrokeStyles.DIMENSIONS, dims);
 
-        const hdn = <Svg.IApgSvgStrokeStyle>{
+
+        const sym: Svg.IApgSvgStrokeStyle = {
             color: eApgCadStdColors.GRAY,
             width: eApgCadDftStrokeWidths.THIN,
-            dashPattern: [5, 5]
+            dashPattern: [this._cad.standardSize / 20, this._cad.standardSize / 5, this._cad.standardSize, this._cad.standardSize / 5]
+        };
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.SYMMETRY, sym);
+
+        const symLrg: Svg.IApgSvgStrokeStyle = {
+            color: eApgCadStdColors.GRAY,
+            width: eApgCadDftStrokeWidths.MILD,
+            dashPattern: [this._cad.standardSize / 10, this._cad.standardSize / 2, this._cad.standardSize * 2, this._cad.standardSize / 2]
+        };
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.SYMMETRY_LARGE, symLrg);
+
+        const dot: Svg.IApgSvgStrokeStyle = {
+            color: eApgCadStdColors.GRAY,
+            width: eApgCadDftStrokeWidths.THIN,
+            dashPattern: [this._cad.standardSize /20, this._cad.standardSize / 20]
+        };
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.DOTTED, dot);
+
+        const dotLrg: Svg.IApgSvgStrokeStyle = {
+            color: eApgCadStdColors.GRAY,
+            width: eApgCadDftStrokeWidths.MILD,
+            dashPattern: [this._cad.standardSize / 10, this._cad.standardSize / 10]
+        };
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.DOTTED_LARGE, dotLrg);
+
+        const hdn: Svg.IApgSvgStrokeStyle = {
+            color: eApgCadStdColors.GRAY,
+            width: eApgCadDftStrokeWidths.THIN,
+            dashPattern: [this._cad.standardSize / 2, this._cad.standardSize / 2]
         };
         this._cad.newStrokeStyle(eApgCadDftStrokeStyles.HIDDEN, hdn);
 
-        const mkdBlue = <Svg.IApgSvgStrokeStyle>{
-            color: eApgCadStdColors.BLUE,
-            width: eApgCadDftStrokeWidths.MARKED,
+        const hdnLrg: Svg.IApgSvgStrokeStyle = {
+            color: eApgCadStdColors.GRAY,
+            width: eApgCadDftStrokeWidths.MILD,
+            dashPattern: [this._cad.standardSize , this._cad.standardSize]
         };
-        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.MARKED_BLUE, mkdBlue);
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.HIDDEN_LARGE, hdnLrg);
+
+        const cart: Svg.IApgSvgStrokeStyle = {
+            color: this._cad.settings.foreGround.strokeColor, 
+            width: this._cad.settings.foreGround.strokeWidth,
+        };
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.CARTOUCHE, cart);
+
     }
 }

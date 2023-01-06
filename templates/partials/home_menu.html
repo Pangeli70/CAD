@@ -15,10 +15,10 @@
 <h1 style="margin-bottom:1rem; margin-top:2rem">
   [: [#0].title :]
 </h1>
-[: for (const link of [#0].links) { :]
-<span style="margin: 1rem;">
-  <a href="[: link.href :]">
+<p>
+  [: for (const link of [#0].links) { :]
+  <a href="[: link.href :]" style="margin: 1rem;" role="button">
     [: link.caption :]
   </a>
-</span>
-[: } :]
+  [: } :]
+</p>

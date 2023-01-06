@@ -11,10 +11,17 @@
 export enum eApgCadDftStrokeStyles {
   NONE = "None",
   BACKGROUND = "Background",
-  AXIS = "Axis",
-  DEBUG = "Debug",
-  DEFAULT = "Default",
-  DIMENSIONS = "Dimensions",
+  FOREGROUND = "Foreground",
+  GRIDS = "Grids",
+  CARTESIAN = "Cartesian",
+  SYMMETRY = "Symmetry",
+  SYMMETRY_LARGE = "Symmetry_Large",
   HIDDEN = "Hidden",
-  MARKED_BLUE = "MarkedBlue"
+  HIDDEN_LARGE = "HiddenLarge",
+  DOTTED = "Dotted",
+  DOTTED_LARGE = "DottedLarge",
+  DEBUG = "Debug",
+  ANNOTATIONS = "Annotations",
+  DIMENSIONS = "Dimensions",
+  CARTOUCHE = "Cartouche",
 }

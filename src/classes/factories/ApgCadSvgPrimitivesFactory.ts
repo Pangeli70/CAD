@@ -6,47 +6,29 @@
  * @version 0.8.0 [APG 2022/04/03] Porting to Deno
  * @version 0.9.2 [APG 2022/11/30] Github beta
  * @version 0.9.3 [APG 2022/12/18] Deno Deploy
+ * @version 0.9.4 [APG 2023/01/03] Changed from SvgDoc to CadSvg
  * -----------------------------------------------------------------------
  */
-import { Svg } from "../../../deps.ts";
+
 import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { ApgCadSvg } from "../ApgCadSvg.ts";
 
 
 export class ApgCadSvgPrimitivesFactory {
 
   protected _ready = false;
 
-  protected _error = '';
+  protected _messages: string[] = [];
 
   protected _type = eApgCadPrimitiveFactoryTypes.UNDEFINED;
 
-  protected _svgDoc: Svg.ApgSvgDoc;
+  protected _cad: ApgCadSvg;
 
-  protected _parent!: Svg.ApgSvgNode;
 
-  public constructor(adoc: Svg.ApgSvgDoc, aparent: Svg.ApgSvgNode, atype: eApgCadPrimitiveFactoryTypes) {
-    this._svgDoc = adoc;
+  public constructor(acad: ApgCadSvg, atype: eApgCadPrimitiveFactoryTypes) {
+    this._cad = acad;
     this._type = atype;
-    this.changeParent(aparent);
   }
 
-  changeParent(aparent: Svg.ApgSvgNode) {
-    if(aparent.type !== Svg.eApgSvgNodeTypes.Group) {
-      throw new Error(
-        `Trying to set an invalid Layer for the ApgSvgCad...Factory #${aparent.ID} type is "${aparent.type}" instead than "Group"`
-      );
-    }
-    this._parent = aparent;
-  }
-
-  protected _setParent(anode: Svg.ApgSvgNode, aparent?: Svg.ApgSvgNode) {
-    if (aparent && aparent.type === Svg.eApgSvgNodeTypes.Group) {
-      anode.childOf(aparent);
-    }
-    else {
-      anode.childOf(this._parent);
-    }
-  }
-
-  
+ 
 }

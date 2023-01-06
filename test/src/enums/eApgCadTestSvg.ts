@@ -15,5 +15,6 @@ export enum eApgCadTestSvg {
   CIRCLES = "Circles",
   ARCS = "Arcs",
   PATHS = "Paths",
-  LABELS = "Lables"
+  TEXTS = "Texts",
+  ASPECT_RATIOS = "AspectRatios"
 }

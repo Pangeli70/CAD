@@ -9,7 +9,7 @@
 export enum eApgCadPrimitiveFactoryTypes {
   UNDEFINED = "Undefined",
   BASIC_SHAPES = "BasicShapes",
-  AXISES = "Axis",
+  CARTESIANS = "Axis",
   GRIDS = "Grids",
   LINEAR_DIMS = "LinearDims",
   RADIAL_DIMS = "RadialDims",

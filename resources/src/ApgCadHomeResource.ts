@@ -7,7 +7,7 @@
 import { Drash, Tng, Uts } from "../../deps.ts";
 
 import { eApgCadTestDefaults } from "../../test/src/enums/eApgCadTestDefaults.ts";
-import { eApgCadTestInsSetGroups } from "../../test/src/enums/eApgCadTestInsSetGroups.ts";
+import { eApgCadTestInsSets } from "../../test/src/enums/eApgCadTestInsSets.ts";
 import { eApgCadTestFactories } from "../../test/src/enums/eApgCadTestFactories.ts";
 import { eApgCadTestFeatures } from "../../test/src/enums/eApgCadTestFeatures.ts";
 import { eApgCadTestSvg } from "../../test/src/enums/eApgCadTestSvg.ts";
@@ -31,7 +31,7 @@ export class ApgCadHomeResource extends Drash.Resource {
         menu.push(factoriesMenu);
         const defaultsMenu = this.getMenuFromEnum(eApgCadTestDefaults, eApgCadTestTypes.DEFAULTS);
         menu.push(defaultsMenu);
-        const insSetGroupsMenu = this.getMenuFromEnum(eApgCadTestInsSetGroups, eApgCadTestTypes.INS_SET_GROUPS);
+        const insSetGroupsMenu = this.getMenuFromEnum(eApgCadTestInsSets, eApgCadTestTypes.INS_SETS);
         menu.push(insSetGroupsMenu);
 
 

@@ -11,11 +11,11 @@
  * Default Text styles 
  */
 export enum eApgCadDftTextStyles {
-  DEFAULT = 'default',
-  DEBUG = 'debug',
-  MONO = 'mono',
-  TITLE = 'title',
-  DIMENSIONS = 'dimensions',
-  ANNOTATIONS = 'annotations',
-  AXIS_LABEL = 'axis_label'
+  DEFAULT = 'Default',
+  DEBUG = 'Debug',
+  MONO = 'Mono',
+  TITLE = 'Title',
+  DIMENSIONS = 'Dimensions',
+  ANNOTATIONS = 'Annotations',
+  CARTESIAN_LABEL = 'CartesianLabel'
 }

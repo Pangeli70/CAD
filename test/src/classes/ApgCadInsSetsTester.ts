@@ -9,50 +9,47 @@ import { Lgr } from "../../../deps.ts";
 import { ApgCadInstructionsSet } from "../../../src/classes/ApgCadInstructionsSet.ts";
 import { ApgCadSvg } from "../../../src/classes/ApgCadSvg.ts";
 import { ApgCadInsSetTest_01 } from "../../data/ApgCadInsSetTest_01.ts";
-import { eApgCadTestInsSetGroups } from "../enums/eApgCadTestInsSetGroups.ts";
+import { eApgCadTestInsSets } from "../enums/eApgCadTestInsSets.ts";
 import { IApgCadInsSetTest } from "../interfaces/IApgCadInsSetTest.ts";
+import { ApgCadBaseTester } from "./ApgCadBaseTester.ts";
 
-export class ApgCadInsSetTester {
+export class ApgCadInsSetsTester extends ApgCadBaseTester {
 
+    protected static _ready = false;
     protected static _tests: Map<string, IApgCadInsSetTest> = new Map();
 
-
-    constructor() {
-        ApgCadInsSetTester.init();
-    }
-
-    static init() {
+    protected static init() {
 
         this._tests.set(ApgCadInsSetTest_01.name, ApgCadInsSetTest_01);
+        this._ready = true;
     }
 
-    static getTestNamesForGroup(agroup: eApgCadTestInsSetGroups) {
-        const r: string[] = []
-        this._tests.forEach((test) => {
-            if (test.group == agroup) {
-                r.push(test.name);
-            }
-        })
-        r.sort();
-        return r;
-    }
 
-    static getTest(atestName: string) {
+    static GetTest(atestName: string) {
+
+        if (!this._ready) this.init();
+
         return this._tests.get(atestName);
     }
 
 
-    static RunTest(aname: string) {
-        const cad = new ApgCadSvg();
+    static RunTest(aname: string, isBlackBack = false) {
+        
+        if (!this._ready) this.init();
+
+        const cad = new ApgCadSvg(isBlackBack);
         cad.svg.title = `Test instructions set`;
         cad.svg.description = "Apg Svg Cad";
 
         const logger = new Lgr.ApgLgr('Instructions set');
-        const test = this.getTest(aname);
+        const test = this.GetTest(aname);
         // TODO @4 APG 20221228 Test here for undefined
         const insSet = new ApgCadInstructionsSet(logger, cad, test!.instructions);
-        const svg = insSet.build();
-        return svg
+        insSet.build();
+        this.cartouche(cad);
+
+        const svg = cad.svg.render();
+        return { svg, logger }
     }
 
 

@@ -9,14 +9,14 @@ import { eApgCadInstructionTypes } from "../../src/enums/eApgCadInstructionTypes
 import { eApgCadTestInsSets } from "../src/enums/eApgCadTestInsSets.ts";
 import { IApgCadInsSetTest } from "../src/interfaces/IApgCadInsSetTest.ts";
 
-export const ApgCadInsSetTest_01: IApgCadInsSetTest = {
+export const ApgCadInsSetTest_02: IApgCadInsSetTest = {
     name: eApgCadTestInsSets.BASIC,
-    description: "Some points and lines on the default layer: Zero ",
+    description: "All the primitives on default layers",
     instructions: [
         {
             id: 0,
             type: eApgCadInstructionTypes.SET_NAME,
-            name: 'TEST 01',
+            name: 'TEST 02',
         },
         {
             id: 1,
@@ -34,24 +34,9 @@ export const ApgCadInsSetTest_01: IApgCadInsSetTest = {
         },
         {
             id: 3,
-            type: eApgCadInstructionTypes.DRAW_LINE,
-            name: 'L2',
+            type: eApgCadInstructionTypes.DRAW_ANNOTATION,
+            name: 'Annot1',
             points: ['P1', 'P2']
-        },
-        {
-            id: 4,
-            type: eApgCadInstructionTypes.NEW_POINT_DELTA,
-            name: 'P3',
-            origin: 'P2',
-            x: 500,
-            y: 100,
-        },
-        {
-            id: 5,
-            type: eApgCadInstructionTypes.DRAW_ALL_POINTS,
-            name: 'Draw_all_pts',
-            radious: 10
-        },
-        
+        }
     ]
 }

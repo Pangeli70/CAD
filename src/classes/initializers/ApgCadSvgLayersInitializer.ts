@@ -7,6 +7,7 @@
 import { eApgCadDftFillStyles } from "../../enums/eApgCadDftFillStyles.ts";
 import { eApgCadDftLayers } from "../../enums/eApgCadDftLayers.ts";
 import { eApgCadDftStrokeStyles } from "../../enums/eApgCadDftStrokeStyles.ts";
+import { eApgCadDftTextStyles } from "../../enums/eApgCadDftTextStyles.ts";
 import { ApgCadSvgBaseInitializer } from "./ApgCadSvgBaseInitializer.ts";
 
 
@@ -19,36 +20,64 @@ export class ApgCadSvgLayersInitializer extends ApgCadSvgBaseInitializer {
         this._cad.newLayer(
             eApgCadDftLayers.BACKGROUND,
             eApgCadDftStrokeStyles.BACKGROUND,
-            eApgCadDftFillStyles.BACKGROUND
+            eApgCadDftFillStyles.BACKGROUND,
+            eApgCadDftTextStyles.MONO
         );
 
         this._cad.newLayer(
-            eApgCadDftLayers.AXISES,
-            eApgCadDftStrokeStyles.AXIS
+            eApgCadDftLayers.GRIDS,
+            eApgCadDftStrokeStyles.GRIDS,
+            eApgCadDftFillStyles.NONE,
+            eApgCadDftTextStyles.MONO
+        );
+
+        this._cad.newLayer(
+            eApgCadDftLayers.CARTESIANS,
+            eApgCadDftStrokeStyles.CARTESIAN,
+            eApgCadDftFillStyles.NONE,
+            eApgCadDftTextStyles.CARTESIAN_LABEL
+        );
+
+        this._cad.newLayer(
+            eApgCadDftLayers.ANNOTATIONS,
+            eApgCadDftStrokeStyles.ANNOTATIONS,
+            eApgCadDftFillStyles.ANNOTATIONS,
+            eApgCadDftTextStyles.ANNOTATIONS
         );
 
         this._cad.newLayer(
             eApgCadDftLayers.DIMENSIONS,
             eApgCadDftStrokeStyles.DIMENSIONS,
-            eApgCadDftFillStyles.DIMENSIONS
+            eApgCadDftFillStyles.DIMENSIONS,
+            eApgCadDftTextStyles.DIMENSIONS
         );
 
         this._cad.newLayer(
             eApgCadDftLayers.DEBUG,
             eApgCadDftStrokeStyles.DEBUG,
-            eApgCadDftFillStyles.DEBUG
+            eApgCadDftFillStyles.DEBUG,
+            eApgCadDftTextStyles.DEBUG
         );
 
         this._cad.newLayer(
             eApgCadDftLayers.HIDDEN,
             eApgCadDftStrokeStyles.HIDDEN,
-            eApgCadDftFillStyles.HIDDEN
+            eApgCadDftFillStyles.HIDDEN,
+            eApgCadDftTextStyles.MONO
         );
 
         this._cad.newLayer(
             eApgCadDftLayers.ZERO,
-            eApgCadDftStrokeStyles.MARKED_BLUE,
-            eApgCadDftFillStyles.NONE
+            eApgCadDftStrokeStyles.FOREGROUND,
+            eApgCadDftFillStyles.NONE,
+            eApgCadDftTextStyles.DEFAULT
+        );
+
+        this._cad.newLayer(
+            eApgCadDftLayers.CARTOUCHE,
+            eApgCadDftStrokeStyles.CARTOUCHE,
+            eApgCadDftFillStyles.CARTOUCHE,
+            eApgCadDftTextStyles.TITLE
         );
 
     }

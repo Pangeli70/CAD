@@ -17,7 +17,8 @@ export * as  Drash from "https://deno.land/x/drash@v2.5.4/mod.ts";
 export { CORSService as DrashCorsService } from "https://deno.land/x/drash@v2.5.4/src/services/cors/cors.ts";
 
 // https://github
-export * as A2D from "https://raw.githubusercontent.com/Pangeli70/apg-2d/master/mod.ts";
+// export * as A2D from "https://raw.githubusercontent.com/Pangeli70/apg-2d/master/mod.ts";
+export * as A2D from "../2D/mod.ts";
 export * as Rst from "https://raw.githubusercontent.com/Pangeli70/apg-rst/master/mod.ts";
 //export * as Svg from "https://raw.githubusercontent.com/Pangeli70/apg-svg/master/mod.ts";
 export * as Svg from "../SVG/mod.ts";

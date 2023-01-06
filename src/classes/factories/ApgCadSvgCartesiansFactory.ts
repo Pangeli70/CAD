@@ -6,13 +6,15 @@
  * @version 0.8.0 [APG 2022/04/03] Porting to Deno
  * @version 0.9.2 [APG 2022/11/30] Github beta
  * @version 0.9.3 [APG 2022/12/18] Deno Deploy
+ * @version 0.9.4 [APG 2023/12/04] ...
  * -----------------------------------------------------------------------
  */
 
 import { A2D, Svg } from "../../../deps.ts";
 import { eApgCadOrientations } from "../../enums/eApgCadOrientations.ts";
 import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
-import { IApgCadSvgAxis } from "../../interfaces/IApgCadSvgAxis.ts";
+import { IApgCadSvgCartesians } from "../../interfaces/IApgCadSvgCartesians.ts";
+import { ApgCadSvg } from "../ApgCadSvg.ts";
 import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
 
 
@@ -25,24 +27,24 @@ interface IApgCadAxisTickData {
 }
 
 
-export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
+export class ApgCadSvgCartesiansFactory extends ApgCadSvgPrimitivesFactory {
 
-  public constructor(adoc: Svg.ApgSvgDoc, anode: Svg.ApgSvgNode) {
-    super(adoc, anode, eApgCadPrimitiveFactoryTypes.AXISES);
+  public constructor(acad: ApgCadSvg) {
+    super(acad, eApgCadPrimitiveFactoryTypes.CARTESIANS);
   }
 
   build(
+    aparent: Svg.ApgSvgNode,
     atype: eApgCadOrientations,
-    asettings: IApgCadSvgAxis,
-    alayer?: Svg.ApgSvgNode,
+    asettings: IApgCadSvgCartesians,
   ) {
-    const r = this._svgDoc.group();
-    r
+    const r = this._cad.svg
+      .group()
       .stroke(asettings.axisStroke.color, asettings.axisStroke.width)
-      .childOf(alayer ? alayer : this._parent);
+      .childOf(aparent);
 
-    const topLeft = this._svgDoc.topLeft();
-    const bottomRight = this._svgDoc.bottomRight();
+    const topLeft = this._cad.svg.bottomLeft();
+    const bottomRight = this._cad.svg.topRight();
 
     let p1, p2: A2D.Apg2DPoint;
     if (atype == eApgCadOrientations.horizontal) {
@@ -53,7 +55,7 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
       p2 = new A2D.Apg2DPoint(0, bottomRight.y);
     }
 
-    this._svgDoc
+    this._cad.svg
       .line(p1.x, p1.y, p2.x, p2.y)
       .childOf(r);
 
@@ -63,40 +65,40 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
   }
 
   #drawTicks(
-    aancestor: Svg.ApgSvgNode,
+    aparent: Svg.ApgSvgNode,
     atype: eApgCadOrientations,
-    aaxis: IApgCadSvgAxis,
+    aaxis: IApgCadSvgCartesians,
   ) {
     let firstTick: number;
     let lastTick: number;
     let ticksNum: number;
-    const topLeft = this._svgDoc.topLeft();
-    const bottomRight = this._svgDoc.bottomRight();
+    const topLeft = this._cad.svg.bottomLeft();
+    const bottomRight = this._cad.svg.topRight();
 
     if (atype == eApgCadOrientations.horizontal) {
 
-      firstTick = Math.floor(topLeft.x / aaxis.ticksDistance)
-        * aaxis.ticksDistance;
-      lastTick = Math.floor(bottomRight.x / aaxis.ticksDistance)
-        * aaxis.ticksDistance;
-      ticksNum = (lastTick - firstTick) / aaxis.ticksDistance;
+      firstTick = Math.floor(topLeft.x / aaxis.ticksStep) * aaxis.ticksStep;
+      lastTick = Math.floor(bottomRight.x / aaxis.ticksStep) * aaxis.ticksStep;
+      ticksNum = (lastTick - firstTick) / aaxis.ticksStep;
 
     } else {
 
-      firstTick = Math.floor(topLeft.y / aaxis.ticksDistance)
-        * aaxis.ticksDistance;
-      lastTick = Math.floor(bottomRight.y / aaxis.ticksDistance)
-        * aaxis.ticksDistance;
-      ticksNum = (lastTick - firstTick) / aaxis.ticksDistance;
+      firstTick = Math.floor(topLeft.y / aaxis.ticksStep) * aaxis.ticksStep;
+      lastTick = Math.floor(bottomRight.y / aaxis.ticksStep) * aaxis.ticksStep;
+      ticksNum = (lastTick - firstTick) / aaxis.ticksStep;
     }
 
-    const ticksG = this._svgDoc.group().childOf(aancestor);
+    const ticksG = this._cad.svg
+      .group()
+      .childOf(aparent);
 
-    const labelsG = this._svgDoc.group().childOf(aancestor);
+    const labelsG = this._cad.svg
+      .group()
+      .childOf(aparent);
+
     if (aaxis.labelsStyle) {
       labelsG.textStyle(aaxis.labelsStyle);
     }
-
 
     let currentTick = 0;
     do {
@@ -108,12 +110,12 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
   }
 
   #getTickData(
-    aaxis: IApgCadSvgAxis,
+    aaxis: IApgCadSvgCartesians,
     atype: eApgCadOrientations,
     atickNumber: number,
     afirstTick: number,
   ) {
-    const tickValue = (atickNumber * aaxis.ticksDistance) + afirstTick;
+    const tickValue = (atickNumber * aaxis.ticksStep) + afirstTick;
     // If nth tick so is Big one
     const isBigTick = tickValue % aaxis.bigTicksEvery === 0;
     /** Lenght of the tick */
@@ -133,21 +135,21 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
   }
 
   #drawTick(
-    aancestor: Svg.ApgSvgNode,
-    aaxis: IApgCadSvgAxis,
+    aparent: Svg.ApgSvgNode,
+    aaxis: IApgCadSvgCartesians,
     atickData: IApgCadAxisTickData,
   ) {
     if (aaxis.drawTicks) {
 
-      this._svgDoc
+      this._cad.svg
         .line(atickData.p1.x, atickData.p1.y, atickData.p2.x, atickData.p2.y)
-        .childOf(aancestor);
+        .childOf(aparent);
     }
   }
 
   #drawTickLabel(
-    aancestor: Svg.ApgSvgNode,
-    aaxis: IApgCadSvgAxis,
+    aparent: Svg.ApgSvgNode,
+    aaxis: IApgCadSvgCartesians,
     atype: eApgCadOrientations,
     atickData: IApgCadAxisTickData,
   ) {
@@ -165,9 +167,9 @@ export class ApgCadSvgAxisFactory extends ApgCadSvgPrimitivesFactory {
           }
         }
 
-        const _label = this._svgDoc
-          .text(labelPoint.x, labelPoint.y, atickData.tickValue.toString())
-          .childOf(aancestor);
+        const _label = this._cad.svg
+          .text(labelPoint.x, labelPoint.y, atickData.tickValue.toString(), 0)
+          .childOf(aparent);
       }
     }
   }

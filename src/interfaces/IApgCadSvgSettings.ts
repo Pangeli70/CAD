@@ -10,17 +10,24 @@
  */
 
 import { IApgCadSvgViewBox } from "./IApgCadSvgViewBox.ts";
-import { IApgCadSvgBackground } from "./IApgCadSvgBackground.ts";
-import { IApgCadSvgAxis } from "./IApgCadSvgAxis.ts";
+import { IApgCadSvgGround } from "./IApgCadSvgGround.ts";
+import { IApgCadSvgCartesians } from "./IApgCadSvgCartesians.ts";
+import { IApgCadSvgGrid } from "./IApgCadSvgGrid.ts";
 
 
 export interface IApgCadSvgSettings {
   /** Name of the SVG object */
   name: string;
+  // Drawing has black background
+  blackBackground: boolean
   /** ViewBox settings */
   viewBox: IApgCadSvgViewBox;
   /** Background settings */
-  background: IApgCadSvgBackground;
+  background: IApgCadSvgGround;
+  /** Foreground settings */
+  foreGround: IApgCadSvgGround;
   /** Axis settings */
-  axis: IApgCadSvgAxis;
+  cartesians: IApgCadSvgCartesians;
+  /** grids settings */
+  grid : IApgCadSvgGrid;
 }

@@ -10,13 +10,13 @@
  */
 
 
-export interface IApgCadSvgBackground {
+export interface IApgCadSvgGround {
   /** Flag that controls if the background has to be drawn */
   draw: boolean;
-  /** Width of the border of the backgrund in pixels*/
-  borderWidth: number;
+  /** Width of the border of the ground in pixels*/
+  strokeWidth: number;
   /** Color of the border of the background*/
-  borderColor: string;
-  /** Color of the rectangle of the background */
+  strokeColor: string;
+  /** Color of ground */
   fillColor: string;
 }

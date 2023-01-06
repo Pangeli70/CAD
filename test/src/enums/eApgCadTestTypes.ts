@@ -13,6 +13,6 @@ export enum eApgCadTestTypes {
     FEATURES = "Features",
     FACTORIES = "Factories",
     DEFAULTS = "Defaults",
-    INS_SET_GROUPS = "InsSetGroups",
+    INS_SETS = "InsSets",
 
 }

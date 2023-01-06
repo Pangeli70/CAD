@@ -10,9 +10,10 @@ import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactor
 import { ApgCadSvgAnnotationsFactory } from "../factories/ApgCadSvgAnnotationsFactory.ts";
 import { ApgCadSvgLinearDimensionsFactory } from "../factories/ApgCadSvgLinearDimensionsFactory.ts";
 import { ApgCadSvgAngularDimensionsFactory } from "../factories/ApgCadSvgAngularDimensionsFactory.ts";
-import { ApgCadSvgAxisFactory } from "../factories/ApgCadSvgAxisFactory.ts";
+import { ApgCadSvgCartesiansFactory } from "../factories/ApgCadSvgCartesiansFactory.ts";
 import { ApgCadSvgBasicShapesFactory } from "../factories/ApgCadSvgBasicShapesFactory.ts";
 import { ApgCadSvgBaseInitializer } from "./ApgCadSvgBaseInitializer.ts";
+import { ApgCadSvgGridFactory } from "../factories/ApgCadSvgGridFactory.ts";
 
 
 /** 
@@ -23,65 +24,38 @@ export class ApgCadSvgPrimitivesFactoriesInitializer extends ApgCadSvgBaseInitia
     override build() {
 
 
-        const basicShapes = new ApgCadSvgBasicShapesFactory(
-            this._cad.svg,
-            this._cad.svg.getRoot(),
-        );
-        this._cad.primitiveFactories.set(
-            eApgCadPrimitiveFactoryTypes.BASIC_SHAPES,
-            basicShapes,
-        );
+        const basicShapes = new ApgCadSvgBasicShapesFactory(this._cad);
+        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.BASIC_SHAPES, basicShapes,);
 
+        const grid = new ApgCadSvgGridFactory(this._cad);
+        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.GRIDS, grid,);
 
-        const axis = new ApgCadSvgAxisFactory(
-            this._cad.svg,
-            this._cad.svg.getRoot(),
-        );
-        this._cad.primitiveFactories.set(
-            eApgCadPrimitiveFactoryTypes.AXISES,
-            axis,
-        );
+        const cartesians = new ApgCadSvgCartesiansFactory(this._cad);
+        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.CARTESIANS, cartesians,);
 
-
-        const textStyle = this._cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS);
+        const annotationsTextStyle = this._cad.getTextStyle(eApgCadDftTextStyles.ANNOTATIONS);
         const annotations = new ApgCadSvgAnnotationsFactory(
-            this._cad.svg,
-            this._cad.svg.getRoot(),
-            textStyle!,
+            this._cad,
+            annotationsTextStyle!,
             eApgCadDftDimArrowStyles.MECHANICAL
         );
-        this._cad.primitiveFactories.set(
-            eApgCadPrimitiveFactoryTypes.ANNOTATIONS,
-            annotations,
-        );
+        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.ANNOTATIONS, annotations,);
 
-
+        const dimensionsTextStyle = this._cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS);
         const linearDims = new ApgCadSvgLinearDimensionsFactory(
-            this._cad.svg,
-            this._cad.svg.getRoot()
-        );
-        linearDims.setup(
-            this._cad.svg.getRoot(),
-            20,
+            this._cad,
+            dimensionsTextStyle!,
             eApgCadDftDimArrowStyles.MECHANICAL
         )
-        this._cad.primitiveFactories.set(
-            eApgCadPrimitiveFactoryTypes.LINEAR_DIMS,
-            linearDims,
-        );
-        
+        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.LINEAR_DIMS, linearDims,);
+
 
         const angulardDims = new ApgCadSvgAngularDimensionsFactory(
-            this._cad.svg,
-            this._cad.svg.getRoot(),
-            textStyle!,
-            eApgCadDftDimArrowStyles.MECHANICAL,
-            20
+            this._cad,
+            dimensionsTextStyle!,
+            eApgCadDftDimArrowStyles.MECHANICAL
         );
-        this._cad.primitiveFactories.set(
-            eApgCadPrimitiveFactoryTypes.ANGULAR_DIMS,
-            angulardDims,
-        );
+        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.ANGULAR_DIMS, angulardDims,);
 
     }
 }

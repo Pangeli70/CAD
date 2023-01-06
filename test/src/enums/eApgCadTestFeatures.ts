@@ -10,10 +10,11 @@
  */
 
 export enum eApgCadTestFeatures {
-  LAYERS = "Layers",
   STROKE_STYLES = "StrokeStyles",
   FILL_STYLES = "FillStyles",
   TEXT_STYLES = "TextStyles",
+  LAYERS = "Layers",
+  BLOCKS = "Blocks",
   PATTERNS = "Patterns",
   GRADIENTS = "Gradients"
 }

@@ -10,7 +10,7 @@ import { eApgCadInstructionTypes } from "../enums/eApgCadInstructionTypes.ts";
 
 const rawSchema: Jsv.IApgJsvInterface = {
     $schema: 'http://json-schema.org/schema#',
-    $id: 'IApgCadInsSetName#',
+    $id: 'IApgCadIns_SetName#',
     type: 'object',
     properties: {
         id: {

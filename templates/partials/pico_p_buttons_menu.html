@@ -1,0 +1,20 @@
+<pre hidden>
+  [: arguments({
+    "#0": [
+      { 
+        "href": "string", 
+        "caption": "string"
+      }
+    ]
+  }) :]
+</pre>
+
+[: if( [#0] != undefined){ :]
+<p style="text-align: center;">
+  [: for (const link of [#0]) { :]
+  <a href="[: link.href :]" style="margin: 0 0 0 1rem;" role="button">
+    [: link.caption :]
+  </a>
+  [: } :]
+</p>
+[: } :]

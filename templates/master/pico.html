@@ -45,6 +45,7 @@
               <h1 class="apg-page-title">
                 [: page.title :]
               </h1>
+              [: partial("/partials/pico_p_buttons_menu.html", [page.menu]) :]
             </td>
           </tr>
         </table>
@@ -59,7 +60,7 @@
 
     </header>
 
-    <main style="padding: 0">
+    <main style="padding: 0; display: flex; justify-content: center;">
       [: yield :]
     </main>
 

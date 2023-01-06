@@ -18,6 +18,7 @@ export enum eApgCadStdColors {
   LAYER = 'layer',
   NONE = 'none',
   RED = 'red',
+  ORANGE = 'orange',
   YELLOW = 'yellow',
   GREEN = 'green',
   CYAN = 'cyan',
