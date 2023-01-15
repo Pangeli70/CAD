@@ -8,16 +8,22 @@
 import { Uts, Jsv } from '../../deps.ts'
 import { eApgCadInstructionTypes } from "../enums/eApgCadInstructionTypes.ts";
 
-const rawSchema: Jsv.IApgJsvEnum = {
-    $schema: "http://json-schema.org/schema#",
-    $id: "eApgCadIns_Types#",
-    definitions: {
-        enumType: {
-            type: "string",
-            enum: Uts.ApgUtsEnum.StringValues(eApgCadInstructionTypes)
+
+const rawSchema: Jsv.IApgJsvInterface = {
+    $schema: 'http://json-schema.org/schema#',
+    $id: 'IApgCadIns_NoGroup#',
+    type: 'object',
+    properties: {
+        type: {
+            const: eApgCadInstructionTypes.NO_GROUP as string
         }
-    }
-}
+    },
+    additionalProperties: false,
+    allErrors: true,
+    required: [
+        'type',
+    ]
 
+};
 
-export const eApgCadIns_TypesSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvEnum;
+export const ApgCadIns_NoGroupSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvInterface;

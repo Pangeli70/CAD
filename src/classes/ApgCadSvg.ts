@@ -352,7 +352,7 @@ export class ApgCadSvg {
   /** Draws the axis and grid on the drawing.
      * This method must be called in the proper order becuse clears 
      * the entire content of the drawing */
-  setAxis(aa: IApgCadSvgCartesians) {
+  setCartesian(aa: IApgCadSvgCartesians) {
     this.settings.cartesians = Object.assign({}, this.settings.cartesians, aa);
     this.#init();
   }

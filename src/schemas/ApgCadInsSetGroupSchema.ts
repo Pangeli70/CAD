@@ -11,37 +11,22 @@ import { eApgCadInstructionTypes } from "../enums/eApgCadInstructionTypes.ts";
 
 const rawSchema: Jsv.IApgJsvInterface = {
     $schema: 'http://json-schema.org/schema#',
-    $id: 'IApgCadIns_DrawLine#',
+    $id: 'IApgCadIns_SetGroup#',
     type: 'object',
     properties: {
         type: {
-            const: eApgCadInstructionTypes.DRAW_LINE as string
+            const: eApgCadInstructionTypes.SET_GROUP as string
         },
         name: {
-            type: 'string'
-        },
-        points: {
-            type: 'array',
-            items: {
-                type: 'string'
-            },
-            minItems: 2,
-            maxItems: 2,
-            uniqueItems: true
-        },
-        angle: {
-            type: 'number'
-        },
-        strokeStyle: {
-            type: 'string'
+            type: 'string',
         }
     },
     additionalProperties: false,
     allErrors: true,
     required: [
-        'type', 'name', 'points'
+        'type', 'name'
     ]
 
 };
 
-export const ApgCadIns_DrawLineSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvInterface;
+export const ApgCadIns_SetGroupSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvInterface;

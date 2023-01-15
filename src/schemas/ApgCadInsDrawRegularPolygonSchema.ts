@@ -11,37 +11,39 @@ import { eApgCadInstructionTypes } from "../enums/eApgCadInstructionTypes.ts";
 
 const rawSchema: Jsv.IApgJsvInterface = {
     $schema: 'http://json-schema.org/schema#',
-    $id: 'IApgCadIns_DrawLine#',
+    $id: 'IApgCadIns_DrawRegularPolygon#',
     type: 'object',
     properties: {
         type: {
-            const: eApgCadInstructionTypes.DRAW_LINE as string
+            const: eApgCadInstructionTypes.DRAW_REGULAR_POLYGON as string
         },
         name: {
             type: 'string'
         },
-        points: {
-            type: 'array',
-            items: {
-                type: 'string'
-            },
-            minItems: 2,
-            maxItems: 2,
-            uniqueItems: true
+        origin: {
+            type: 'string',
+        },
+        radious: {
+            type: 'number'
+        },
+        n: {
+            type: 'number',
+            minimum: 3,
+            maximum: 20
         },
         angle: {
             type: 'number'
         },
-        strokeStyle: {
+        pivot: {
             type: 'string'
-        }
+        },
     },
     additionalProperties: false,
     allErrors: true,
     required: [
-        'type', 'name', 'points'
+        'type', 'name', 'origin', 'n'
     ]
 
 };
 
-export const ApgCadIns_DrawLineSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvInterface;
+export const ApgCadIns_DrawRegularPolygonSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvInterface;

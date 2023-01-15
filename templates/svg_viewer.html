@@ -2,12 +2,13 @@
 
 <section>
     [: if(testLogger.hasErrors){ :]
+    [: partial("/partials/pico_logger.html") :]
     <p>
         <code>
             [: JSON.stringify(testLogger,undefined, '  ').replaceAll('\n','<br>').replaceAll(' ', '&nbsp;') :]
         </code>
     </p>
     [: } else { :]
-        [: partial("/partials/svg_pan_zoom_inline_viewer.html") :]
+    [: partial("/partials/svg_pan_zoom_inline_viewer.html") :]
     [: } :]
 </section>

@@ -1,0 +1,27 @@
+<div>
+    [: if(testLogger.hasErrors){ :]
+    <p>
+        [: for (let i = 0; i != testLogger.events.length-1; i++ ){ :]
+        [: const event = testLogger.events[i]; :]
+        [: const padding = "&nbsp".repeat(event.depth * 2); :]
+        [: padding :]
+        [: event.className :].[: event.method :]
+        [: if (event.result.payload) { :]
+        .[: event.result.payload.data :]
+        [: } :]
+        [: if(event.result.error != 0) { :]
+        <br>
+        <span style="color: red;">
+            [: padding :][: JSON.stringify(event.result.codedMessage).replaceAll(" ", "&nbsp;") :]
+            [: if (event.result.payload.data.errors) { :]
+                <br>
+                [: padding :][: JSON.stringify(event.result.payload.data.errors) :] 
+            [: } :]
+        </span>
+        [: } :]
+        [: event.result.message :]
+        <br>
+        [: } :]
+    </p>
+    [: } :]
+</div>

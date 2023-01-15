@@ -1,7 +1,8 @@
 /** -----------------------------------------------------------------------
- * @module [JSV]
+ * @module [CAD-JSV]
  * @author [APG] ANGELI Paolo Giusto
  * @version 0.9.3 [APG 2022/12/26] Github Beta
+ * @version 0.9.4 [APG 2023/01/07] Deno Deploy Beta
   * -----------------------------------------------------------------------
  */
 import { Uts, Jsv } from '../../deps.ts'
@@ -13,9 +14,7 @@ const rawSchema: Jsv.IApgJsvInterface = {
     $id: 'IApgCadIns_NewPointDelta#',
     type: 'object',
     properties: {
-        id: {
-            type: 'integer'
-        },
+
         type: {
             const: eApgCadInstructionTypes.NEW_POINT_DELTA as string
         },
@@ -25,17 +24,17 @@ const rawSchema: Jsv.IApgJsvInterface = {
         origin: {
             type: 'string',
         },
-        x: {
+        w: {
             type: 'number'
         },
-        y: {
+        h: {
             type: 'number'
         }
     },
     additionalProperties: false,
     allErrors: true,
     required: [
-        'id', 'type', 'name', 'origin', 'x', 'y'
+        'type', 'name', 'origin', 'w', 'h'
     ]
 
 };

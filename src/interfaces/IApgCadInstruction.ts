@@ -13,19 +13,37 @@ import { eApgCadInstructionTypes } from '../enums/eApgCadInstructionTypes.ts';
 
 
 export interface IApgCadInstruction {
-  id: number;
   type: eApgCadInstructionTypes;
+  /** name of the instruction or of the item that will be created */
   name?: string;
+  /** horizontal coordinate */
   x?: number;
+  /** vertical coordinate */
   y?: number;
+  /** width */
+  w?: number;
+  /** height */
+  h?: number;
+  /** number of items */
+  n?: number;
+  /** name of the point used for circles and arcs */
   origin?: string;
+  /** for circles and arcs */
   radious?: number;
+  /** name of the point used for rotations */
   pivot?: string;
+  /** for rotations */
   angle?: number;
+  /** names of the points used for lines, polylines, polygons etc */
   points?: string[];
+  /** for labels, annotations etc */
   text?: string[];
-  stroke?: string;
-  fill?: string;
-  font?: string;
+  /** stroke style name, must be already defined */
+  strokeStyle?: string;
+  /** fills style name, must be already defined */
+  fillStyle?: string;
+  /** text style name, must be already defined*/
+  textStyle?: string;
+  /** other content specific of the instruction, must be validated elsewhere */
   payload?: any;
 }
