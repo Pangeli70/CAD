@@ -23,11 +23,14 @@ const rawSchema: Jsv.IApgJsvInterface = {
         radious: {
             type: 'number'
         },
+        textStyle: {
+            type: 'string'
+        },
     },
     additionalProperties: false,
     allErrors: true,
     required: [
-        'type', 'name', 'radious'
+        'type', 'radious'
     ]
 
 };

@@ -28,6 +28,8 @@ import { ApgCadSvgAnnotationsFactory } from "./factories/ApgCadSvgAnnotationsFac
 import { ApgCadSvgBasicShapesFactory } from "./factories/ApgCadSvgBasicShapesFactory.ts";
 import { ApgCadSvgLinearDimensionsFactory } from "./factories/ApgCadSvgLinearDimensionsFactory.ts";
 import { ApgCadSvg } from "./ApgCadSvg.ts";
+import { eApgCadArcDimensionTypes } from "../enums/eApgCadArcDimensionTypes.ts";
+import { ApgCadSvgArcDimensionsFactory } from "./factories/ApgCadSvgArcDimensionsFactory.ts";
 
 
 /** Apg Svg Instruction set Manager
@@ -409,65 +411,62 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   // #region Points management --------------------------------------------------
 
   /** Adds a point to the points set. */
-  newPoint_(
-    ax: number,
-    ay: number,
-    anewPointName?: string
-  ) {
+  newPoint_(ainstruction: IApgCadInstruction) {
 
     this.logBegin(this.newPoint_.name);
-    this.logTrace(`${this._currId++}`);
 
-    if (anewPointName) {
-      const pointExists = this._points.get(anewPointName);
+    if (ainstruction.name) {
+      const pointExists = this._points.get(ainstruction.name);
       if (pointExists) {
         this._status = Rst.ApgRstErrors.AlreadyExists(
           "",
           `Point named [%1] already exists`,
-          [anewPointName]
+          [ainstruction.name]
         )
       }
     }
     if (this._status.Ok) {
-      const newPoint = new A2D.Apg2DPoint(ax, ay);
+      const newPoint = new A2D.Apg2DPoint(ainstruction.x!, ainstruction.y!);
       this._lastPointIndex++;
       let pointName;
-      if (!anewPointName) {
+      if (!ainstruction.name) {
         pointName = 'P#' + this._lastPointIndex;
       }
       else {
-        pointName = anewPointName;
+        pointName = ainstruction.name;
       }
       this._points.set(pointName, newPoint);
+      this.#traceMethod("NewPoint", ainstruction.name);
     }
-
     this.logEnd(this._status);
   }
 
 
   /** Adds a point to the points set, by setting a distance from another point. */
-  newPointByDelta_(
-    aoriginPointName: string,
-    aw: number,
-    ah: number,
-    anewPointName?: string
-  ) {
+  newPointByDelta_(ainstruction: IApgCadInstruction) {
 
     this.logBegin(this.newPointByDelta_.name,);
-    this.logTrace(`${this._currId++}`);
-    const point = this._points.get(aoriginPointName);
+
+    const point = this._points.get(ainstruction.origin!);
 
     if (!point) {
       this._status = Rst.ApgRstErrors.NotFound(
         "",
         `Point origin named [%1] not found in set.`,
-        [aoriginPointName]
+        [ainstruction.origin!]
       )
     }
     else {
-      const x = point.x + aw;
-      const y = point.y + ah;
-      this.newPoint_(x, y, anewPointName);
+      ainstruction.x = point.x + ainstruction.w!;
+      ainstruction.y = point.y + ainstruction.h!;
+      this._lastPointIndex++;
+      let pointName;
+      if (!ainstruction.name) {
+        ainstruction.name = 'P#' + this._lastPointIndex;
+      }
+
+      this.newPoint_(ainstruction);
+      this.#traceMethod("NewPointByDelta", pointName);
     }
 
     this.logEnd(this._status);
@@ -490,17 +489,17 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
   }
 
-  #get2PointsByNames(apointsNames: string[]) {
+  #get2PointsByNames(apoints: string[]) {
 
     let r: A2D.Apg2DPoint[] = [];
 
-    if (apointsNames.length !== 2) {
+    if (apoints.length !== 2) {
       this._status = Rst.ApgRstErrors.NotValidParameters(
         "",
         `Wrong number of points: must be 2`)
     }
     else {
-      const pts = this.#getPointsByNames(apointsNames);
+      const pts = this.#getPointsByNames(apoints!);
 
       if (this._status.Ok) {
         if (pts.length !== 2) {
@@ -582,7 +581,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     }
   }
 
-  #trySetFill(node: Svg.ApgSvgNode, afillStyleName?: string) {
+  #trySetFillStyle(node: Svg.ApgSvgNode, afillStyleName?: string) {
     if (afillStyleName) {
       const fill = this.#checkFillStyle(afillStyleName);
       if (fill) {
@@ -591,11 +590,20 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     }
   }
 
-  #trySetStroke(node: Svg.ApgSvgNode, astrokeStyleName?: string) {
+  #trySetStrokeStyle(node: Svg.ApgSvgNode, astrokeStyleName?: string) {
     if (astrokeStyleName) {
       const strk = this.#checkStrokeStyle(astrokeStyleName);
       if (strk) {
         node.stroke(strk.color, strk.width);
+      }
+    }
+  }
+
+  #trySetTextStyle(node: Svg.ApgSvgNode, atextStyleName?: string) {
+    if (atextStyleName) {
+      const textStyle = this.#checkTextStyle(atextStyleName);
+      if (textStyle) {
+        node.textStyle(textStyle);
       }
     }
   }
@@ -659,23 +667,26 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     return factory;
   }
 
+  #traceMethod(amethod: string, aname?: string) {
+    if (!aname) {
+      aname = `${amethod}${this._currId++}`;
+    }
+    this.logTrace(aname);
+    return aname;
+  }
+
   //#endregion
 
 
   // #region Drawing routines --------------------------------------------------
 
   /** Draws a series of points */
-  drawPoints_(
-    apointsNames: string[],
-    aradious: number,
-    astrokeStyleName?: string,
-    afillStyleName?: string
-  ) {
+  drawPoints_(ainstruction: IApgCadInstruction) {
 
     this.logBegin(this.drawPoints_.name);
-    this.logTrace(`${this._currId++}`);
+    this.#traceMethod("DrawPoints", ainstruction.name);
 
-    const pts: A2D.Apg2DPoint[] = this.#getPointsByNames(apointsNames);
+    const pts: A2D.Apg2DPoint[] = this.#getPointsByNames(ainstruction.points!);
 
     if (this._status.Ok) {
 
@@ -683,11 +694,11 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
       pts.forEach(pt => {
         const node = factory
-          .buildDot(pt, aradious)
+          .buildDot(pt, ainstruction.radious!)
 
-        this.#trySetStroke(node, astrokeStyleName,);
+        this.#trySetStrokeStyle(node, ainstruction.strokeStyle,);
 
-        this.#trySetFill(node, afillStyleName);
+        this.#trySetFillStyle(node, ainstruction.fillStyle);
 
         this.#setParent(node);
       });
@@ -697,38 +708,40 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     return this._status;
   }
 
+
   /** Draws all the points adding debbugging info (name / coordinates) */
-  drawAllPointsWithInfo_(
-    aradious: number,
-    atextStyle: Svg.IApgSvgTextStyle
-  ) {
+  drawAllPointsWithInfo_(ainstruction: IApgCadInstruction) {
 
     this.logBegin(this.drawAllPointsWithInfo_.name);
-    this.logTrace(`${this._currId++}`);
+    this.#traceMethod("DrawAllPoints");
 
-    const factory = this.#getBasicShapesFactory();
+    let textStyle = this.#checkTextStyle(ainstruction.textStyle!)
+    if (!textStyle) {
+      textStyle = this.#checkTextStyle(eApgCadDftTextStyles.MONO);
+    }
 
-    this._points.forEach((pt, name) => {
-      const node = factory
-        .buildPoint(pt, aradious, name, atextStyle);
+    if (this._status.Ok) {
+      const factory = this.#getBasicShapesFactory();
 
-      this.#setParent(node);
-    });
+      this._points.forEach((pt, name) => {
+        const node = factory
+          .buildPoint(pt, ainstruction.radious!, name, textStyle!);
+
+        this.#setParent(node);
+      });
+    }
 
     this.logEnd();
     return this._status;
   }
 
   /** Draws a line between the given points */
-  drawLine_(
-    apointsNames: string[],
-    astrokeStyleName?: string
-  ) {
+  drawLine_(ainstruction: IApgCadInstruction) {
 
     this.logBegin(this.drawLine_.name);
-    this.logTrace(`${this._currId++}`);
+    this.#traceMethod('DrawLine', ainstruction.name);
 
-    const pts = this.#get2PointsByNames(apointsNames);
+    const pts = this.#get2PointsByNames(ainstruction.points!);
 
     if (this._status.Ok) {
 
@@ -738,7 +751,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
         .buildLine(pts[0], pts[1])
         .fill('none');
 
-      this.#trySetStroke(node, astrokeStyleName,);
+      this.#trySetStrokeStyle(node, ainstruction.strokeStyle,);
 
       this.#setParent(node);
     }
@@ -748,17 +761,13 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   }
 
   /** Draws an open polyline */
-  #drawPolyLine(
-    apointsNames: string[],
-    aangle?: number,
-    apivot?: string,
-    astrokeStyleName?: string
-  ) {
+  #drawPolyLine(ainstruction: IApgCadInstruction) {
+
 
     this.logBegin(this.#drawPolyLine.name);
-    this.logTrace(`${this._currId++}`);
+    this.#traceMethod("DrawPolyLine", ainstruction.name);
 
-    const pts = this.#getPointsByNames(apointsNames);
+    const pts = this.#getPointsByNames(ainstruction.points!);
 
     if (this._status.Ok && pts.length > 2) {
 
@@ -768,9 +777,9 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
         .buildPolyLine(pts)
         .fill('none');
 
-      this.#trySetRotation(node, pts[0], aangle, apivot);
+      this.#trySetRotation(node, pts[0], ainstruction.angle!, ainstruction.pivot!);
 
-      this.#trySetStroke(node, astrokeStyleName,);
+      this.#trySetStrokeStyle(node, ainstruction.strokeStyle,);
 
       this.#setParent(node);
     }
@@ -780,17 +789,12 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   }
 
   /**  */
-  #drawRectangleByPoints(
-    apointsNames: string[],
-    aangle?: number,
-    apivot?: string,
-    astrokeStyleName?: string,
-    afillStyleName?: string
-  ) {
-    this.logBegin(this.#drawRectangleByPoints.name);
-    this.logTrace(`${this._currId++}`);
+  #drawRectangleByPoints(ainstruction: IApgCadInstruction) {
 
-    const pts: A2D.Apg2DPoint[] = this.#get2PointsByNames(apointsNames);
+    this.logBegin(this.#drawRectangleByPoints.name);
+    this.#traceMethod("DrawRectByPoints", ainstruction.name);
+
+    const pts: A2D.Apg2DPoint[] = this.#get2PointsByNames(ainstruction.points!);
 
     if (this._status.Ok) {
 
@@ -806,11 +810,11 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       const node = factory.
         buildPolyLine(ppts, true);
 
-      this.#trySetRotation(node, ppts[0], aangle, apivot);
+      this.#trySetRotation(node, ppts[0], ainstruction.angle, ainstruction.pivot!);
 
-      this.#trySetStroke(node, astrokeStyleName,);
+      this.#trySetStrokeStyle(node, ainstruction.strokeStyle,);
 
-      this.#trySetFill(node, afillStyleName);
+      this.#trySetFillStyle(node, ainstruction.fillStyle);
 
       this.#setParent(node);
 
@@ -820,33 +824,26 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   }
 
   /** Draws a rectangle from an origin and sizes */
-  #drawRectangleBySizes(
-    aorigin: string,
-    aw: number,
-    ah: number,
-    aangle?: number,
-    apivot?: string,
-    astrokeStyleName?: string,
-    afillStyleName?: string
-  ) {
-    this.logBegin(this.#drawRectangleBySizes.name);
-    this.logTrace(`${this._currId++}`);
+  #drawRectangleBySizes(ainstruction: IApgCadInstruction) {
 
-    const p = this._points.get(aorigin);
+    this.logBegin(this.#drawRectangleBySizes.name);
+    this.#traceMethod("DrawRectBySizes", ainstruction.name);
+
+    const p = this._points.get(ainstruction.origin!);
     if (!p) {
       this._status = Rst.ApgRstErrors.NotFound(
         "",
         `Point named [%1] not found: `,
-        [aorigin]
+        [ainstruction.origin!]
       )
     }
     else {
 
       const ppts: A2D.Apg2DPoint[] = [];
       ppts.push(new A2D.Apg2DPoint(p.x, p.y));
-      ppts.push(new A2D.Apg2DPoint(p.x + aw, p.y));
-      ppts.push(new A2D.Apg2DPoint(p.x + aw, p.y + ah));
-      ppts.push(new A2D.Apg2DPoint(p.x, p.y + ah));
+      ppts.push(new A2D.Apg2DPoint(p.x + ainstruction.w!, p.y));
+      ppts.push(new A2D.Apg2DPoint(p.x + ainstruction.w!, p.y + ainstruction.h!));
+      ppts.push(new A2D.Apg2DPoint(p.x, p.y + ainstruction.h!));
       ppts.push(new A2D.Apg2DPoint(p.x, p.y));
 
       const factory = this.#getBasicShapesFactory();
@@ -854,11 +851,11 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       const node = factory.
         buildPolyLine(ppts, true)
 
-      this.#trySetRotation(node, ppts[0], aangle, apivot);
+      this.#trySetRotation(node, ppts[0], ainstruction.angle, ainstruction.pivot!);
 
-      this.#trySetStroke(node, astrokeStyleName,);
+      this.#trySetStrokeStyle(node, ainstruction.strokeStyle,);
 
-      this.#trySetFill(node, afillStyleName);
+      this.#trySetFillStyle(node, ainstruction.fillStyle);
 
       this.#setParent(node);
     }
@@ -867,18 +864,13 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   }
 
   /** Draws a closed polyline or any polygon from the given points */
-  drawPolygon_(
-    apts: string[],
-    aangle?: number,
-    apivot?: string,
-    astrokeStyleName?: string,
-    afillStyleName?: string
-  ) {
+  drawPolygon_(ainstruction: IApgCadInstruction) {
+
 
     this.logBegin(this.drawPolygon_.name);
-    this.logTrace(`${this._currId++}`);
+    this.#traceMethod("DrawPolygon", ainstruction.name);
 
-    const pts = this.#getPointsByNames(apts);
+    const pts = this.#getPointsByNames(ainstruction.points!);
 
     if (pts.length < 3) {
       this._status = Rst.ApgRstErrors.NotValidParameters(
@@ -896,11 +888,11 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       const node = factory
         .buildPolyLine(pts, true)
 
-      this.#trySetRotation(node, pts[0], aangle, apivot);
+      this.#trySetRotation(node, pts[0], ainstruction.angle, ainstruction.pivot!);
 
-      this.#trySetStroke(node, astrokeStyleName,);
+      this.#trySetStrokeStyle(node, ainstruction.strokeStyle,);
 
-      this.#trySetFill(node, afillStyleName);
+      this.#trySetFillStyle(node, ainstruction.fillStyle);
 
       this.#setParent(node);
 
@@ -910,33 +902,25 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   }
 
   /** Draws a regular polygon from the given origin, radious and number of sides */
-  drawRegularPolygon_(
-    aorigin: string,
-    aradious: number,
-    asidesNum: number,
-    aangle?: number,
-    apivot?: string,
-    astrokeStyleName?: string,
-    afillStyleName?: string
-  ) {
+  drawRegularPolygon_(ainstruction: IApgCadInstruction) {
 
-    this.logBegin(this.drawPolygon_.name);
-    this.logTrace(`${this._currId++}`);
+    this.logBegin(this.drawRegularPolygon_.name);
+    this.#traceMethod("DrawRegPolygon", ainstruction.name);
 
-    const pts = this.#getPointsByNames([aorigin]);
+    const pts = this.#getPointsByNames([ainstruction.origin!]);
 
     if (this._status.Ok) {
 
       const factory = this.#getBasicShapesFactory();
 
       const node = factory
-        .buildPolygon(pts[0], aradious, asidesNum, 0)
+        .buildPolygon(pts[0], ainstruction.radious!, ainstruction.n!, 0)
 
-      this.#trySetRotation(node, pts[0], aangle, apivot);
+      this.#trySetRotation(node, pts[0], ainstruction.angle, ainstruction.pivot);
 
-      this.#trySetStroke(node, astrokeStyleName,);
+      this.#trySetStrokeStyle(node, ainstruction.strokeStyle);
 
-      this.#trySetFill(node, afillStyleName);
+      this.#trySetFillStyle(node, ainstruction.fillStyle);
 
       this.#setParent(node);
 
@@ -946,30 +930,22 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   }
 
   /** Draws a circle given center and radious  */
-  drawCircle_(
-    aorigin: string,
-    aradious: number,
-    astrokeStyleName?: string
-  ) {
-    this.logBegin(this.drawLine_.name);
-    this.logTrace(`${this._currId++}`);
+  drawCircle_(ainstruction: IApgCadInstruction) {
 
-    const pts = this.#getPointsByNames([aorigin]);
+    this.logBegin(this.drawCircle_.name);
+    this.#traceMethod("DrawCircle", ainstruction.name);
+
+    const pts = this.#getPointsByNames([ainstruction.origin!]);
 
     if (this._status.Ok) {
 
       const factory = this.#getBasicShapesFactory();
 
       const node = factory
-        .buildCircle(pts[0], aradious)
+        .buildCircle(pts[0], ainstruction.radious!)
         .fill('none');
 
-      if (astrokeStyleName) {
-        const strokeStyle = this.#checkStrokeStyle(astrokeStyleName);
-        if (strokeStyle) {
-          node.stroke(strokeStyle.color, strokeStyle.width);
-        }
-      }
+      this.#trySetStrokeStyle(node, ainstruction.strokeStyle);
 
       this.#setParent(node);
     }
@@ -978,15 +954,42 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     return this._status;
   }
 
+  /** Draws an arc given center the radious the beggining and the end */
+  drawArc_(ainstruction: IApgCadInstruction) {
+
+    this.logBegin(this.drawArc_.name);
+    this.#traceMethod("DrawArc", ainstruction.name);
+
+    const pts = this.#getPointsByNames(ainstruction.points!);
+
+    if (this._status.Ok) {
+
+      const factory = this.#getBasicShapesFactory();
+
+      const node = factory
+        .buildArc(pts[0], pts[1], ainstruction.angle!)
+        .fill('none');
+
+      this.#trySetStrokeStyle(node, ainstruction.strokeStyle);
+
+      this.#setParent(node);
+    }
+
+    this.logEnd();
+    return this._status;
+  }
+
+
+
   /** Draws a text at the given coords */
   #drawText(
     atext: string[],
     aorigin: string,
-    atextStyleName?: string
+    atextStyleName?: string,
   ) {
 
     this.logBegin(this.#drawText.name);
-    this.logTrace(`${this._currId++}`);
+    this.#traceMethod("DrawText");
 
     const pts = this.#getPointsByNames([aorigin]);
 
@@ -1001,7 +1004,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     if (this._status.Ok) {
       const zero = new A2D.Apg2DPoint(0, 0);
       pts.push(zero);
-// TODO @5 APG ... -- this is a mess better to draw text without Annotations factory
+      // TODO @5 APG ... -- this is a mess better to draw text without Annotations factory
       const factory = this._cad.getPrimitiveFactory(
         eApgCadPrimitiveFactoryTypes.ANNOTATIONS
       ) as ApgCadSvgAnnotationsFactory;
@@ -1019,11 +1022,11 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   /** Draws the name of the Drawing */
   #drawTitle(
     ax: number,
-    ay: number
+    ay: number,
   ) {
 
     this.logBegin(this.#drawTitle.name);
-    this.logTrace(`${this._currId++}`);
+    this.#traceMethod("DrawTitle");
 
     const origin = new A2D.Apg2DPoint(ax, ay);
     const zero = new A2D.Apg2DPoint(0, 0);
@@ -1046,16 +1049,12 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
 
   /** Draws an annotation from the given data */
-  #drawAnnotation(
-    apointsNames: string[],
-    atext: string[],
-    aangle = 0
-  ) {
+  #drawAnnotation(ainstruction: IApgCadInstruction) {
 
     this.logBegin(this.#drawAnnotation.name);
-    this.logTrace(`${this._currId++}`);
+    this.#traceMethod("DrawAnnotation");
 
-    const pts = this.#get2PointsByNames(apointsNames);
+    const pts = this.#get2PointsByNames(ainstruction.points!);
 
     if (this._status.Ok) {
 
@@ -1065,23 +1064,26 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
       const disp = new A2D.Apg2DPoint(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
 
-      const _g = factory.build(this._cad.currentLayer, pts[0], disp, atext[0], aangle);
+      const _g = factory.build(
+        this._cad.currentLayer,
+        pts[0],
+        disp,
+        ainstruction.text!.join('\n'),
+        ainstruction.angle!
+      );
     }
     this.logEnd();
     return this._status;
   }
 
 
-  /** Draws an annotation from the given data */
-  #drawLinearDim(
-    apointsNames: string[],
-    adisplacement: number,
-    atext: string[]
-  ) {
-    this.logBegin(this.#drawLinearDim.name);
-    this.logTrace(`${this._currId++}`);
+  /** Draws a linear dimension from the given data */
+  #drawLinearDim(ainstruction: IApgCadInstruction) {
 
-    const pts = this.#get2PointsByNames(apointsNames);
+    this.logBegin(this.#drawLinearDim.name);
+    this.#traceMethod("DrawLinDim");
+
+    const pts = this.#get2PointsByNames(ainstruction.points!);
 
     if (this._status.Ok) {
 
@@ -1089,8 +1091,81 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
         eApgCadPrimitiveFactoryTypes.LINEAR_DIMS
       ) as ApgCadSvgLinearDimensionsFactory;
 
+
+      let dimType = eApgCadLinearDimensionTypes.ALIGNED;
+      if (
+        ainstruction.payload &&
+        ainstruction.payload.type &&
+        typeof (ainstruction.payload.type) == 'number' &&
+        Uts.ApgUtsEnum.NumericContains(eApgCadLinearDimensionTypes, ainstruction.payload.type)
+      ) {
+        dimType = ainstruction.payload.type;
+      }
+      let before = "";
+      let after = ""
+      if (ainstruction.text) { 
+        before = ainstruction.text[0];
+        after = ainstruction.text[1];
+      }
+
       const node = factory
-        .build(eApgCadLinearDimensionTypes.ALIGNED, pts[0], pts[1], adisplacement, atext[0], atext[1]);
+        .build(
+          dimType,
+          pts[0],
+          pts[1],
+          ainstruction.radious!,
+          before,
+          after
+        );
+
+      this.#setParent(node!);
+
+    }
+    this.logEnd();
+    return this._status;
+  }
+
+
+  /** Draws an arc dimension from the given data */
+  #drawArcDim(ainstruction: IApgCadInstruction) {
+
+    this.logBegin(this.#drawArcDim.name);
+    this.#traceMethod("DrawArcDim");
+
+    const pts = this.#get2PointsByNames(ainstruction.points!);
+
+    if (this._status.Ok) {
+
+      const factory = this._cad.getPrimitiveFactory(
+        eApgCadPrimitiveFactoryTypes.ARC_DIMS
+      ) as ApgCadSvgArcDimensionsFactory;
+
+
+      let dimType = eApgCadArcDimensionTypes.OUTER_DIAMETER;
+      if (
+        ainstruction.payload &&
+        ainstruction.payload.type &&
+        typeof (ainstruction.payload.type) == 'number' &&
+        Uts.ApgUtsEnum.NumericContains(eApgCadArcDimensionTypes, ainstruction.payload.type)
+      ) {
+        dimType = ainstruction.payload.type;
+      }
+      let before = "";
+      let after = ""
+      if (ainstruction.text) {
+        before = ainstruction.text[0];
+        after = ainstruction.text[1];
+      }
+
+      const node = factory
+        .build(
+          dimType,
+          pts[0],
+          pts[1],
+          ainstruction.radious!,
+          before,
+          after
+        );
 
       this.#setParent(node!);
 
@@ -1139,20 +1214,11 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
             break;
           }
           case eApgCadInstructionTypes.NEW_POINT: {
-            this.newPoint_(
-              ainstruction.x!,
-              ainstruction.y!,
-              ainstruction.name
-            ); // 2023/01/04 
+            this.newPoint_(ainstruction); // 2023/01/04 
             break;
           }
           case eApgCadInstructionTypes.NEW_POINT_DELTA: {
-            this.newPointByDelta_(
-              ainstruction.origin!,
-              ainstruction.w!,
-              ainstruction.h!,
-              ainstruction.name
-            ); // 2023/01/04
+            this.newPointByDelta_(ainstruction); // 2023/01/04
             break;
           }
           case eApgCadInstructionTypes.NEW_STROKE_STYLE: {
@@ -1195,104 +1261,61 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
           }
           case eApgCadInstructionTypes.DRAW_POINTS: {
             if (!asettingsOnly) {
-              this.drawPoints_(
-                ainstruction.points!,
-                ainstruction.radious!,
-                <string>ainstruction.strokeStyle,
-                <string>ainstruction.fillStyle
-              ); // 
+              this.drawPoints_(ainstruction); // 2023/01/04
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_ALL_POINTS: {
             if (!asettingsOnly) {
-              const textStyle = this.#checkTextStyle(eApgCadDftTextStyles.MONO)
-              this.drawAllPointsWithInfo_(
-                ainstruction.radious!,
-                textStyle!
-              ); // 2023/01/04 **
+              this.drawAllPointsWithInfo_(ainstruction); // 2023/01/04
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_LINE: {
             if (!asettingsOnly) {
-              this.drawLine_(
-                ainstruction.points!,
-                <string>ainstruction.strokeStyle
-              ); // 2023/01/04
+              this.drawLine_(ainstruction); // 2023/01/04
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_CIRCLE: {
             if (!asettingsOnly) {
-              this.drawCircle_(
-                ainstruction.origin!,
-                ainstruction.radious!,
-                <string>ainstruction.strokeStyle
-              ); // 2023/01/06
+              this.drawCircle_(ainstruction); // 2023/01/06
+            }
+            break;
+          }
+          case eApgCadInstructionTypes.DRAW_ARC: {
+            if (!asettingsOnly) {
+              this.drawArc_(ainstruction); // 2023/01/06
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_POLYLINE: {
             if (!asettingsOnly) {
-              this.#drawPolyLine(
-                ainstruction.points!,
-                ainstruction.angle,
-                ainstruction.pivot,
-                ainstruction.strokeStyle
-              ); // 2023/01/06
+              this.#drawPolyLine(ainstruction); // 2023/01/06
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_RECTANGLE_POINTS: {
             if (!asettingsOnly) {
-              this.#drawRectangleByPoints(
-                ainstruction.points!,
-                ainstruction.angle,
-                ainstruction.pivot,
-                ainstruction.strokeStyle,
-                ainstruction.fillStyle
-              ); // 2023/01/07
+              this.#drawRectangleByPoints(ainstruction); // 2023/01/07
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_RECTANGLE_SIZES: {
             if (!asettingsOnly) {
-              this.#drawRectangleBySizes(
-                ainstruction.origin!,
-                ainstruction.w!,
-                ainstruction.h!,
-                ainstruction.angle,
-                ainstruction.pivot,
-                ainstruction.strokeStyle,
-                ainstruction.fillStyle
-              ); // 2023/01/07 
+              this.#drawRectangleBySizes(ainstruction); // 2023/01/07 
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_POLYGON: {
             if (!asettingsOnly) {
-              this.drawPolygon_(
-                ainstruction.points!,
-                ainstruction.angle,
-                ainstruction.pivot,
-                ainstruction.strokeStyle,
-                ainstruction.fillStyle
-              ); // 2023/01/07
+              this.drawPolygon_(ainstruction); // 2023/01/07
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_REGULAR_POLYGON: {
             if (!asettingsOnly) {
-              this.drawRegularPolygon_(
-                ainstruction.origin!,
-                ainstruction.radious!,
-                ainstruction.n!,
-                ainstruction.angle,
-                ainstruction.pivot,
-                ainstruction.strokeStyle,
-                ainstruction.fillStyle
-              ); // 
+              this.drawRegularPolygon_(ainstruction); // 2023/01/15
             }
             break;
           }
@@ -1317,22 +1340,21 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
           }
           case eApgCadInstructionTypes.DRAW_ANNOTATION: {
             if (!asettingsOnly) {
-              this.#drawAnnotation(
-                ainstruction.points!,
-                ainstruction.text!,
-                ainstruction.angle
-              );
+              this.#drawAnnotation(ainstruction);
             }
             break;
           }
           case eApgCadInstructionTypes.DRAW_LIN_DIM: {
             if (!asettingsOnly) {
-              this.#drawLinearDim(
-                ainstruction.points!,
-                ainstruction.radious!,
-                ainstruction.text!
-              );
+              this.#drawLinearDim(ainstruction);
             }
+            break;
+          }
+          case eApgCadInstructionTypes.DRAW_ARC_DIM: {
+            if (!asettingsOnly) {
+              this.#drawArcDim(ainstruction);
+            }
+            break;
           }
 
         }

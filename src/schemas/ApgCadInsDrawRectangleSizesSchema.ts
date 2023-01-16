@@ -38,12 +38,14 @@ const rawSchema: Jsv.IApgJsvInterface = {
         strokeStyle: {
             type: 'string'
         },
-
+        fillStyle: {
+            type: 'string'
+        },
     },
     additionalProperties: false,
     allErrors: true,
     required: [
-        'type', 'name', 'origin', 'w', 'h'
+        'type','origin', 'w', 'h'
     ]
 
 };

@@ -31,12 +31,15 @@ const rawSchema: Jsv.IApgJsvInterface = {
         },
         strokeStyle: {
             type: 'string'
+        },
+        fillyle: {
+            type: 'string'
         }
     },
     additionalProperties: false,
     allErrors: true,
     required: [
-        'type', 'name', 'points'
+        'type', 'points'
     ]
 
 };

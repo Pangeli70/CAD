@@ -1,25 +1,71 @@
-<div>
+<div id="pico_logger">
     [: if(testLogger.hasErrors){ :]
-    <p>
-        [: for (let i = 0; i != testLogger.events.length-1; i++ ){ :]
-        [: const event = testLogger.events[i]; :]
-        [: const padding = "&nbsp".repeat(event.depth * 2); :]
-        [: padding :]
-        [: event.className :].[: event.method :]
-        [: if (event.result.payload) { :]
-        .[: event.result.payload.data :]
-        [: } :]
-        [: if(event.result.error != 0) { :]
-        <br>
-        <span style="color: red;">
-            [: padding :][: JSON.stringify(event.result.codedMessage).replaceAll(" ", "&nbsp;") :]
-            [: if (event.result.payload.data.errors) { :]
-                <br>
-                [: padding :][: JSON.stringify(event.result.payload.data.errors) :] 
-            [: } :]
-        </span>
-        [: } :]
-        [: event.result.message :]
+    <p style = "font-family: 'Lucida Console', 'Courier New', Courier, monospace; font-size: smaller; text-align: left;">
+        [: let newLine = true;
+        let hrtDelta = 0;
+        let hrt = "000.00";
+        for (let i = 0; i != testLogger.events.length-1; i++ ){ 
+            
+            const event = testLogger.events[i];
+
+            if(i != 0){
+                hrtDelta = event.hrt - testLogger.events[i-1].hrt;
+                hrt = hrtDelta.toFixed(2).padStart(6, '0');
+            }
+
+            let payloadData = "";
+            if (
+                event.result.payload &&
+                event.result.payload.data
+            ) {
+                payloadData = `${event.result.payload.data}`;
+                if (payloadData.includes("{")){
+                    newLine = true
+                }
+                else {
+                    newLine = false;
+                }
+            }
+            const padding = "&nbsp".repeat(event.depth * 2);
+
+            const currMethod = newLine ? `${event.className}.${event.method}` : "";
+            const index = i.toString().padStart(4, '0');
+            const currRow = `${index} ${hrt}${padding}${currMethod} ${payloadData}`;
+            r.push(currRow);
+
+            if(event.result.error != 0) {
+                r.push(`<br><span style="color: red;">`);
+                let message = event.result.codedMessage.template ?
+                    event.result.codedMessage.template : JSON.stringify(event.result.codedMessage); 
+                console.log(event.result.codedMessage);
+                if( 
+                    event.result.codedMessage.params && 
+                    event.result.codedMessage.params.length > 0 
+                ) { 
+                    const params = event.result.codedMessage.params;
+                    for (let i = 0; i != params.length; i++) {
+                        const param = `${params[i]}`;
+                        const placeholder = `%${i+1}`;
+                        message = message.replaceAll(placeholder, param);
+                    }
+                }
+                r.push(`${padding}${message}`);
+
+                if (
+                    event.result.payload && 
+                    event.result.payload.data && 
+                    event.result.payload.data.errors
+                ) { 
+                    r.push(`<br>`);
+                    const dataErrors = JSON.stringify(event.result.payload.data.errors);
+                    r.push(`${padding}${dataErrors}`);
+                }
+                r.push(`</span>`);
+            } :]
+
+            [: if(event.result.message) { 
+                r.push(`<span style:"color:blue">&nbsp; ${event.result.message}</span>`);
+            } :]
         <br>
         [: } :]
     </p>

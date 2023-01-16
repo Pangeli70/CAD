@@ -6,10 +6,11 @@
  * @version 0.8.0 [APG 2022/04/03] Porting to Deno
  * @version 0.9.2 [APG 2022/11/30] Github beta
  * @version 0.9.3 [APG 2022/12/18] Deno Deploy
+ * @version 0.9.4 [APG 2023/01/14] Deno Deploy beta
  * -----------------------------------------------------------------------
  */
 
-import { Svg, A2D } from "../../../deps.ts";
+import { Svg, A2D, Uts } from "../../../deps.ts";
 import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
 import { ApgCadSvg } from "../ApgCadSvg.ts";
 import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
@@ -119,6 +120,29 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
     const r = this.cad.svg
       .circle(acenter.x, acenter.y, aradious)
 
+    return r;
+  }
+
+
+  buildArc(
+    acenter: A2D.Apg2DPoint,
+    astart: A2D.Apg2DPoint,
+    aangle: number
+  ) {
+
+    const radious = astart.distanceFrom(acenter);
+
+    const dx = astart.x - acenter.x;
+    const dy = (astart.y - acenter.y) / dx;
+    
+    let alpha = Math.asin(dy)*360/(2*Math.PI);
+
+    if (dx < 0) { 
+      alpha += 90;
+    }
+
+    const r = this.cad.svg
+      .arc(acenter.x, acenter.y, radious, alpha, alpha + aangle)
     return r;
   }
 

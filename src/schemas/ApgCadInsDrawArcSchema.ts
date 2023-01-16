@@ -11,11 +11,11 @@ import { eApgCadInstructionTypes } from "../enums/eApgCadInstructionTypes.ts";
 
 const rawSchema: Jsv.IApgJsvInterface = {
     $schema: 'http://json-schema.org/schema#',
-    $id: 'IApgCadIns_DrawPolyline#',
+    $id: 'IApgCadIns_DrawArc#',
     type: 'object',
     properties: {
         type: {
-            const: eApgCadInstructionTypes.DRAW_POLYLINE as string
+            const: eApgCadInstructionTypes.DRAW_ARC as string
         },
         name: {
             type: 'string'
@@ -24,24 +24,24 @@ const rawSchema: Jsv.IApgJsvInterface = {
             type: 'array',
             items: {
                 type: 'string'
-            }
+            },
+            minItems: 2,
+            maxItems: 2,
+            uniqueItems: true
         },
         angle: {
             type: 'number'
         },
         strokeStyle: {
             type: 'string'
-        },
-        fillStyle: {
-            type: 'string'
         }
     },
     additionalProperties: false,
     allErrors: true,
     required: [
-        'type', 'points'
+        'type', 'points', 'angle'
     ]
 
 };
 
-export const ApgCadIns_DrawPolylineSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvInterface;
+export const ApgCadIns_DrawArcSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvInterface;

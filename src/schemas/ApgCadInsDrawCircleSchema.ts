@@ -25,13 +25,16 @@ const rawSchema: Jsv.IApgJsvInterface = {
         },
         radious: {
             type: 'number',
-            minimum: 0,
+            minimum: 0.1,
+        },
+        strokeStyle: {
+            type: 'string'
         }
     },
     additionalProperties: false,
     allErrors: true,
     required: [
-        'type', 'name', 'origin', 'radious'
+        'type', 'origin', 'radious'
     ]
 
 };

@@ -17,10 +17,14 @@ import { ApgCadIns_DrawPointsSchema } from "../schemas/ApgCadInsDrawPointsSchema
 import { ApgCadIns_DrawLineSchema } from "../schemas/ApgCadInsDrawLineSchema.ts";
 import { ApgCadIns_DrawPolylineSchema } from "../schemas/ApgCadInsDrawPolylineSchema.ts";
 import { ApgCadIns_DrawCircleSchema } from "../schemas/ApgCadInsDrawCircleSchema.ts";
+import { ApgCadIns_DrawArcSchema } from "../schemas/ApgCadInsDrawArcSchema.ts";
 import { ApgCadIns_DrawRectanglePointsSchema } from "../schemas/ApgCadInsDrawRectanglePointsSchema.ts";
 import { ApgCadIns_DrawRectangleSizesSchema } from "../schemas/ApgCadInsDrawRectangleSizesSchema.ts";
 import { ApgCadIns_DrawRegularPolygonSchema } from "../schemas/ApgCadInsDrawRegularPolygonSchema.ts";
 import { ApgCadIns_DrawPolygonSchema } from "../schemas/ApgCadInsDrawPolygonSchema.ts";
+import { ApgCadIns_DrawLinearDimSchema } from "../schemas/ApgCadInsDrawLinearDimSchema.ts";
+import { ApgCadIns_DrawArcDimSchema } from "../schemas/ApgCadInsDrawArcDimSchema.ts";
+import { ApgCadIns_DrawAnnotationSchema } from "../schemas/ApgCadInsDrawAnnotationSchema.ts";
 
 
 export const ApgCadInsValidators = [
@@ -67,9 +71,10 @@ export const ApgCadInsValidators = [
         type: eApgCadInstructionTypes.DRAW_ALL_POINTS, // Ok 2023/01/04
         jsonSchema: ApgCadIns_DrawAllPointsSchema,
     },
-    // {
-    //   type: eApgCadInstructionTypes.DRAW_ARC,
-    // },
+    {
+        type: eApgCadInstructionTypes.DRAW_ARC, // Ok 2023/01/15
+        jsonSchema: ApgCadIns_DrawArcSchema,
+    },
     {
         type: eApgCadInstructionTypes.DRAW_CIRCLE, // Ok 2023/01/06
         jsonSchema: ApgCadIns_DrawCircleSchema,
@@ -98,10 +103,18 @@ export const ApgCadInsValidators = [
         type: eApgCadInstructionTypes.DRAW_RECTANGLE_SIZES, // Ok 2023/01/06
         jsonSchema: ApgCadIns_DrawRectangleSizesSchema,
     },
-    //{
-    //   type: eApgCadInstructionTypes.DRAW_POLYGON,
-    //   schema: 'IApgCadSvgInsDrawPolygon'
-    // },
+    {
+        type: eApgCadInstructionTypes.DRAW_LIN_DIM, // Ok 2023/01/15
+        jsonSchema: ApgCadIns_DrawLinearDimSchema,
+    },
+    {
+        type: eApgCadInstructionTypes.DRAW_ARC_DIM, // Ok 2023/01/15
+        jsonSchema: ApgCadIns_DrawArcDimSchema,
+    },
+    {
+        type: eApgCadInstructionTypes.DRAW_ANNOTATION, // Ok 2023/01/15
+        jsonSchema: ApgCadIns_DrawAnnotationSchema,
+    },
     //{
     //   type: eApgCadInstructionTypes.DRAW_TEXT,
     //   schema: 'IApgCadSvgInsDrawText'

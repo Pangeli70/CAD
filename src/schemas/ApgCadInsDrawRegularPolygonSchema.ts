@@ -37,11 +37,17 @@ const rawSchema: Jsv.IApgJsvInterface = {
         pivot: {
             type: 'string'
         },
+        strokeStyle: {
+            type: 'string'
+        },
+        fillStyle: {
+            type: 'string'
+        },
     },
     additionalProperties: false,
     allErrors: true,
     required: [
-        'type', 'name', 'origin', 'n'
+        'type', 'origin', 'n'
     ]
 
 };

@@ -16,72 +16,72 @@ const rawSchema: Jsv.IApgJsvInterface = {
         type: {
             $ref: 'eApgCadIns_Types#/definitions/enumType'
         },
-        
+
         name: {
             type: 'string'
         },
-        
+
         x: {
             type: 'number'
         },
-        
+
         y: {
             type: 'number'
         },
-        
+
         w: {
             type: 'number'
         },
-        
+
         h: {
             type: 'number'
         },
-        
+
         n: {
             type: 'integer'
         },
-        
+
         origin: {
             type: 'string'
         },
-        
+
         radious: {
             type: 'number'
         },
-       
+
         pivot: {
             type: 'string'
         },
-        
+
         angle: {
             type: 'number'
         },
-        
+
         points: {
             type: 'array',
             items: {
                 type: 'string'
             }
         },
-        
+
         text: {
             type: 'array',
             items: {
                 type: 'string'
             }
         },
-        
+
         strokeStyle: {
             type: 'string'
         },
         fillStyle: {
             type: 'string'
         },
-        
+
         textStyle: {
             type: 'string'
         },
-        
+
         payload: {
             type: 'object'
         }

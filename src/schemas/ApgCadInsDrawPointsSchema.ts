@@ -39,7 +39,7 @@ const rawSchema: Jsv.IApgJsvInterface = {
     additionalProperties: false,
     allErrors: true,
     required: [
-        'type', 'name', 'points'
+        'type', 'points'
     ]
 
 };

@@ -27,7 +27,7 @@ export enum eApgCadInstructionTypes {
   SET_FILL = "SET_FILL_STYLE", 
 
   NEW_LAYER = "NEW_LAYER", // unused
-  SET_LAYER = "SET_LAYER",  // S
+  SET_LAYER = "SET_LAYER",  // S + I
   NEW_GROUP = "NEW_GROUP", // S
   SET_GROUP = "SET_GROUP", // S
   NO_GROUP = "NO_GROUP", // S
@@ -35,7 +35,7 @@ export enum eApgCadInstructionTypes {
   NEW_POINT = "NEW_POINT", // S + I
   NEW_POINT_DELTA = "NEW_POINT_DELTA", // S + I
 
-  DRAW_POINTS = "DRAW_POINTS", 
+  DRAW_POINTS = "DRAW_POINTS", // S + I
   DRAW_ALL_POINTS = "DRAW_ALL_POINTS", // S + I
   DRAW_LINE = "DRAW_LINE", // S + I
   DRAW_POLYLINE = "DRAW_POLYLINE", // S + I
@@ -44,13 +44,13 @@ export enum eApgCadInstructionTypes {
   DRAW_RECTANGLE_POINTS = "DRAW_RECTANGLE_POINTS", // S + I
   DRAW_RECTANGLE_SIZES = "DRAW_RECTANGLE_SIZE", // S + I
   DRAW_CIRCLE = "DRAW_CIRCLE", // S + I
-  DRAW_ARC = "DRAW_ARC", 
+  DRAW_ARC = "DRAW_ARC", // S + I // TODO test
   DRAW_TEXT = "DRAW_TEXT", 
   DRAW_NAME = "DRAW_NAME", 
-  DRAW_CPLX = "DRAW_CPLX",
   DRAW_IMAGE = "DRAW_IMAGE",
   DRAW_ANNOTATION = "DRAW_ANNOTATION",
-  DRAW_LIN_DIM = "DRAW_LIN_DIM",
+  DRAW_LIN_DIM = "DRAW_LIN_DIM", // S + I // TODO test
+  DRAW_ARC_DIM = "DRAW_ARC_DIM",
   DRAW_ANG_DIM = "DRAW_ANG_DIM",
 
   DRAW_ARRAY = "DRAW_ARRAY",
