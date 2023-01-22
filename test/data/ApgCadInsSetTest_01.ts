@@ -8,13 +8,12 @@
 
 import { eApgCadDftLayers } from "../../src/enums/eApgCadDftLayers.ts";
 import { eApgCadInstructionTypes } from "../../src/enums/eApgCadInstructionTypes.ts";
-import { eApgCadLinearDimensionTypes } from "../../src/enums/eApgCadLinearDimensionTypes.ts";
 import { eApgCadTestInsSets } from "../src/enums/eApgCadTestInsSets.ts";
 import { IApgCadInsSetTest } from "../src/interfaces/IApgCadInsSetTest.ts";
 
 export const ApgCadInsSetTest_01: IApgCadInsSetTest = {
     name: eApgCadTestInsSets.BASIC,
-    description: "Some points and lines on the default layer: Zero ",
+    description: "Basic shapes on the default layer: Zero ",
     instructions: [
         {
             type: eApgCadInstructionTypes.SET_NAME,
@@ -179,75 +178,7 @@ export const ApgCadInsSetTest_01: IApgCadInsSetTest = {
             angle: 80
         },
         {
-            type: eApgCadInstructionTypes.NEW_POINT,
-            name: 'P19',
-            x: 3500,
-            y: 3500
-        },
-        {
-            type: eApgCadInstructionTypes.NEW_POINT,
-            name: 'P20',
-            x: 4000,
-            y: 3000
-        },
-        {
-            type: eApgCadInstructionTypes.DRAW_LIN_DIM,
-            points: ['P19', 'P20'],
-            radious: 200,
-        },
-        {
-            type: eApgCadInstructionTypes.DRAW_LIN_DIM,
-            points: ['P20', 'P19'],
-            radious: 200,
-            payload: {
-                type: eApgCadLinearDimensionTypes.VERTICAL
-            }
-        },
-        {
-            type: eApgCadInstructionTypes.DRAW_LIN_DIM,
-            points: ['P19', 'P20'],
-            radious: 200,
-            //text: [ '<[(', ')]>'],
-            payload: {
-                type: eApgCadLinearDimensionTypes.HORIZONTAL
-            }
-        },
-        {
-            type: eApgCadInstructionTypes.NEW_POINT,
-            name: 'P21',
-            x: 500,
-            y: 4500
-        },
-        {
-            type: eApgCadInstructionTypes.NEW_POINT,
-            name: 'P22',
-            x: 900,
-            y: 4900
-        },
-        {
-            type: eApgCadInstructionTypes.DRAW_ARC_DIM,
-            points: ['P21', 'P22'],
-            radious: -200,
-        },
-        {
-            type: eApgCadInstructionTypes.NEW_POINT,
-            name: 'P23',
-            x: 5000,
-            y: 100
-        },
-        {
-            type: eApgCadInstructionTypes.NEW_POINT,
-            name: 'P24',
-            x: 5500,
-            y: 800
-        },
-        {
-            type: eApgCadInstructionTypes.DRAW_ANNOTATION,
-            points: ['P23', 'P24'],
-            text: ['Prova', 'Test', 'Tentativo', 'Come il precedente'],
-        },
-        {
-            type: eApgCadInstructionTypes.SET_LAYER,
+            type: eApgCadInstructionTypes.PUSH_LAYER,
             name: eApgCadDftLayers.DEBUG
         },
         {

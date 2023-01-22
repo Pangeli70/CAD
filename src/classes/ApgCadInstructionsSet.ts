@@ -60,6 +60,9 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
   /** The Object is correctly initialized */
   private _ready = false;
 
+  /** Stack of layers */
+  private _layersStack: Svg.ApgSvgNode[] = [];
+
   /** The general status of the object */
   private _status: Rst.ApgRst;
   get Status() { return this._status; }
@@ -195,6 +198,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
               }
               else {
                 r = instVal!.validate(instruction);
+                debugger;
               }
             }
           }
@@ -316,11 +320,11 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
 
   // #region Layers and groups -------------------------------------------------
 
-  /** Sets the current layer by name. Layer must already exist */
-  setLayer_(
+  /** Sets the current layer by name and puts it on the stack. Layer must already exist */
+  pushLayer_(
     alayerName: string
   ) {
-    this.logBegin(this.setLayer_.name);
+    this.logBegin(this.pushLayer_.name);
     this.logTrace(`${this._currId++}`);
 
     const layer: Svg.ApgSvgNode | undefined = this._cad.setCurrentLayer(alayerName);
@@ -332,39 +336,77 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
         [alayerName]
       )
     }
+    else {
+      this._layersStack.push(layer);
+    }
 
     this.logEnd(this._status);
     return this._status;
   }
 
-  /** Creates a new group in the current layer ad sets it as the current one
-   * @returns Error If the group name already exists */
-  #newGroup(
-    agroupName: string,
-    aoptions: IApgCadStyleOptions
-  ) {
 
-    this.logBegin(this.#newGroup.name);
+  /** Removes the layer from the stack and restores the previous one. Stack must not be empty */
+  popLayer_() {
+    this.logBegin(this.popLayer_.name);
     this.logTrace(`${this._currId++}`);
 
-    const group: Svg.ApgSvgNode | undefined = this._cad.getGroup(agroupName);
+    const layer = this._layersStack.pop();
+
+    if (!layer) {
+      this._status = Rst.ApgRstErrors.NotFound(
+        "",
+        `There aren't any layer on the layer stack. There are POP_LAYER mismatches.`,
+        []
+      )
+    }
+    else if (this._layersStack.length < 1) {
+      this._status = Rst.ApgRstErrors.NotValidParameters(
+        "",
+        `Pop operation has emptied the layer Stack. There is a POP_LAYER mismatch.`,
+        []
+      )
+    }
+    else {
+      const layerName = this._layersStack[this._layersStack.length - 1].ID;
+      this._cad.setCurrentLayer(layerName);
+    }
+
+    this.logEnd(this._status);
+    return this._status;
+  }
+
+
+  /** Creates a new group in the current layer ad sets it as the current one
+   * @returns Error If the group name already exists */
+  newGroup_(
+    ainstruction: IApgCadInstruction
+  ) {
+
+    this.logBegin(this.newGroup_.name);
+    this.logTrace(`${this._currId++}`);
+
+    const group: Svg.ApgSvgNode | undefined = this._cad.getGroup(ainstruction.name!);
 
     if (group) {
       this._status = Rst.ApgRstErrors.AlreadyExists(
         "",
-        `Group name [%1] already exists . Use openGroup instead.`,
-        [agroupName]
+        `Group name [%1] already exists . Use SetGroup instead.`,
+        [ainstruction.name!]
       )
     }
     else {
-      if (aoptions.strokeName) {
-        this.#checkStrokeStyle(aoptions.strokeName);
+      const options: IApgCadStyleOptions = {};
+      if (ainstruction.strokeStyle) {
+        this.#checkStrokeStyle(ainstruction.strokeStyle);
       }
-      if (this._status.Ok && aoptions.fillName) {
-        this.#checkFillStyle(aoptions.fillName);
+      if (this._status.Ok && ainstruction.fillStyle) {
+        this.#checkFillStyle(ainstruction.fillStyle);
+      }
+      if (this._status.Ok && ainstruction.textStyle) {
+        this.#checkTextStyle(ainstruction.textStyle);
       }
       if (this._status.Ok) {
-        this._cad.newGroup(agroupName, aoptions);
+        this._cad.newGroup(ainstruction.name!, options);
       }
     }
 
@@ -457,15 +499,14 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       )
     }
     else {
-      ainstruction.x = point.x + ainstruction.w!;
-      ainstruction.y = point.y + ainstruction.h!;
-      this._lastPointIndex++;
-      let pointName;
-      if (!ainstruction.name) {
-        ainstruction.name = 'P#' + this._lastPointIndex;
-      }
+      const x = point.x + ainstruction.w!;
+      const y = point.y + ainstruction.h!;
+      const newPoint = new A2D.Apg2DPoint(x, y);
 
-      this.newPoint_(ainstruction);
+      this._lastPointIndex++;
+      const pointName = ainstruction.name || 'P#' + this._lastPointIndex;
+
+      this._points.set(pointName, newPoint);
       this.#traceMethod("NewPointByDelta", pointName);
     }
 
@@ -585,7 +626,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
     if (afillStyleName) {
       const fill = this.#checkFillStyle(afillStyleName);
       if (fill) {
-        node.fill(fill.color);
+        node.fill(fill.color, fill.opacity);
       }
     }
   }
@@ -595,6 +636,9 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       const strk = this.#checkStrokeStyle(astrokeStyleName);
       if (strk) {
         node.stroke(strk.color, strk.width);
+        if (strk.dashPattern) {
+          node.strokeDashPattern(strk.dashPattern, strk.dashOffset)
+        }
       }
     }
   }
@@ -1103,7 +1147,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
       }
       let before = "";
       let after = ""
-      if (ainstruction.text) { 
+      if (ainstruction.text) {
         before = ainstruction.text[0];
         after = ainstruction.text[1];
       }
@@ -1222,7 +1266,7 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
             break;
           }
           case eApgCadInstructionTypes.NEW_STROKE_STYLE: {
-            throw new Error('Not implemented' + eApgCadInstructionTypes.NEW_STROKE_STYLE);
+            throw new Error('Not implemented ' + eApgCadInstructionTypes.NEW_STROKE_STYLE);
             // this._cad.newStrokeStyle(
             //   ainstruction.name!,
             //   ainstruction.payload!
@@ -1230,33 +1274,45 @@ export class ApgCadInstructionsSet extends Lgr.ApgLgrLoggable {
             // break;
           }
           case eApgCadInstructionTypes.NEW_FILL_STYLE: {
-            throw new Error('Not implemented' + eApgCadInstructionTypes.NEW_FILL_STYLE);
+            throw new Error('Not implemented ' + eApgCadInstructionTypes.NEW_FILL_STYLE);
             // this._cad.newFillStyle(
             //   ainstruction.name!,
             //   ainstruction.payload!
             // );
             // break;
           }
-          case eApgCadInstructionTypes.SET_LAYER: {
-            this.setLayer_(
+          case eApgCadInstructionTypes.NEW_TEXT_STYLE: {
+            throw new Error('Not implemented ' + eApgCadInstructionTypes.NEW_FILL_STYLE);
+            // this._cad.newFillStyle(
+            //   ainstruction.name!,
+            //   ainstruction.payload!
+            // );
+            // break;
+          }
+          case eApgCadInstructionTypes.PUSH_LAYER: {
+            this.pushLayer_(
               ainstruction.name!
-            ); // 2023/01/04 **
+            ); // 2023/01/04
+            break;
+          }
+          case eApgCadInstructionTypes.POP_LAYER: {
+            this.popLayer_(); // 2023/01/22
             break;
           }
           case eApgCadInstructionTypes.NEW_GROUP: {
-            throw new Error('Not implemented' + eApgCadInstructionTypes.NEW_FILL_STYLE);
-            // const options: IApgCadStyleOptions = { strokeName: ainstruction.stroke, fillName: ainstruction.fill }
-            // this.#newGroup(
-            //   index,
-            //   ainstruction.name!,
-            //   options
-            // ); // 
-            // break;
+            this.newGroup_(
+              ainstruction
+            ); // 2023/01/21
+            break;
           }
           case eApgCadInstructionTypes.SET_GROUP: {
             this.setGroup_(
               ainstruction.name!
             ); // 
+            break;
+          }
+          case eApgCadInstructionTypes.NO_GROUP: {
+            this.noGroup_(); // 2023/01/21
             break;
           }
           case eApgCadInstructionTypes.DRAW_POINTS: {

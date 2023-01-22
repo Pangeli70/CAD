@@ -34,7 +34,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .circle(cx, cy, 20)
         .childOf(cad.currentLayer);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 
@@ -58,7 +59,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .line(x1, y1, x2, y2)
         .childOf(cad.currentLayer);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 
@@ -104,7 +106,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .fill(eApgCadStdColors.NONE)
         .childOf(cad.currentLayer);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 
@@ -130,7 +133,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .fill(eApgCadStdColors.NONE)
         .childOf(cad.currentLayer);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 
@@ -158,7 +162,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .fill(eApgCadStdColors.NONE)
         .childOf(cad.currentLayer);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 
@@ -206,7 +211,49 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .stroke(eApgCadStdColors.NONE, 0)
         .childOf(cad.currentLayer);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
+    return cad.svg.render();
+  }
+
+
+  static testRawImages(aisBlackBack = false) {
+
+    const cad = new ApgCadSvg(aisBlackBack);
+    cad.svg.title = "Test Image";
+    cad.svg.description = "Apg Svg Cad";
+    const layers = this.buildTestLayers(cad);
+    const layId = this.randomLayer(layers);
+    cad.setCurrentLayer(layId);
+
+    const imagesRefs = [
+      'https://picsum.photos/id/' + this.randomInt(0, 220).toString() + '/400/300',
+      'https://picsum.photos/id/' + this.randomInt(0, 220).toString() + '/400/300',
+      'https://picsum.photos/id/' + this.randomInt(0, 220).toString() + '/400/300',
+      'https://picsum.photos/id/' + this.randomInt(0, 220).toString() + '/400/300',
+      'https://picsum.photos/id/' + this.randomInt(0, 220).toString() + '/400/300',
+    ];
+
+
+    for (let i = 0; i < this.randomInN(); i++) {
+
+      const stringId = this.randomInt(0, imagesRefs.length - 1);
+
+      const p1 = this.randomPointInRange();
+      const p2 = this.randomPointInRange();
+      const midPoint = p1.halfwayFrom(p2);
+
+      cad.svg
+        .rect(p1.x, p1.y, 800, 600)
+        .childOf(cad.currentLayer);
+
+      cad.svg
+        .image(p1.x, p1.y, 800, 600, imagesRefs[i])
+        .childOf(cad.currentLayer);
+
+    }
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 
@@ -239,9 +286,9 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
       const totalW = START + rulerWidth;
 
       const tx = (ts!.anchor && ts.anchor == Svg.eApgSvgTextAnchor.middle) ?
-        START + rulerWidth/2 :
+        START + rulerWidth / 2 :
         START
-      
+
       cad.svg
         .line(START, currY, totalW, currY)
         .childOf(cad.currentLayer);
@@ -253,11 +300,12 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .text(totalW + START, currY, style + " - " + ts.font + " W/H:" + ts.aspectRatio.toFixed(3), textLineHeight)
         .textStyle(testTextStyle)
         .childOf(cad.currentLayer);
-      
+
 
       currY += textLineHeight;
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 
@@ -272,11 +320,10 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
 
     this.notImplemented(cad);
 
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
-
-
 
 
   static RunTest(atest: eApgCadTestSvg, aisBlackBack = false) {
@@ -303,6 +350,9 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         break;
       case eApgCadTestSvg.PATHS:
         r = this.testRawPaths(aisBlackBack);
+        break;
+      case eApgCadTestSvg.IMAGES:
+        r = this.testRawImages(aisBlackBack);
         break;
       case eApgCadTestSvg.ASPECT_RATIOS:
         r = this.testAspectRatios(aisBlackBack);

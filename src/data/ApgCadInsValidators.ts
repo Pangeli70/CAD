@@ -9,14 +9,18 @@ import { eApgCadInstructionTypes } from "../enums/eApgCadInstructionTypes.ts";
 import { eApgCadIns_TypesSchema } from "../schemas/eApgCadInsTypesSchema.ts";
 import { ApgCadIns_GenericSchema } from "../schemas/ApgCadInsGenericSchema.ts";
 import { ApgCadIns_SetNameSchema } from "../schemas/ApgCadInsSetNameSchema.ts";
-import { ApgCadIns_SetLayerSchema } from "../schemas/ApgCadInsSetLayerSchema.ts";
+import { ApgCadIns_PopLayerSchema } from "../schemas/ApgCadInsPopLayerSchema.ts";
+import { ApgCadIns_PushLayerSchema } from "../schemas/ApgCadInsPushLayerSchema.ts";
 import { ApgCadIns_NewPointSchema } from "../schemas/ApgCadInsNewPointSchema.ts";
 import { ApgCadIns_NewPointDeltaSchema } from "../schemas/ApgCadInsNewPointDeltaSchema.ts";
+import { ApgCadIns_NewGroupSchema } from "../schemas/ApgCadInsNewGroupSchema.ts";
+import { ApgCadIns_NoGroupSchema } from "../schemas/ApgCadInsNoGroupSchema.ts";
 import { ApgCadIns_DrawAllPointsSchema } from "../schemas/ApgCadInsDrawAllPointsSchema.ts";
 import { ApgCadIns_DrawPointsSchema } from "../schemas/ApgCadInsDrawPointsSchema.ts";
 import { ApgCadIns_DrawLineSchema } from "../schemas/ApgCadInsDrawLineSchema.ts";
 import { ApgCadIns_DrawPolylineSchema } from "../schemas/ApgCadInsDrawPolylineSchema.ts";
 import { ApgCadIns_DrawCircleSchema } from "../schemas/ApgCadInsDrawCircleSchema.ts";
+import { ApgCadIns_DrawGroupSchema } from "../schemas/ApgCadInsDrawGroupSchema.ts";
 import { ApgCadIns_DrawArcSchema } from "../schemas/ApgCadInsDrawArcSchema.ts";
 import { ApgCadIns_DrawRectanglePointsSchema } from "../schemas/ApgCadInsDrawRectanglePointsSchema.ts";
 import { ApgCadIns_DrawRectangleSizesSchema } from "../schemas/ApgCadInsDrawRectangleSizesSchema.ts";
@@ -52,8 +56,20 @@ export const ApgCadInsValidators = [
     //   schema: 'IApgCadSvgInsSetBackground'
     // },
     {
-        type: eApgCadInstructionTypes.SET_LAYER,
-        jsonSchema: ApgCadIns_SetLayerSchema,
+        type: eApgCadInstructionTypes.PUSH_LAYER, // Ok 2023/01/21
+        jsonSchema: ApgCadIns_PushLayerSchema,
+    },
+    {
+        type: eApgCadInstructionTypes.POP_LAYER, // Ok 2023/01/21
+        jsonSchema: ApgCadIns_PopLayerSchema,
+    },
+    {
+        type: eApgCadInstructionTypes.NEW_GROUP, // Ok 2023/01/21
+        jsonSchema: ApgCadIns_NewGroupSchema,
+    },
+    {
+        type: eApgCadInstructionTypes.NO_GROUP, // Ok 2023/01/21
+        jsonSchema: ApgCadIns_NoGroupSchema,
     },
     {
         type: eApgCadInstructionTypes.NEW_POINT, // Ok 2023/01/04
@@ -102,6 +118,10 @@ export const ApgCadInsValidators = [
     {
         type: eApgCadInstructionTypes.DRAW_RECTANGLE_SIZES, // Ok 2023/01/06
         jsonSchema: ApgCadIns_DrawRectangleSizesSchema,
+    },
+    {
+        type: eApgCadInstructionTypes.DRAW_GROUP, 
+        jsonSchema: ApgCadIns_DrawGroupSchema,
     },
     {
         type: eApgCadInstructionTypes.DRAW_LIN_DIM, // Ok 2023/01/15

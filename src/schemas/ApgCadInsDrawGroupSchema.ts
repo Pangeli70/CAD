@@ -10,19 +10,38 @@ import { eApgCadInstructionTypes } from "../enums/eApgCadInstructionTypes.ts";
 
 const rawSchema: Jsv.IApgJsvInterface = {
     $schema: 'http://json-schema.org/schema#',
-    $id: 'IApgCadIns_NoGroup#',
+    $id: 'IApgCadIns_DrawGroup#',
     type: 'object',
     properties: {
         type: {
-            const: eApgCadInstructionTypes.NO_GROUP as string
-        }
+            const: eApgCadInstructionTypes.DRAW_GROUP as string
+        },
+        name: {
+            type: 'string'
+        },
+        origin: {
+            type: 'string'
+        },
+        w: {
+            type: 'number'
+        },
+        h: {
+            type: 'number'
+        },
+        angle: {
+            type: 'number'
+        },
+        payload: {
+            type: 'object'
+        },
+
     },
     additionalProperties: false,
     allErrors: true,
     required: [
-        'type',
+        'type', 'name', 'origin', 'w', 'h', 'payload'
     ]
 
 };
 
-export const ApgCadIns_NoGroupSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvInterface;
+export const ApgCadIns_DrawGroupSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvInterface;

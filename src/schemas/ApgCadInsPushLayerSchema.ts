@@ -1,7 +1,8 @@
 /** -----------------------------------------------------------------------
  * @module [CAD-JSV]
  * @author [APG] ANGELI Paolo Giusto
- * @version 0.9.4 [APG 2023/01/21] Deno Deploy Beta
+ * @version 0.9.3 [APG 2022/12/26] Github Beta
+ * @version 0.9.4 [APG 2023/01/07] Deno Deploy Beta
   * -----------------------------------------------------------------------
  */
 import { Uts, Jsv } from '../../deps.ts'
@@ -10,19 +11,22 @@ import { eApgCadInstructionTypes } from "../enums/eApgCadInstructionTypes.ts";
 
 const rawSchema: Jsv.IApgJsvInterface = {
     $schema: 'http://json-schema.org/schema#',
-    $id: 'IApgCadIns_NoGroup#',
+    $id: 'IApgCadIns_PushLayer#',
     type: 'object',
     properties: {
         type: {
-            const: eApgCadInstructionTypes.NO_GROUP as string
+            const: eApgCadInstructionTypes.PUSH_LAYER as string
+        },
+        name: {
+            type: 'string',
         }
     },
     additionalProperties: false,
     allErrors: true,
     required: [
-        'type',
+        'type', 'name'
     ]
 
 };
 
-export const ApgCadIns_NoGroupSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvInterface;
+export const ApgCadIns_PushLayerSchema = Uts.ApgUtsObj.DeepFreeze(rawSchema) as Jsv.IApgJsvInterface;

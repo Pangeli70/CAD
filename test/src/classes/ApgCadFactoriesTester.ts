@@ -20,6 +20,7 @@ import { eApgCadDftLayers } from "../../../src/enums/eApgCadDftLayers.ts";
 import { eApgCadDftTextStyles } from "../../../src/enums/eApgCadDftTextStyles.ts";
 import { eApgCadLinearDimensionTypes } from "../../../src/enums/eApgCadLinearDimensionTypes.ts";
 import { eApgCadTestFactories } from "../enums/eApgCadTestFactories.ts";
+import { eApgCadTestGridMode } from "../enums/eApgCadTestGridMode.ts";
 import { eApgCadTestLayers } from "../enums/eApgCadTestLayers.ts";
 import { ApgCadBaseTester } from "./ApgCadBaseTester.ts";
 
@@ -31,7 +32,7 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
 
   static RunTest(atest: eApgCadTestFactories,
     aisBlackBack = false,
-    aisDotGrid = false,
+    agridMode = eApgCadTestGridMode.LINES,
     aisRandom = false,
     adebug = false,
   ) {
@@ -43,43 +44,43 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
         r = this.testBasicShapes(aisBlackBack);
         break;
       case eApgCadTestFactories.ANNOTATIONS:
-        r = this.testAnnotations(aisBlackBack, aisDotGrid, aisRandom, adebug);
+        r = this.testAnnotations(aisBlackBack, agridMode, adebug);
         break;
       case eApgCadTestFactories.HORIZONTAL_LIN_DIMS:
         r = this.#testLinearDims(
-          eApgCadLinearDimensionTypes.HORIZONTAL, aisBlackBack, aisDotGrid, aisRandom, adebug);
+          eApgCadLinearDimensionTypes.HORIZONTAL, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.VERTICAL_LIN_DIMS:
         r = this.#testLinearDims(
-          eApgCadLinearDimensionTypes.VERTICAL, aisBlackBack, aisDotGrid, aisRandom, adebug);
+          eApgCadLinearDimensionTypes.VERTICAL, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.ALIGNED_LIN_DIMS:
         r = this.#testLinearDims(
-          eApgCadLinearDimensionTypes.ALIGNED, aisBlackBack, aisDotGrid, aisRandom, adebug);
+          eApgCadLinearDimensionTypes.ALIGNED, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.IN_DIAMETER_ARC_DIMS:
         r= this.#testArcDims(
-          eApgCadArcDimensionTypes.INNER_DIAMETER, aisBlackBack, aisDotGrid, aisRandom, adebug);
+          eApgCadArcDimensionTypes.INNER_DIAMETER, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.IN_RADIOUS_ARC_DIMS:
         r = this.#testArcDims(
-          eApgCadArcDimensionTypes.INNER_RADIOUS, aisBlackBack, aisDotGrid, aisRandom, adebug);
+          eApgCadArcDimensionTypes.INNER_RADIOUS, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.OUT_DIAMETER_DIMS:
         r = this.#testArcDims(
-          eApgCadArcDimensionTypes.OUTER_DIAMETER, aisBlackBack, aisDotGrid, aisRandom, adebug);
+          eApgCadArcDimensionTypes.OUTER_DIAMETER, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.OUT_RADIOUS_ARC_DIMS:
         r = this.#testArcDims(
-          eApgCadArcDimensionTypes.OUTER_RADIOUS, aisBlackBack, aisDotGrid, aisRandom, adebug);
+          eApgCadArcDimensionTypes.OUTER_RADIOUS, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.HORIZONTAL_ARC_DIMS:
         r = this.#testArcDims(
-          eApgCadArcDimensionTypes.HORIZONTAL, aisBlackBack, aisDotGrid, aisRandom, adebug);
+          eApgCadArcDimensionTypes.HORIZONTAL, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.VERTICAL_ARC_DIMS:
         r = this.#testArcDims(
-          eApgCadArcDimensionTypes.VERTICAL, aisBlackBack, aisDotGrid, aisRandom, adebug);
+          eApgCadArcDimensionTypes.VERTICAL, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.ANGULAR_DIMS:
         r = this.testAngularDims(aisBlackBack);
@@ -90,10 +91,15 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
   }
 
 
-  static testBasicShapes(aisBlackBack = false) {
+  static testBasicShapes(
+    aisBlackBack = false,
+    agridMode = eApgCadTestGridMode.LINES,
+  ) {
+
     const cad = new ApgCadSvg(aisBlackBack);
     cad.svg.title = "Test Basic Shapes";
     cad.svg.description = "Apg Svg Cad Factory";
+
     const layers = this.buildTestLayers(cad);
     const layId = this.getLayerName(eApgCadTestLayers.GREEN);
     cad.setCurrentLayer(layId);
@@ -152,18 +158,19 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
         .buildDot(cp, 4)
         .childOf(layers[4]);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 
   static testAnnotations(
     isBlackBack = false,
-    aisDotGrid = false,
-    aisRandom = false,
+    agridMode = eApgCadTestGridMode.LINES,
     aisDebug = false,
   ) {
 
-    const cad = new ApgCadSvg(isBlackBack, aisDotGrid, aisDebug);
+    const isDotGrid = agridMode == eApgCadTestGridMode.DOTS;
+    const cad = new ApgCadSvg(isBlackBack, isDotGrid, aisDebug);
     cad.svg.title = `Test Annotations`;
     cad.svg.description = "Apg Svg Cad";
 
@@ -212,7 +219,8 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
       g?.childOf(cad.currentLayer);
     }
 
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
 
   }
@@ -232,14 +240,16 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
   static #testLinearDims(
     atype: eApgCadLinearDimensionTypes,
     isBlackBack = false,
-    aisDotGrid = false,
+    agridMode = eApgCadTestGridMode.LINES,
     aisRandom = false,
     aisDebug = false
   ) {
 
-    const cad = new ApgCadSvg(isBlackBack, aisDotGrid, aisDebug);
+    const isDotGrid = agridMode == eApgCadTestGridMode.DOTS;
+    const cad = new ApgCadSvg(isBlackBack, isDotGrid, aisDebug);
     cad.svg.title = `Test Linear dims (${atype})`;
     cad.svg.description = "Apg Svg Cad";
+
     // const textStyle: IApgSvgTextStyle = { size: 30, stroke: { color: "none", width: 0 }, aspectRatio: 0.5 }
     const textStyle = cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS)
     const dimFact = new ApgCadSvgLinearDimensionsFactory(
@@ -287,7 +297,8 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
         ?.childOf(cad.currentLayer)
 
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
 
   }
@@ -296,15 +307,16 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
   static #testArcDims(
     atype: eApgCadArcDimensionTypes,
     isBlackBack = false,
-    aisDotGrid = false,
+    agridMode = eApgCadTestGridMode.LINES,
     aisRandom = false,
     aisDebug = false,
   ) {
      
-
-    const cad = new ApgCadSvg(isBlackBack, aisDotGrid, aisDebug);
+    const isDotGrid = agridMode == eApgCadTestGridMode.DOTS;
+    const cad = new ApgCadSvg(isBlackBack, isDotGrid, aisDebug);
     cad.svg.title = `Test Arc dims (${atype})`;
     cad.svg.description = "Apg Svg Cad";
+
     const layers = this.buildTestLayers(cad);
     cad.setCurrentLayer(eApgCadDftLayers.DIMENSIONS);
     const textStyle = cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS)
@@ -351,13 +363,10 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
          .build(atype, centerPoint, ladderPoint, displacement)
         ?.childOf(cad.currentLayer)
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
-
-
-
-
 
   static _m(arr: number[]) {
     const sorted = arr.sort((a, b) => a === b ? 0 : a < b ? -1 : 1);
@@ -367,7 +376,9 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
     return delta + min;
   }
 
-  static testAngularDims(isBlackBack = false) {
+  static testAngularDims(
+    isBlackBack = false
+  ) {
     const cad = new ApgCadSvg(isBlackBack);
     cad.svg.title = `Test Angular dims`;
     cad.svg.description = "Apg Svg Cad";
@@ -404,7 +415,8 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
       cad.setCurrentLayer('2');
       dimFact.build(cad.currentLayer, l1, l2, 50, A2D.eApg2DQuadrant.posXposY, "##", "##");
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 

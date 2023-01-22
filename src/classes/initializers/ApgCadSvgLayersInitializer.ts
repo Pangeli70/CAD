@@ -80,5 +80,12 @@ export class ApgCadSvgLayersInitializer extends ApgCadSvgBaseInitializer {
             eApgCadDftTextStyles.TITLE
         );
 
+        this._cad.newLayer(
+            eApgCadDftLayers.GUI,
+            eApgCadDftStrokeStyles.FOREGROUND,
+            eApgCadDftFillStyles.NONE,
+            eApgCadDftTextStyles.DEFAULT
+        );
+
     }
 }

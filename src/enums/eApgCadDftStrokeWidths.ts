@@ -9,10 +9,10 @@
  * Default Stroke Widths
  */
 export enum eApgCadDftStrokeWidths {
-    NONE = 0,
-    SLIGHT = 1,
-    THIN = 2,
-    MILD = 4,
-    MARKED = 6,
-    THICK = 8
+    NONE_0 = 0,
+    SLIGHT_1 = 1,
+    THIN_2 = 2,
+    MILD_4 = 4,
+    MARKED_6 = 6,
+    THICK_8 = 8
 } 

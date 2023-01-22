@@ -9,7 +9,7 @@
  * -----------------------------------------------------------------------
  */
 
-import { Svg, Uts } from "../../deps.ts";
+import { A2D, Svg, Uts } from "../../deps.ts";
 
 import { eApgCadDftFillStyles } from "../enums/eApgCadDftFillStyles.ts";
 import { eApgCadDftLayers } from "../enums/eApgCadDftLayers.ts";
@@ -98,14 +98,14 @@ export class ApgCadSvg {
 
     const background: IApgCadSvgGround = {
       draw: true,
-      strokeWidth: eApgCadDftStrokeWidths.MILD,
+      strokeWidth: eApgCadDftStrokeWidths.MILD_4,
       strokeColor: eApgCadStdColors.GRAY,
       fillColor: ablackBackground ? eApgCadStdColors.BLACK : eApgCadStdColors.WHITE,
     }
 
     const foreGround: IApgCadSvgGround = {
       draw: true,
-      strokeWidth: eApgCadDftStrokeWidths.MILD,
+      strokeWidth: eApgCadDftStrokeWidths.MILD_4,
       strokeColor: ablackBackground ? eApgCadStdColors.WHITE : eApgCadStdColors.BLACK,
       fillColor: ablackBackground ? eApgCadStdColors.WHITE : eApgCadStdColors.BLACK,
     }
@@ -222,6 +222,21 @@ export class ApgCadSvg {
       this.settings.viewBox.viewPortWidth,
       this.settings.viewBox.viewPortHeight,
     );
+  }
+
+
+  /** Returns an array with BottomLeft and TopRight canvas  */
+  getBoundaries() {
+    const r: A2D.Apg2DPoint[] = [];
+    r.push(new A2D.Apg2DPoint(
+      -this.settings.viewBox.originXDisp,
+      -this.settings.viewBox.originYDisp
+    ));
+    r.push(new A2D.Apg2DPoint(
+      this.settings.viewBox.viewPortWidth - this.settings.viewBox.originXDisp,
+      this.settings.viewBox.viewPortHeight - this.settings.viewBox.originYDisp
+    ));
+    return r;
   }
 
 

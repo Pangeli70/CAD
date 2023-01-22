@@ -16,41 +16,59 @@ import { eApgCadTestFactories } from "../../test/src/enums/eApgCadTestFactories.
 import { eApgCadTestFeatures } from "../../test/src/enums/eApgCadTestFeatures.ts";
 import { eApgCadTestInsSets } from "../../test/src/enums/eApgCadTestInsSets.ts";
 import { eApgCadTestTypes } from "../../test/src/enums/eApgCadTestTypes.ts";
+import { eApgCadTestGridMode } from "../../test/src/enums/eApgCadTestGridMode.ts";
+import { eApgCadTestCartesianMode } from "../../test/src/enums/eApgCadTestCartesianMode.ts";
 
+enum eResParams {
+    pTYPE = 'type',
+    pTEST = 'test',
+    qBLACK = 'black',
+    qGRID = 'grid',
+    qCART = 'cartesian',
+    qRANDOM = 'random',
+    qDEBUG = 'debug'
+}
 
 export class ApgCadSvgTestViewerResource extends Drash.Resource {
 
-    public override paths = ["/test/:type/:test"];
+    public override paths = [`/test/:${eResParams.pTYPE}/:${eResParams.pTEST}`];
 
     public async GET(request: Drash.Request, response: Drash.Response) {
-
-        const rawBlackBack = request.queryParam("black") as eApgCadTestTypes;
+        
+        const testType = request.pathParam(eResParams.pTYPE) as eApgCadTestTypes;
+        const testName = request.pathParam(eResParams.pTEST);
+        
+        const rawBlackBack = request.queryParam(eResParams.qBLACK);
         const blackBack = Uts.ApgUtsIs.IsTrueish(rawBlackBack);
 
-        const rawDotsGrid = request.queryParam("dots") as eApgCadTestTypes;
-        const dotsGrid = Uts.ApgUtsIs.IsTrueish(rawDotsGrid);
+        const rawGridMode = request.queryParam(eResParams.qGRID) as eApgCadTestGridMode;
+        const gridMode = (Uts.ApgUtsEnum.StringContains(eApgCadTestGridMode, rawGridMode)) ?
+            rawGridMode :
+            eApgCadTestGridMode.LINES;
 
-        const rawRandom = request.queryParam("random") as eApgCadTestTypes;
+        const rawCartesianMode = request.queryParam(eResParams.qCART) as eApgCadTestCartesianMode;
+        const cartesianMode = (Uts.ApgUtsEnum.StringContains(eApgCadTestCartesianMode, rawCartesianMode)) ?
+            rawCartesianMode :
+            eApgCadTestCartesianMode.NORMAL;
+
+        const rawRandom = request.queryParam(eResParams.qRANDOM) ;
         const random = Uts.ApgUtsIs.IsTrueish(rawRandom);
 
-        const rawDebug = request.queryParam("debug") as eApgCadTestTypes;
+        const rawDebug = request.queryParam(eResParams.qDEBUG);
         const debug = Uts.ApgUtsIs.IsTrueish(rawDebug);
 
-        const testType = request.pathParam("type") as eApgCadTestTypes;
+        let pageMenu: { href: string, caption: string }[] = []
+        pageMenu = this.#buildMenu(testType, testName, blackBack, gridMode, cartesianMode, random, debug, pageMenu);
+
         let svgContent = "";
         let testLogger: any = { hasErrors: false };
-        const testName = request.pathParam("test");
-
-        let pageMenu: { href: string, caption: string }[] = []
-
-        pageMenu = this.#buildMenu(testType, testName, blackBack, dotsGrid, random, debug, pageMenu);
 
         switch (testType) {
             case eApgCadTestTypes.DIRECT_SVG:
                 svgContent = ApgCadSvgTester.RunTest(testName as eApgCadTestSvg, blackBack);
                 break;
             case eApgCadTestTypes.FACTORIES:
-                svgContent = ApgCadFactoriesTester.RunTest(testName as eApgCadTestFactories, blackBack, dotsGrid, random, debug);
+                svgContent = ApgCadFactoriesTester.RunTest(testName as eApgCadTestFactories, blackBack, gridMode, random, debug);
                 break;
             case eApgCadTestTypes.FEATURES:
                 svgContent = ApgCadFeaturesTester.RunTest(testName as eApgCadTestFeatures, blackBack);
@@ -60,7 +78,7 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
                 break;
             case eApgCadTestTypes.INS_SETS:
                 {
-                    const { svg, logger } = ApgCadInsSetsTester.RunTest(testName as unknown as eApgCadTestInsSets, blackBack, dotsGrid, debug);
+                    const { svg, logger } = ApgCadInsSetsTester.RunTest(testName as unknown as eApgCadTestInsSets, blackBack, gridMode, debug);
                     svgContent = svg;
                     testLogger = logger;
                 } break;
@@ -97,65 +115,92 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
 
 
 
-    #buildMenu(testType: eApgCadTestTypes, testName: string | undefined, blackBack: boolean, dotsGrid: boolean, random: boolean, debug: boolean, pageMenu: { href: string; caption: string; }[]) {
+    #buildMenu(
+        atestType: eApgCadTestTypes,
+        atestName: string | undefined,
+        ablackBack: boolean,
+        agridMode: eApgCadTestGridMode,
+        acartesianMode: eApgCadTestCartesianMode,
+        arandom: boolean,
+        adebug: boolean,
+        apageMenu: { href: string; caption: string; }[]
+    ) {
+
+        const root = `/test/${atestType}/${atestName}`;
+        const blackFlag = `black=${ablackBack}`;
+        const blackFlagInv = `black=${!ablackBack}`;
+        const debugFlag = `debug=${adebug}`;
+        const debugFlagInv = `debug=${!adebug}`;
+        const randomFlag = `random=${arandom}`;
+        const randomFlagInv = `random=${!arandom}`;
+        const gridFlag = `grid=${agridMode}`;
+        const gridFlagInv = `grid=${agridMode == eApgCadTestGridMode.LINES ? eApgCadTestGridMode.DOTS : eApgCadTestGridMode.LINES}`;
+        const cartesianFlag = `axis=${acartesianMode}`;
+        const cartesianFlagInv = `axis=${acartesianMode == eApgCadTestCartesianMode.NORMAL ? eApgCadTestCartesianMode.NONE : eApgCadTestCartesianMode.NORMAL}`;
+
+
         const fullMenu = [
             {
-                href: `/test/${testType}/${testName}/?black=${!blackBack}&dots=${dotsGrid}&random=${random}&debug=${debug}`,
-                caption: (blackBack) ? "White" : "Black"
+                href: `${root}?${blackFlagInv}&${gridFlag}&${cartesianFlag}&${randomFlag}&${debugFlag}`,
+                caption: (ablackBack) ? "White" : "Black"
             },
             {
-                href: `/test/${testType}/${testName}/?black=${blackBack}&dots=${!dotsGrid}&random=${random}&debug=${debug}`,
-                caption: (dotsGrid) ? "Lines" : "Dots"
+                href: `${root}?${blackFlag}&${gridFlagInv}&${cartesianFlag}&${randomFlag}&${debugFlag}`,
+                caption: agridMode == eApgCadTestGridMode.LINES ? eApgCadTestGridMode.DOTS : eApgCadTestGridMode.LINES
             },
             {
-                href: `/test/${testType}/${testName}/?black=${blackBack}&dots=${dotsGrid}&random=${!random}&debug=${debug}`,
-                caption: (random) ? "Determ." : "Random"
+                href: `${root}?${blackFlag}&${gridFlagInv}&${cartesianFlag}&${randomFlag}&${debugFlag}`,
+                caption: acartesianMode == eApgCadTestCartesianMode.NORMAL ? eApgCadTestCartesianMode.NONE : eApgCadTestCartesianMode.NORMAL
             },
             {
-                href: `/test/${testType}/${testName}/?black=${blackBack}&dots=${dotsGrid}&random=${random}&debug=${!debug}`,
-                caption: (debug) ? "Standard" : "Debug"
+                href: `${root}?${blackFlag}&${gridFlag}&${cartesianFlag}&${randomFlagInv}&${debugFlag}`,
+                caption: (arandom) ? "Determ." : "Random"
+            },
+            {
+                href: `${root}?${blackFlag}&${gridFlag}&${cartesianFlag}&${randomFlag}&${debugFlagInv}`,
+                caption: (adebug) ? "Standard" : "Debug"
             }
         ];
 
         const baseMenu = [
             {
-                href: `/test/${testType}/${testName}/?black=${!blackBack}`,
-                caption: (blackBack) ? "White" : "Black"
+                href: `${root}?black=${!ablackBack}`,
+                caption: (ablackBack) ? "White" : "Black"
             }
         ];
 
         const noRandomlMenu = [
             {
-                href: `/test/${testType}/${testName}/?black=${!blackBack}&dots=${dotsGrid}&debug=${debug}`,
-                caption: (blackBack) ? "White" : "Black"
+                href: `${root}?${blackFlagInv}&${gridFlag}&${debugFlag}`,
+                caption: (ablackBack) ? "White" : "Black"
             },
             {
-                href: `/test/${testType}/${testName}/?black=${blackBack}&dots=${!dotsGrid}&debug=${debug}`,
-                caption: (dotsGrid) ? "Lines" : "Dots"
+                href: `${root}?${blackFlag}&${gridFlagInv}&${randomFlag}&${debugFlag}`,
+                caption: agridMode == eApgCadTestGridMode.LINES ? eApgCadTestGridMode.DOTS : eApgCadTestGridMode.LINES
             },
             {
-                href: `/test/${testType}/${testName}/?black=${blackBack}&dots=${dotsGrid}&debug=${!debug}`,
-                caption: (debug) ? "Standard" : "Debug"
+                href: `${root}?${blackFlag}&${gridFlag}&${debugFlagInv}`,
+                caption: (adebug) ? "Standard" : "Debug"
             }
         ];
 
-        switch (testType) {
+        switch (atestType) {
             case eApgCadTestTypes.DIRECT_SVG:
             case eApgCadTestTypes.FEATURES:
             case eApgCadTestTypes.DEFAULTS:
                 {
-                    pageMenu = [...baseMenu];
+                    apageMenu = [...baseMenu];
                 }
                 break;
             case eApgCadTestTypes.FACTORIES:
                 {
-                    pageMenu = [...fullMenu];
+                    apageMenu = [...fullMenu];
                 } break;
             case eApgCadTestTypes.INS_SETS:
                 {
-                    pageMenu = [...noRandomlMenu];
+                    apageMenu = [...noRandomlMenu];
                 } break;
         }
-        return pageMenu;
+        return apageMenu;
     }
 }

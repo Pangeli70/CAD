@@ -74,7 +74,8 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
         .stroke(eApgCadStdColors.NONE)
         .childOf(r.group);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
 
   }
@@ -97,7 +98,8 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
       }
       r.group.childOf(cad.currentLayer);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 
@@ -116,7 +118,8 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
       r.group.fill(fillStyle!.color, fillStyle!.opacity);
       r.group.childOf(cad.currentLayer);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 
@@ -141,7 +144,8 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
         .fill(eApgCadStdColors.CYAN)
         .childOf(r.group);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
   
@@ -205,7 +209,8 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
         .textStyle(debugTextStyle)
         .childOf(r.group);
     }
-    this.cartouche(cad);
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 

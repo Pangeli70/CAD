@@ -137,7 +137,7 @@ export abstract class ApgCadBaseTester {
 
   protected static notImplemented(acad: ApgCadSvg) {
 
-    const ts = acad.textStyles.get(eApgCadDftTextStyles.DEBUG )
+    const ts = acad.textStyles.get(eApgCadDftTextStyles.DEBUG)
     const mid = (this._maxRange - this._minRange) / 2;
     acad.svg
       .text(mid, mid, 'NOT YET IMPLEMENTED', 0)
@@ -150,7 +150,7 @@ export abstract class ApgCadBaseTester {
     const r: Svg.IApgSvgTextStyle = {
       size: acad.standardSize,
       fill: { color: acad.settings.foreGround.fillColor, opacity: 1 },
-      stroke: { color: eApgCadStdColors.NONE, width: eApgCadDftStrokeWidths.NONE },
+      stroke: { color: eApgCadStdColors.NONE, width: eApgCadDftStrokeWidths.NONE_0 },
       anchor: Svg.eApgSvgTextAnchor.end,
       aspectRatio: 0.5,
       leading: 1.1
@@ -198,7 +198,7 @@ export abstract class ApgCadBaseTester {
   }
 
 
-  protected static cartouche(acad: ApgCadSvg) {
+  protected static DrawCartouche(acad: ApgCadSvg) {
     const WIDTH = 2000;
     const HEIGHT = 500;
 
@@ -240,6 +240,127 @@ export abstract class ApgCadBaseTester {
       .textStyle(textStyle)
       .stroke(eApgCadStdColors.NONE, 0)
       .childOf(acad.currentLayer);
+  }
+
+  protected static Gui(acad: ApgCadSvg) {
+    acad.setCurrentLayer(eApgCadDftLayers.GUI);
+    this.GuiButton(acad);
+    this.GuiMenu(acad);
+    this.LayerBoardGui(acad);
+  }
+
+  static GuiButton(acad: ApgCadSvg) {
+    const boundaries = acad.getBoundaries();
+    acad.setCurrentLayer(eApgCadDftLayers.GUI);
+
+    const currLayerDef = acad.layerDefs.get(acad.currentLayer.ID);
+    const currTextStyle = currLayerDef!.textStyle;
+    const textStyle = Uts.ApgUtsObj.DeepCopy(currTextStyle) as Svg.IApgSvgTextStyle;
+
+    const textHeight = textStyle.size;
+
+    const width = textHeight * 3;
+    const height = (boundaries[1].y - boundaries[0].y) / 2;
+    let x = boundaries[1].x - width;
+    let y = boundaries[0].y + height / 2;
+    const id = "BTN_GUI";
+    acad.svg
+      .rect(x, y, width, height, id)
+      .fill(eApgCadStdColors.WHITE, 0)
+      .attrib('onclick', "top.GuiButtonOnClick(event)")
+      .attrib('show', "false")
+      .attrib('style', "display:'block'")
+      .childOf(acad.currentLayer)
+
+    const text = 'Toolbar';
+
+    x = x + (2 / 3 * width);
+    y = boundaries[0].y
+      + ((boundaries[1].y - boundaries[0].y) / 2)
+      - (text.length * textStyle.size * textStyle.aspectRatio / 2);
+    acad.svg
+      .text(x, y, text, 0)
+      .stroke(eApgCadStdColors.NONE, 0)
+      .fill(eApgCadStdColors.BLUE)
+      .rotate(90)
+      .childOf(acad.currentLayer)
+  }
+
+  static GuiMenu(acad: ApgCadSvg) {
+    const boundaries = acad.getBoundaries();
+    acad.setCurrentLayer(eApgCadDftLayers.GUI);
+
+    const currLayerDef = acad.layerDefs.get(acad.currentLayer.ID);
+    const currTextStyle = currLayerDef!.textStyle;
+    const textStyle = Uts.ApgUtsObj.DeepCopy(currTextStyle) as Svg.IApgSvgTextStyle;
+
+    const textHeight = textStyle.size;
+    const textWidth = textHeight * textStyle.aspectRatio;
+    const guiButtonWidth = textHeight * 3;
+    const MAX_CHARS = 40;
+
+    const width = textWidth * MAX_CHARS;
+    const height = (boundaries[1].y - boundaries[0].y) / 2;
+    let x = boundaries[1].x - width - guiButtonWidth;
+    let y = boundaries[0].y + height / 2;
+
+    const r = acad.svg
+      .group("GUI_MENU")
+      .attrib('style', 'display:none')
+      .childOf(acad.currentLayer);
+
+    acad.svg
+      .rect(x, y, width, height)
+      .fill(eApgCadStdColors.ORANGE, 0)
+      .childOf(r);
+
+    let btnX = x + (textWidth);
+    let btnY = y + height - textWidth - (textHeight * 3);
+    acad.svg
+      .rect(btnX, btnY, width - (2 * textWidth), textHeight * 3, 'BTN_LAYER_MENU')
+      .fill(eApgCadStdColors.GRAY, 0)
+      .attrib('onclick', "top.LayerBoardMenuOnClick(event)")
+      .childOf(r)
+
+    acad.svg
+      .text(btnX, btnY, 'Layers', 0)
+      .stroke(eApgCadStdColors.NONE, 0)
+      .fill(eApgCadStdColors.BLUE)
+      .childOf(r)
+
+    return r;
+  }
+
+  static LayerBoardGui(acad: ApgCadSvg) {
+    acad.setCurrentLayer(eApgCadDftLayers.GUI);
+    const WIDTH = 200;
+    const HEIGHT = 200;
+    let y = 0;
+    const DELTA_XY = 220;
+
+    const r = acad.svg
+      .group('LAYER_BOARD')
+      .attrib('style', 'display:none')
+      .childOf(acad.currentLayer);
+
+    for (const layer of acad.layers.keys()) {
+      const id = "BTN_LAYER_" + layer;
+      acad.svg
+        .rect(0, y, WIDTH, HEIGHT, id)
+        .fill(eApgCadStdColors.GREEN, 0)
+        .attrib('onclick', "top.LayerBoardButtonOnClick(event)")
+        .attrib('show', "true")
+        .childOf(r)
+
+      acad.svg
+        .text(DELTA_XY, y, layer, 0)
+        .stroke(eApgCadStdColors.NONE, 0)
+        .fill(eApgCadStdColors.BLUE)
+        .childOf(r)
+
+      y += DELTA_XY;
+    }
+
   }
 
 }
