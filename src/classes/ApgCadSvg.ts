@@ -73,9 +73,12 @@ export class ApgCadSvg {
   patternsDefs: string[] = [];
 
 
+  blocks: Map<string, Svg.ApgSvgNode> = new Map();
   blockDefs: string[] = [];
 
+  
   gradients: Map<string, Svg.ApgSvgNode> = new Map();
+  gradientsDefs: string[] = [];
 
   primitiveFactories: Map<string, ApgCadSvgPrimitivesFactory> = new Map();
 
@@ -530,29 +533,14 @@ export class ApgCadSvg {
     }
     return g;
   }
-
   unSetCurrentGroup() {
     this.currentGroup = undefined;
-  }
-
-
-  newPattern(aname: string, apattern: Svg.ApgSvgNode) {
-    this.patterns.set(aname, apattern);
-    this.patternsDefs.push(aname);
-  }
-
-
-  getPattern(aname: string) {
-    const r = this.patterns.get(aname);
-    return r;
   }
 
 
   newStrokeStyle(aname: string, adata: Svg.IApgSvgStrokeStyle) {
     this.strokeStyles.set(aname, adata);
   }
-
-
   getStrokeStyle(aname: string) {
     const r = this.strokeStyles.get(aname);
     return r;
@@ -562,8 +550,6 @@ export class ApgCadSvg {
   newFillStyle(aname: string, adata: Svg.IApgSvgFillStyle) {
     this.fillStyles.set(aname, adata);
   }
-
-
   getFillStyle(aname: string) {
     const r = this.fillStyles.get(aname);
     return r;
@@ -573,8 +559,6 @@ export class ApgCadSvg {
   newTextStyle(aname: string, atextStyle: Svg.IApgSvgTextStyle) {
     this.textStyles.set(aname, atextStyle);
   }
-
-
   getTextStyle(aname: string): Svg.IApgSvgTextStyle | undefined {
     const r: Svg.IApgSvgTextStyle | undefined = this.textStyles.get(aname);
     return r;
@@ -582,14 +566,35 @@ export class ApgCadSvg {
 
 
   newBlock(anode: Svg.ApgSvgNode) {
+    this.blocks.set(anode.ID, anode)
     this.blockDefs.push(anode.ID);
     this.svg.addToDefs(anode.ID, anode);
   }
-
-
   getBlock(ablockId: string) {
     return this.svg.getFromDef(ablockId);
   }
+
+
+  newPattern(apattern: Svg.ApgSvgNode) {
+    this.patterns.set(apattern.ID, apattern);
+    this.patternsDefs.push(apattern.ID);
+    this.svg.addToDefs(apattern.ID, apattern);
+  }
+  getPattern(aname: string) {
+    return this.patterns.get(aname);
+  }
+
+
+  newGradient(agradient: Svg.ApgSvgNode) {
+    this.gradients.set(agradient.ID, agradient);
+    this.gradientsDefs.push(agradient.ID);
+    this.svg.addToDefs(agradient.ID, agradient);
+  }
+  getGradient(aname: string) {
+    return this.gradients.get(aname);
+  }
+
+
 
 
   /** Draws a simple svg as stub for the tests */
@@ -616,6 +621,7 @@ export class ApgCadSvg {
     r.textStyles = Uts.ApgUtsMap.ToArray(this.textStyles);
     r.gradients = Uts.ApgUtsMap.ToArray(this.gradients);
     r.patterns = Uts.ApgUtsMap.ToArray(this.patterns);
+    r.blocks = Uts.ApgUtsMap.ToArray(this.blocks);
     r.layers = Uts.ApgUtsMap.ToArray(this.layers);
     r.groups = Uts.ApgUtsMap.ToArray(this.groupsDefs);
     return JSON.stringify(r, undefined, "  ");

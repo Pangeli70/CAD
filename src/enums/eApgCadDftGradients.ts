@@ -10,4 +10,8 @@
  */
 export enum eApgCadDftGradients {
     NONE = "None",
+    LINEAR_LEFT_TO_RIGHT_LIGHT_SHADOW = "LinearLeftToRightLightShadow",
+    LINEAR_LEFT_TO_RIGHT_DARK_SHADOW = "LinearLeftToRightDarkShadow",
+    LINEAR_TOP_TO_DOWN_LIGHT_SHADOW_ = "LinearTopToDownLightShadow",
+    LINEAR_TOP_TO_DOWN_DARK_SHADOW = "LinearTopToDownDarkShadow",
 }

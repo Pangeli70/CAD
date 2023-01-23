@@ -176,11 +176,10 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
 
       const block = cad.getBlock(blockDef);
       if (!block) {
-        throw new Error("Block [" + block + "] Not implemented")
+        throw new Error("Block [" + block + "] not defined")
       }
       const _b = cad.svg
         .useT(blockDef, r.point.x, r.point.y, {})
-        //.useT(blockDef, r.point.x, r.point.y, { scale: { x: 4, y: 4 }, rotate: { a: 90 }, translate: { x: 0, y: 100 } })
         .fill(eApgCadStdColors.CYAN)
         .childOf(r.group);
     }
@@ -192,14 +191,57 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
 
   static testGradients(aisBlackBack = false) {
     const cad = new ApgCadSvg(aisBlackBack);
-    const _r = this.notImplemented(cad);
+    cad.svg.title = "Default Gradients";
+    cad.svg.description = "Apg-Cad";
+
+    for (let i = 0; i < cad.gradientsDefs.length; i++) {
+      const gradientDef = cad.gradientsDefs[i];
+      const r = this.getTestBox(cad, i, gradientDef);
+
+      const gradient = cad.getGradient(gradientDef);
+      if (!gradient) {
+        throw new Error("Gradient [" + gradient + "] not defined")
+      }
+      r.group.fill(`url(#${gradientDef})`)
+      r.group.childOf(cad.currentLayer);
+    }
+
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
   }
 
   static testPatterns(aisBlackBack = false) {
     const cad = new ApgCadSvg(aisBlackBack);
-    const _r = this.notImplemented(cad);
+    cad.svg.title = "Default Patterns";
+    cad.svg.description = "Apg-Cad";
+
+    for (let i = 0; i < cad.patternsDefs.length; i++) {
+      const patternDef = cad.patternsDefs[i];
+      const r = this.getTestBox(cad, i, patternDef);
+
+      const pattern = cad.getPattern(patternDef);
+      if (!pattern) {
+        throw new Error("Pattern [" + pattern + "] not defined")
+      }
+      r.group.fill(`url(#${patternDef})`)
+      r.group.childOf(cad.currentLayer);
+    }
+
+    this.DrawCartouche(cad);
+    this.Gui(cad);
     return cad.svg.render();
+
+    // TODO @3 APG20220122 -- Implement this
+    /**
+     * <defs>
+        <pattern id="img1" patternUnits="userSpaceOnUse" width="100" height="100">
+          <image href="wall.jpg" x="0" y="0" width="100" height="100" />
+        </pattern>
+      </defs>
+      <path d="M5,5 l0,680 l980,0 l0,-680 l-980,0 fill="url(#img1)" />
+     * 
+     */
   }
 
   static testTextStyles(aisBlackBack = false) {

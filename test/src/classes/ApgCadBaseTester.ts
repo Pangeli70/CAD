@@ -268,6 +268,7 @@ export abstract class ApgCadBaseTester {
       .rect(x, y, width, height, id)
       .fill(eApgCadStdColors.WHITE, 0)
       .attrib('onclick', "top.GuiButtonOnClick(event)")
+      .attrib('touchstart', "top.GuiButtonOnClick(event)")
       .attrib('show', "false")
       .attrib('style', "display:'block'")
       .childOf(acad.currentLayer)
@@ -320,6 +321,7 @@ export abstract class ApgCadBaseTester {
       .rect(btnX, btnY, width - (2 * textWidth), textHeight * 3, 'BTN_LAYER_MENU')
       .fill(eApgCadStdColors.GRAY, 0)
       .attrib('onclick', "top.LayerBoardMenuOnClick(event)")
+      .attrib('touchstart', "top.LayerBoardMenuOnClick(event)")
       .childOf(r)
 
     acad.svg
@@ -349,6 +351,7 @@ export abstract class ApgCadBaseTester {
         .rect(0, y, WIDTH, HEIGHT, id)
         .fill(eApgCadStdColors.GREEN, 0)
         .attrib('onclick', "top.LayerBoardButtonOnClick(event)")
+        .attrib('touchstart', "top.LayerBoardButtonOnClick(event)")
         .attrib('show', "true")
         .childOf(r)
 
