@@ -34,10 +34,10 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
     public override paths = [`/test/:${eResParams.pTYPE}/:${eResParams.pTEST}`];
 
     public async GET(request: Drash.Request, response: Drash.Response) {
-        
+
         const testType = request.pathParam(eResParams.pTYPE) as eApgCadTestTypes;
         const testName = request.pathParam(eResParams.pTEST);
-        
+
         const rawBlackBack = request.queryParam(eResParams.qBLACK);
         const blackBack = Uts.ApgUtsIs.IsTrueish(rawBlackBack);
 
@@ -51,7 +51,7 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
             rawCartesianMode :
             eApgCadTestCartesianMode.NORMAL;
 
-        const rawRandom = request.queryParam(eResParams.qRANDOM) ;
+        const rawRandom = request.queryParam(eResParams.qRANDOM);
         const random = Uts.ApgUtsIs.IsTrueish(rawRandom);
 
         const rawDebug = request.queryParam(eResParams.qDEBUG);
@@ -84,6 +84,7 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
                 } break;
         }
 
+        await Deno.writeTextFile(Deno.cwd() + "/test/output/" + testType + "_" + testName + ".svg", svgContent);
 
         const templateData = {
             site: {

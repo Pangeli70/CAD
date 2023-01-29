@@ -202,7 +202,7 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
       if (!gradient) {
         throw new Error("Gradient [" + gradient + "] not defined")
       }
-      r.group.fill(`url(#${gradientDef})`)
+      r.rect.fill(`url(#${gradientDef})`)
       r.group.childOf(cad.currentLayer);
     }
 
@@ -224,7 +224,7 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
       if (!pattern) {
         throw new Error("Pattern [" + pattern + "] not defined")
       }
-      r.group.fill(`url(#${patternDef})`)
+      r.rect.fill(`url(#${patternDef})`)
       r.group.childOf(cad.currentLayer);
     }
 

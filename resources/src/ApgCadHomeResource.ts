@@ -25,12 +25,12 @@ export class ApgCadHomeResource extends Drash.Resource {
         const menu: any[] = [];
         const svgMenu = this.getMenuFromEnum(eApgCadTestSvg, eApgCadTestTypes.DIRECT_SVG);
         menu.push(svgMenu);
+        const defaultsMenu = this.getMenuFromEnum(eApgCadTestDefaults, eApgCadTestTypes.DEFAULTS);
+        menu.push(defaultsMenu);
         const featuresMenu = this.getMenuFromEnum(eApgCadTestFeatures, eApgCadTestTypes.FEATURES);
         menu.push(featuresMenu);
         const factoriesMenu = this.getMenuFromEnum(eApgCadTestFactories, eApgCadTestTypes.FACTORIES);
         menu.push(factoriesMenu);
-        const defaultsMenu = this.getMenuFromEnum(eApgCadTestDefaults, eApgCadTestTypes.DEFAULTS);
-        menu.push(defaultsMenu);
         const insSetGroupsMenu = this.getMenuFromEnum(eApgCadTestInsSets, eApgCadTestTypes.INS_SETS);
         menu.push(insSetGroupsMenu);
 

@@ -1,9 +1,9 @@
 <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
 
-<section id="inline-svg"
-         style="background-color: #ffffff; width: 100vw; display:flex; justify-content: center;">
+<div id="inline-svg"
+         style="background-color: #888888; width: 90vw; display:flex; justify-content: center;">
   [: svgContent :]
-</section>
+</div>
 
 <script>
   document.getElementById('APG_SVG_DOC').addEventListener('load', function () {
@@ -15,13 +15,13 @@
         controlIconsEnabled: true,
         zoomEnabled: true,
         dblClickZoomEnabled: true,
-        mouseWheelZoomEnabled: true,
+        mouseWheelZoomEnabled: false,
         preventMouseEventsDefault: true,
-        zoomScaleSensitivity: 0.2,
-        minZoom: 0.5,
-        maxZoom: 10,
+        zoomScaleSensitivity: 0.25,
+        minZoom: 0.1,
+        maxZoom: 20,
         fit: true,
-        contain: false,
+        contain: true,
         center: true,
         refreshRate: 'auto'
       }

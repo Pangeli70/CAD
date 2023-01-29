@@ -3,7 +3,7 @@
  * @author [APG] ANGELI Paolo Giusto
  * ------------------------------------------------------------------------
  */
-import { ApgCadSvgTester } from "./test/src/ApgSvgCadTester.ts";
+export { ApgCadBaseTester } from "./test/src/classes/ApgCadBaseTester.ts";
 
-const cadSvgTester = new ApgCadSvgTester(Deno.cwd() + "\\public\\img\\svg\\");
-cadSvgTester.runAllTests(false);
+export { eApgCadTestCartesianMode } from "./test/src/enums/eApgCadTestCartesianMode.ts"
+export { eApgCadTestGridMode } from "./test/src/enums/eApgCadTestGridMode.ts"

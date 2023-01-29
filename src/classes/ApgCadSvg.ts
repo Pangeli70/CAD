@@ -76,7 +76,7 @@ export class ApgCadSvg {
   blocks: Map<string, Svg.ApgSvgNode> = new Map();
   blockDefs: string[] = [];
 
-  
+
   gradients: Map<string, Svg.ApgSvgNode> = new Map();
   gradientsDefs: string[] = [];
 
@@ -116,15 +116,15 @@ export class ApgCadSvg {
     const grid: IApgCadSvgGrid = {
       draw: true,
       gridStep: 100,
-      gridStroke: { color: eApgCadStdColors.GREEN, width: 1 },
+      gridStroke: { color: eApgCadStdColors.GREEN, width: 1, dashPattern: [10, 90], dashOffset: 5 },
       drawMajors: true,
       majorEvery: 1000,
-      majorGridStroke: { color: eApgCadStdColors.CYAN, width: 2 },
+      majorGridStroke: { color: eApgCadStdColors.CYAN, width: 2, dashPattern: [10, 90], dashOffset: 5 },
       asDots: adotGrid
     }
 
     const cartesians: IApgCadSvgCartesians = {
-      draw: true,
+      draw: false,
       axisStroke: { color: eApgCadStdColors.GRAY, width: 4 },
       drawTicks: true,
       tickStroke: { color: eApgCadStdColors.CYAN, width: 2 },
@@ -429,7 +429,7 @@ export class ApgCadSvg {
         `Text style named ${atextStyleName} not available in ApgCadSvg Text Styles`,
       );
     }
-    layer.textStyle(textStyle);
+    layer.textStyle(textStyle, false);
 
     this.layers.set(aname, layer);
 

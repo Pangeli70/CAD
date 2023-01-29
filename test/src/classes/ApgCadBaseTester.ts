@@ -182,19 +182,21 @@ export abstract class ApgCadBaseTester {
     const x = aoptions.dx + (numX * (aoptions.w + aoptions.dx));
     const y = aoptions.dy + (numY * (aoptions.h + aoptions.dy));
     const g = acad.svg.group();
-    const _b = acad.svg
+    const rect = acad.svg
       .rect(x, y, aoptions.w, aoptions.h)
       .childOf(g);
 
     const cx = x + aoptions.w / 2;
     const cy = y + aoptions.h / 2;
 
+    const textStyle = this.getTestTextStyle(acad);
+
     const _t = acad.svg
-      .text(x + aoptions.w, y + aoptions.h, aname, 0)
-      .textStyle(this.getTestTextStyle(acad))
+      .text(x + aoptions.w, y + (1.1*aoptions.h), aname, 0)
+      .textStyle(textStyle)
       .childOf(g)
 
-    return { group: g, point: new A2D.Apg2DPoint(cx, cy), w: aoptions.w, h: aoptions.h };
+    return { group: g, rect, point: new A2D.Apg2DPoint(cx, cy), w: aoptions.w, h: aoptions.h };
   }
 
 

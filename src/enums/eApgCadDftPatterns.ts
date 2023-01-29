@@ -9,6 +9,7 @@
  * Default Patterns 
  */
 export enum eApgCadDftPatterns {
+    BACK_GRID_LINES = "BackGridLines",
     CHESSBOARD = "Chessboard",
     GRID1 = "Background",
     GRID2 = "Grid2",
