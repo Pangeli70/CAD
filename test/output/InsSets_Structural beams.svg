@@ -1,0 +1,762 @@
+
+<svg
+    viewBox="-1000 -5625 10000 5625 "
+    width="1000"
+    height="562.5"
+    xmlns="http://www.w3.org/2000/svg"
+    >
+    <!-- Generator: APG - DENO - ApgSvgDoc Renderer -->
+    <title>Test instructions set</title>
+    <desc>Apg Svg Cad</desc>
+
+    <defs>
+        <polygon
+            id = "mechArrow"
+            points = " 0,0 100,25 100,-25"
+            stroke="none"
+        >
+        </polygon>
+        <polyline
+            id = "simpleArrow"
+            points = " 100,25 0,0 100,-25"
+            fill="none"
+        >
+        </polyline>
+        <line
+            id = "archArrow"
+            x1 = "-25"
+            y1 = "50"
+            x2 = "25"
+            y2 = "-50"
+        >
+        </line>
+        <circle
+            id = "dotArrow"
+            cx = "0"
+            cy = "0"
+            r = "25"
+            stroke="none"
+        >
+        </circle>
+        <pattern
+            id = "Chessboard"
+            viewBox = "0 -20 20 20"
+            width = "20"
+            height = "20"
+            patternUnits = "userSpaceOnUse"
+            preserveAspectRatio = "xMidYMid slice"
+        >
+            <rect
+                id = "Rect-17"
+                x = "0"
+                y = "-10"
+                width = "10"
+                height = "10"
+                fill="black"
+            >
+            </rect>
+            <rect
+                id = "Rect-18"
+                x = "10"
+                y = "-30"
+                width = "20"
+                height = "20"
+                fill="black"
+            >
+            </rect>
+        </pattern>
+        <pattern
+            id = "Background"
+            viewBox = "0 -10 8 10"
+            width = "8"
+            height = "10"
+            patternUnits = "userSpaceOnUse"
+            preserveAspectRatio = "xMidYMid slice"
+        >
+            <line
+                id = "Line-20"
+                x1 = "0"
+                y1 = "0"
+                x2 = "8"
+                y2 = "-10"
+                stroke="#444444"
+                stroke-width="2.5"
+            >
+            </line>
+            <line
+                id = "Line-21"
+                x1 = "0"
+                y1 = "-10"
+                x2 = "8"
+                y2 = "0"
+                stroke="#343434"
+                stroke-width="2.5"
+            >
+            </line>
+        </pattern>
+        <pattern
+            id = "Grid2"
+            viewBox = "0 -16 12 16"
+            width = "12"
+            height = "16"
+            patternUnits = "userSpaceOnUse"
+            preserveAspectRatio = "xMidYMid slice"
+        >
+            <line
+                id = "Line-23"
+                x1 = "0"
+                y1 = "0"
+                x2 = "12"
+                y2 = "-16"
+                stroke="#444444"
+                stroke-width="2"
+            >
+            </line>
+            <line
+                id = "Line-24"
+                x1 = "0"
+                y1 = "-16"
+                x2 = "12"
+                y2 = "0"
+                stroke="#343434"
+                stroke-width="2"
+            >
+            </line>
+        </pattern>
+        <pattern
+            id = "Grid3"
+            viewBox = "0 -50 50 50"
+            width = "50"
+            height = "50"
+            patternUnits = "userSpaceOnUse"
+            preserveAspectRatio = "xMidYMid slice"
+        >
+            <line
+                id = "Line-26"
+                x1 = "0"
+                y1 = "-25"
+                x2 = "50"
+                y2 = "-25"
+                stroke="#0f0f0f"
+                stroke-width="3"
+            >
+            </line>
+            <line
+                id = "Line-27"
+                x1 = "25"
+                y1 = "0"
+                x2 = "25"
+                y2 = "-50"
+                stroke="#2f2f2f"
+                stroke-width="3"
+            >
+            </line>
+        </pattern>
+        <linearGradient
+            id = "LinearLeftToRightLightShadow"
+            x1 = "0"
+            y1 = "0"
+            x2 = "1"
+            y2 = "0"
+        >
+            <stop offset="0%" stop-color="gray" stop-opacity="1" />
+            <stop offset="100%" stop-color="gray" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient
+            id = "LinearLeftToRightDarkShadow"
+            x1 = "0"
+            y1 = "0"
+            x2 = "1"
+            y2 = "0"
+        >
+            <stop offset="0%" stop-color="black" stop-opacity="1" />
+            <stop offset="100%" stop-color="black" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient
+            id = "LinearTopToDownLightShadow"
+            x1 = "0"
+            y1 = "0"
+            x2 = "0"
+            y2 = "1"
+        >
+            <stop offset="0%" stop-color="gray" stop-opacity="1" />
+            <stop offset="100%" stop-color="gray" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient
+            id = "LinearTopToDownDarkShadow"
+            x1 = "0"
+            y1 = "0"
+            x2 = "0"
+            y2 = "1"
+        >
+            <stop offset="0%" stop-color="black" stop-opacity="1" />
+            <stop offset="100%" stop-color="black" stop-opacity="0" />
+        </linearGradient>
+    </defs>
+    <style>
+    </style>
+
+    <g
+        id = "Apg_Svg_Root_Node"
+        transform="translate(0 -562.5) "
+    >
+        <g
+            id = "BackgroundLayer"
+            class="layer-backgroundlayer"
+            stroke="#888888"
+            stroke-width="4"
+            fill="white"
+            fill-opacity="1"
+            font-size = "100"
+            font-family = "Courier New, Courier, monospace"
+            text-anchor = "start"
+        >
+            <rect
+                id = "Rect-32"
+                x = "-1000"
+                y = "-5062.5"
+                width = "10000"
+                height = "5625"
+            >
+            </rect>
+        </g>
+        <g
+            id = "GridsLayer"
+            class="layer-gridslayer"
+            stroke="green"
+            stroke-width="1"
+            fill="none"
+            font-size = "100"
+            font-family = "Courier New, Courier, monospace"
+            text-anchor = "start"
+        >
+        </g>
+        <g
+            id = "CartesianLayer"
+            class="layer-cartesianlayer"
+            stroke="#888888"
+            stroke-width="4"
+            fill="none"
+            font-size = "100"
+            font-family = "Courier New, Courier, monospace"
+            text-anchor = "middle"
+            font-style = "italic"
+        >
+        </g>
+        <g
+            id = "AnnotationsLayer"
+            class="layer-annotationslayer"
+            stroke="orange"
+            stroke-width="2"
+            fill="orange"
+            fill-opacity="1"
+            font-size = "100"
+            font-family = "Lucida Sans Unicode, Lucida Grande, sans-serif"
+            text-anchor = "start"
+            font-style = "italic"
+        >
+        </g>
+        <g
+            id = "DimensionsLayer"
+            class="layer-dimensionslayer"
+            stroke="red"
+            stroke-width="4"
+            fill="red"
+            fill-opacity="1"
+            font-size = "100"
+            font-family = "Lucida Console, Monaco, monospace"
+            text-anchor = "middle"
+        >
+        </g>
+        <g
+            id = "Debuglayer"
+            class="layer-debuglayer"
+            stroke="magenta"
+            stroke-width="6"
+            fill="magenta"
+            fill-opacity="1"
+            font-size = "50"
+            font-family = "Tahoma, Geneva, sans- serif"
+            text-anchor = "start"
+            font-style = "italic"
+        >
+        </g>
+        <g
+            id = "HiddenLayer"
+            class="layer-hiddenlayer"
+            stroke="#888888"
+            stroke-width="4"
+            stroke-dasharray="50,50"
+            stroke-dashoffset="0"
+            fill="#888888"
+            fill-opacity="0.5"
+            font-size = "100"
+            font-family = "Courier New, Courier, monospace"
+            text-anchor = "start"
+        >
+        </g>
+        <g
+            id = "0Layer"
+            class="layer-0layer"
+            stroke="black"
+            stroke-width="4"
+            fill="none"
+            font-size = "100"
+            font-family = "Verdana, Geneva, sans-serif"
+            text-anchor = "start"
+        >
+            <g
+                id = "GROUP_IPE_1"
+            >
+                <polyline
+                    id = "PolyLine-34"
+                    points = " 200,-1200 1000,-1200 1000,-1280 640,-1280 640,-1920 1000,-1920 1000,-2000 200,-2000 200,-1920 560,-1920 560,-1280 200,-1280 200,-1200"
+                >
+                </polyline>
+            </g>
+            <g
+                id = "GROUP_DOOR2"
+            >
+                <polyline
+                    id = "PolyLine-36"
+                    points = " 2000,-1200 2800,-1200 2800,-1380 2490,-1380 2490,-2820 2800,-2820 2800,-3000 2000,-3000 2000,-2820 2310,-2820 2310,-1380 2000,-1380 2000,-1200"
+                >
+                </polyline>
+            </g>
+            <g
+                id = "GROUP_HEA1"
+            >
+                <polyline
+                    id = "PolyLine-38"
+                    points = " 3400,-500 3478,-500 3478,-1536 4102,-1536 4102,-500 4180,-500 4180,-2650 4102,-2650 4102,-1614 3478,-1614 3478,-2650 3400,-2650 3400,-500"
+                >
+                </polyline>
+            </g>
+            <g
+                id = "GROUP_HEA2"
+            >
+                <polyline
+                    id = "PolyLine-40"
+                    points = " 4500,-1500 4590,-1500 4590,-2480 5310,-2480 5310,-1500 5400,-1500 5400,-3550 5310,-3550 5310,-2570 4590,-2570 4590,-3550 4500,-3550 4500,-1500"
+                >
+                </polyline>
+            </g>
+        </g>
+        <g
+            id = "CartoucheLayer"
+            class="layer-cartouchelayer"
+            stroke="black"
+            stroke-width="4"
+            fill="black"
+            fill-opacity="1"
+            font-size = "200"
+            font-family = "Arial, Helvetica, sans-serif"
+            text-anchor = "middle"
+            font-weight = "bold"
+        >
+            <rect
+                id = "Rect-41"
+                x = "7000"
+                y = "-5062.5"
+                width = "2000"
+                height = "500"
+                fill="none"
+            >
+            </rect>
+            <g
+                id = "Text-42"
+                font-size = "200"
+                font-family = "Arial, Helvetica, sans-serif"
+                text-anchor = "middle"
+                font-weight = "bold"
+                stroke="none"
+                transform="translate(8000 -4842.5) "
+            >
+                <text
+                    id = "Text-42_text"
+                    x = "0"
+                    y = "0"
+                >
+                    Test instructions set
+                </text>
+            </g>
+            <g
+                id = "Text-44"
+                font-size = "100"
+                font-family = "Arial, Helvetica, sans-serif"
+                text-anchor = "middle"
+                font-weight = "bold"
+                stroke="none"
+                transform="translate(8000 -4732.5) "
+            >
+                <text
+                    id = "Text-44_text"
+                    x = "0"
+                    y = "0"
+                >
+                    Apg Svg Cad
+                </text>
+            </g>
+            <g
+                id = "Text-46"
+                font-size = "100"
+                font-family = "Arial, Helvetica, sans-serif"
+                text-anchor = "middle"
+                font-weight = "bold"
+                stroke="none"
+                transform="translate(8000 -4622.5) "
+            >
+                <text
+                    id = "Text-46_text"
+                    x = "0"
+                    y = "0"
+                >
+                    2023-01-28T12:40:19.903Z
+                </text>
+            </g>
+        </g>
+        <g
+            id = "GuiLayer"
+            class="layer-guilayer"
+            stroke="black"
+            stroke-width="4"
+            fill="none"
+            font-size = "100"
+            font-family = "Verdana, Geneva, sans-serif"
+            text-anchor = "start"
+        >
+            <rect
+                id = "BTN_GUI"
+                x = "8700"
+                y = "-3656.25"
+                width = "300"
+                height = "2812.5"
+                fill="white"
+                onclick = "top.GuiButtonOnClick(event)"
+                touchstart = "top.GuiButtonOnClick(event)"
+                show = "false"
+                style = "display:'block'"
+            >
+            </rect>
+            <g
+                id = "Text-49"
+                stroke="none"
+                fill="blue"
+                transform="translate(8900 -2057.85) rotate(270, 0, 0) "
+            >
+                <text
+                    id = "Text-49_text"
+                    x = "0"
+                    y = "0"
+                >
+                    Toolbar
+                </text>
+            </g>
+            <g
+                id = "GUI_MENU"
+                style = "display:none"
+            >
+                <rect
+                    id = "Rect-52"
+                    x = "6504"
+                    y = "-3656.25"
+                    width = "2196"
+                    height = "2812.5"
+                    fill="orange"
+                >
+                </rect>
+                <rect
+                    id = "BTN_LAYER_MENU"
+                    x = "6558.9"
+                    y = "-3601.35"
+                    width = "2086.2"
+                    height = "300"
+                    fill="#888888"
+                    onclick = "top.LayerBoardMenuOnClick(event)"
+                    touchstart = "top.LayerBoardMenuOnClick(event)"
+                >
+                </rect>
+                <g
+                    id = "Text-54"
+                    stroke="none"
+                    fill="blue"
+                    transform="translate(6558.9 -3301.35) "
+                >
+                    <text
+                        id = "Text-54_text"
+                        x = "0"
+                        y = "0"
+                    >
+                        Layers
+                    </text>
+                </g>
+            </g>
+            <g
+                id = "LAYER_BOARD"
+                style = "display:none"
+            >
+                <rect
+                    id = "BTN_LAYER_BackgroundLayer"
+                    x = "0"
+                    y = "-200"
+                    width = "200"
+                    height = "200"
+                    fill="green"
+                    onclick = "top.LayerBoardButtonOnClick(event)"
+                    touchstart = "top.LayerBoardButtonOnClick(event)"
+                    show = "true"
+                >
+                </rect>
+                <g
+                    id = "Text-58"
+                    stroke="none"
+                    fill="blue"
+                    transform="translate(220 0) "
+                >
+                    <text
+                        id = "Text-58_text"
+                        x = "0"
+                        y = "0"
+                    >
+                        BackgroundLayer
+                    </text>
+                </g>
+                <rect
+                    id = "BTN_LAYER_GridsLayer"
+                    x = "0"
+                    y = "-420"
+                    width = "200"
+                    height = "200"
+                    fill="green"
+                    onclick = "top.LayerBoardButtonOnClick(event)"
+                    touchstart = "top.LayerBoardButtonOnClick(event)"
+                    show = "true"
+                >
+                </rect>
+                <g
+                    id = "Text-61"
+                    stroke="none"
+                    fill="blue"
+                    transform="translate(220 -220) "
+                >
+                    <text
+                        id = "Text-61_text"
+                        x = "0"
+                        y = "0"
+                    >
+                        GridsLayer
+                    </text>
+                </g>
+                <rect
+                    id = "BTN_LAYER_CartesianLayer"
+                    x = "0"
+                    y = "-640"
+                    width = "200"
+                    height = "200"
+                    fill="green"
+                    onclick = "top.LayerBoardButtonOnClick(event)"
+                    touchstart = "top.LayerBoardButtonOnClick(event)"
+                    show = "true"
+                >
+                </rect>
+                <g
+                    id = "Text-64"
+                    stroke="none"
+                    fill="blue"
+                    transform="translate(220 -440) "
+                >
+                    <text
+                        id = "Text-64_text"
+                        x = "0"
+                        y = "0"
+                    >
+                        CartesianLayer
+                    </text>
+                </g>
+                <rect
+                    id = "BTN_LAYER_AnnotationsLayer"
+                    x = "0"
+                    y = "-860"
+                    width = "200"
+                    height = "200"
+                    fill="green"
+                    onclick = "top.LayerBoardButtonOnClick(event)"
+                    touchstart = "top.LayerBoardButtonOnClick(event)"
+                    show = "true"
+                >
+                </rect>
+                <g
+                    id = "Text-67"
+                    stroke="none"
+                    fill="blue"
+                    transform="translate(220 -660) "
+                >
+                    <text
+                        id = "Text-67_text"
+                        x = "0"
+                        y = "0"
+                    >
+                        AnnotationsLayer
+                    </text>
+                </g>
+                <rect
+                    id = "BTN_LAYER_DimensionsLayer"
+                    x = "0"
+                    y = "-1080"
+                    width = "200"
+                    height = "200"
+                    fill="green"
+                    onclick = "top.LayerBoardButtonOnClick(event)"
+                    touchstart = "top.LayerBoardButtonOnClick(event)"
+                    show = "true"
+                >
+                </rect>
+                <g
+                    id = "Text-70"
+                    stroke="none"
+                    fill="blue"
+                    transform="translate(220 -880) "
+                >
+                    <text
+                        id = "Text-70_text"
+                        x = "0"
+                        y = "0"
+                    >
+                        DimensionsLayer
+                    </text>
+                </g>
+                <rect
+                    id = "BTN_LAYER_Debuglayer"
+                    x = "0"
+                    y = "-1300"
+                    width = "200"
+                    height = "200"
+                    fill="green"
+                    onclick = "top.LayerBoardButtonOnClick(event)"
+                    touchstart = "top.LayerBoardButtonOnClick(event)"
+                    show = "true"
+                >
+                </rect>
+                <g
+                    id = "Text-73"
+                    stroke="none"
+                    fill="blue"
+                    transform="translate(220 -1100) "
+                >
+                    <text
+                        id = "Text-73_text"
+                        x = "0"
+                        y = "0"
+                    >
+                        Debuglayer
+                    </text>
+                </g>
+                <rect
+                    id = "BTN_LAYER_HiddenLayer"
+                    x = "0"
+                    y = "-1520"
+                    width = "200"
+                    height = "200"
+                    fill="green"
+                    onclick = "top.LayerBoardButtonOnClick(event)"
+                    touchstart = "top.LayerBoardButtonOnClick(event)"
+                    show = "true"
+                >
+                </rect>
+                <g
+                    id = "Text-76"
+                    stroke="none"
+                    fill="blue"
+                    transform="translate(220 -1320) "
+                >
+                    <text
+                        id = "Text-76_text"
+                        x = "0"
+                        y = "0"
+                    >
+                        HiddenLayer
+                    </text>
+                </g>
+                <rect
+                    id = "BTN_LAYER_0Layer"
+                    x = "0"
+                    y = "-1740"
+                    width = "200"
+                    height = "200"
+                    fill="green"
+                    onclick = "top.LayerBoardButtonOnClick(event)"
+                    touchstart = "top.LayerBoardButtonOnClick(event)"
+                    show = "true"
+                >
+                </rect>
+                <g
+                    id = "Text-79"
+                    stroke="none"
+                    fill="blue"
+                    transform="translate(220 -1540) "
+                >
+                    <text
+                        id = "Text-79_text"
+                        x = "0"
+                        y = "0"
+                    >
+                        0Layer
+                    </text>
+                </g>
+                <rect
+                    id = "BTN_LAYER_CartoucheLayer"
+                    x = "0"
+                    y = "-1960"
+                    width = "200"
+                    height = "200"
+                    fill="green"
+                    onclick = "top.LayerBoardButtonOnClick(event)"
+                    touchstart = "top.LayerBoardButtonOnClick(event)"
+                    show = "true"
+                >
+                </rect>
+                <g
+                    id = "Text-82"
+                    stroke="none"
+                    fill="blue"
+                    transform="translate(220 -1760) "
+                >
+                    <text
+                        id = "Text-82_text"
+                        x = "0"
+                        y = "0"
+                    >
+                        CartoucheLayer
+                    </text>
+                </g>
+                <rect
+                    id = "BTN_LAYER_GuiLayer"
+                    x = "0"
+                    y = "-2180"
+                    width = "200"
+                    height = "200"
+                    fill="green"
+                    onclick = "top.LayerBoardButtonOnClick(event)"
+                    touchstart = "top.LayerBoardButtonOnClick(event)"
+                    show = "true"
+                >
+                </rect>
+                <g
+                    id = "Text-85"
+                    stroke="none"
+                    fill="blue"
+                    transform="translate(220 -1980) "
+                >
+                    <text
+                        id = "Text-85_text"
+                        x = "0"
+                        y = "0"
+                    >
+                        GuiLayer
+                    </text>
+                </g>
+            </g>
+        </g>
+    </g>
+
+</svg>

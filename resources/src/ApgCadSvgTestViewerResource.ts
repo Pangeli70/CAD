@@ -84,7 +84,10 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
                 } break;
         }
 
-        await Deno.writeTextFile(Deno.cwd() + "/test/output/" + testType + "_" + testName + ".svg", svgContent);
+        const isDenoDeploy = Deno.env.get("DENO_DEPLOYMENT_ID") !== undefined;
+        if (!isDenoDeploy) { 
+            await Deno.writeTextFile(Deno.cwd() + "/test/output/" + testType + "_" + testName + ".svg", svgContent);
+        }
 
         const templateData = {
             site: {
