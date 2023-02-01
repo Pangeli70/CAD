@@ -7,8 +7,8 @@
     xmlns="http://www.w3.org/2000/svg"
     >
     <!-- Generator: APG - DENO - ApgSvgDoc Renderer -->
-    <title>Test Image</title>
-    <desc>Apg Svg Cad</desc>
+    <title>Test Basic Shapes</title>
+    <desc>Apg Svg Cad Factory</desc>
 
     <defs>
         <polygon
@@ -415,7 +415,7 @@
             class="layer-backgroundlayer"
             stroke="#888888"
             stroke-width="4"
-            fill="white"
+            fill="black"
             fill-opacity="1"
             font-size = "100"
             font-family = "Courier New, Courier, monospace"
@@ -1784,7 +1784,7 @@
         <g
             id = "0Layer"
             class="layer-0layer"
-            stroke="black"
+            stroke="white"
             stroke-width="4"
             fill="none"
             font-size = "100"
@@ -1795,9 +1795,9 @@
         <g
             id = "CartoucheLayer"
             class="layer-cartouchelayer"
-            stroke="black"
+            stroke="white"
             stroke-width="4"
-            fill="black"
+            fill="white"
             fill-opacity="1"
             font-size = "200"
             font-family = "Arial, Helvetica, sans-serif"
@@ -1805,7 +1805,7 @@
             font-weight = "bold"
         >
             <rect
-                id = "Rect-219"
+                id = "Rect-234"
                 x = "7000"
                 y = "-5062.5"
                 width = "2000"
@@ -1814,70 +1814,70 @@
             >
             </rect>
             <g
-                id = "Text-220"
+                id = "Text-235"
                 font-size = "200"
                 font-family = "Arial, Helvetica, sans-serif"
                 text-anchor = "middle"
                 font-weight = "bold"
-                fill="black"
+                fill="white"
                 fill-opacity="1"
                 stroke="none"
                 stroke="none"
                 transform="translate(8000 -4842.5) "
             >
                 <text
-                    id = "Text-220_text"
+                    id = "Text-235_text"
                     x = "0"
                     y = "0"
                 >
-                    Test Image
+                    Test Basic Shapes
                 </text>
             </g>
             <g
-                id = "Text-222"
+                id = "Text-237"
                 font-size = "100"
                 font-family = "Arial, Helvetica, sans-serif"
                 text-anchor = "middle"
                 font-weight = "bold"
-                fill="black"
+                fill="white"
                 fill-opacity="1"
                 stroke="none"
                 stroke="none"
                 transform="translate(8000 -4732.5) "
             >
                 <text
-                    id = "Text-222_text"
+                    id = "Text-237_text"
                     x = "0"
                     y = "0"
                 >
-                    Apg Svg Cad
+                    Apg Svg Cad Factory
                 </text>
             </g>
             <g
-                id = "Text-224"
+                id = "Text-239"
                 font-size = "100"
                 font-family = "Arial, Helvetica, sans-serif"
                 text-anchor = "middle"
                 font-weight = "bold"
-                fill="black"
+                fill="white"
                 fill-opacity="1"
                 stroke="none"
                 stroke="none"
                 transform="translate(8000 -4622.5) "
             >
                 <text
-                    id = "Text-224_text"
+                    id = "Text-239_text"
                     x = "0"
                     y = "0"
                 >
-                    2023-02-01T22:37:09.051Z
+                    2023-02-01T22:40:41.127Z
                 </text>
             </g>
         </g>
         <g
             id = "GuiLayer"
             class="layer-guilayer"
-            stroke="black"
+            stroke="white"
             stroke-width="4"
             fill="none"
             font-size = "100"
@@ -1898,13 +1898,13 @@
             >
             </rect>
             <g
-                id = "Text-227"
+                id = "Text-242"
                 stroke="none"
                 fill="blue"
                 transform="translate(8900 -2057.85) rotate(270, 0, 0) "
             >
                 <text
-                    id = "Text-227_text"
+                    id = "Text-242_text"
                     x = "0"
                     y = "0"
                 >
@@ -1916,7 +1916,7 @@
                 style = "display:none"
             >
                 <rect
-                    id = "Rect-230"
+                    id = "Rect-245"
                     x = "6504"
                     y = "-3656.25"
                     width = "2196"
@@ -1936,13 +1936,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-232"
+                    id = "Text-247"
                     stroke="none"
                     fill="blue"
                     transform="translate(6558.9 -3301.35) "
                 >
                     <text
-                        id = "Text-232_text"
+                        id = "Text-247_text"
                         x = "0"
                         y = "0"
                     >
@@ -1967,13 +1967,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-236"
+                    id = "Text-251"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 0) "
                 >
                     <text
-                        id = "Text-236_text"
+                        id = "Text-251_text"
                         x = "0"
                         y = "0"
                     >
@@ -1993,13 +1993,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-239"
+                    id = "Text-254"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -220) "
                 >
                     <text
-                        id = "Text-239_text"
+                        id = "Text-254_text"
                         x = "0"
                         y = "0"
                     >
@@ -2019,13 +2019,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-242"
+                    id = "Text-257"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -440) "
                 >
                     <text
-                        id = "Text-242_text"
+                        id = "Text-257_text"
                         x = "0"
                         y = "0"
                     >
@@ -2045,13 +2045,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-245"
+                    id = "Text-260"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -660) "
                 >
                     <text
-                        id = "Text-245_text"
+                        id = "Text-260_text"
                         x = "0"
                         y = "0"
                     >
@@ -2071,13 +2071,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-248"
+                    id = "Text-263"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -880) "
                 >
                     <text
-                        id = "Text-248_text"
+                        id = "Text-263_text"
                         x = "0"
                         y = "0"
                     >
@@ -2097,13 +2097,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-251"
+                    id = "Text-266"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -1100) "
                 >
                     <text
-                        id = "Text-251_text"
+                        id = "Text-266_text"
                         x = "0"
                         y = "0"
                     >
@@ -2123,13 +2123,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-254"
+                    id = "Text-269"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -1320) "
                 >
                     <text
-                        id = "Text-254_text"
+                        id = "Text-269_text"
                         x = "0"
                         y = "0"
                     >
@@ -2149,13 +2149,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-257"
+                    id = "Text-272"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -1540) "
                 >
                     <text
-                        id = "Text-257_text"
+                        id = "Text-272_text"
                         x = "0"
                         y = "0"
                     >
@@ -2175,13 +2175,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-260"
+                    id = "Text-275"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -1760) "
                 >
                     <text
-                        id = "Text-260_text"
+                        id = "Text-275_text"
                         x = "0"
                         y = "0"
                     >
@@ -2201,13 +2201,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-263"
+                    id = "Text-278"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -1980) "
                 >
                     <text
-                        id = "Text-263_text"
+                        id = "Text-278_text"
                         x = "0"
                         y = "0"
                     >
@@ -2227,13 +2227,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-266"
+                    id = "Text-281"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -2200) "
                 >
                     <text
-                        id = "Text-266_text"
+                        id = "Text-281_text"
                         x = "0"
                         y = "0"
                     >
@@ -2253,13 +2253,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-269"
+                    id = "Text-284"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -2420) "
                 >
                     <text
-                        id = "Text-269_text"
+                        id = "Text-284_text"
                         x = "0"
                         y = "0"
                     >
@@ -2279,13 +2279,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-272"
+                    id = "Text-287"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -2640) "
                 >
                     <text
-                        id = "Text-272_text"
+                        id = "Text-287_text"
                         x = "0"
                         y = "0"
                     >
@@ -2305,13 +2305,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-275"
+                    id = "Text-290"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -2860) "
                 >
                     <text
-                        id = "Text-275_text"
+                        id = "Text-290_text"
                         x = "0"
                         y = "0"
                     >
@@ -2331,13 +2331,13 @@
                 >
                 </rect>
                 <g
-                    id = "Text-278"
+                    id = "Text-293"
                     stroke="none"
                     fill="blue"
                     transform="translate(220 -3080) "
                 >
                     <text
-                        id = "Text-278_text"
+                        id = "Text-293_text"
                         x = "0"
                         y = "0"
                     >
@@ -2357,40 +2357,30 @@
             font-family = "Courier New, Courier, monospace"
             text-anchor = "start"
         >
-            <rect
-                id = "Rect-215"
-                x = "43"
-                y = "-2348"
-                width = "800"
-                height = "600"
+            <circle
+                id = "Circle-215"
+                cx = "979"
+                cy = "-3455"
+                r = "72"
+                fill="none"
             >
-            </rect>
-            <image
-                id = "Image-216"
-                x = "43"
-                y = "-2348"
-                width = "800"
-                height = "600"
-                href = "https://picsum.photos/id/30/400/300"
+            </circle>
+            <circle
+                id = "Circle-216"
+                cx = "3224"
+                cy = "-2270"
+                r = "21"
+                fill="none"
             >
-            </image>
-            <rect
-                id = "Rect-217"
-                x = "1591"
-                y = "-3531"
-                width = "800"
-                height = "600"
+            </circle>
+            <circle
+                id = "Circle-217"
+                cx = "3509"
+                cy = "-2518"
+                r = "64"
+                fill="none"
             >
-            </rect>
-            <image
-                id = "Image-218"
-                x = "1591"
-                y = "-3531"
-                width = "800"
-                height = "600"
-                href = "https://picsum.photos/id/186/400/300"
-            >
-            </image>
+            </circle>
         </g>
         <g
             id = "T2"
@@ -2403,6 +2393,20 @@
             font-family = "Courier New, Courier, monospace"
             text-anchor = "start"
         >
+            <circle
+                id = "Circle-218"
+                cx = "1767"
+                cy = "-2971"
+                r = "76"
+            >
+            </circle>
+            <circle
+                id = "Circle-219"
+                cx = "2428"
+                cy = "-2874"
+                r = "97"
+            >
+            </circle>
         </g>
         <g
             id = "T3"
@@ -2415,6 +2419,38 @@
             font-family = "Courier New, Courier, monospace"
             text-anchor = "start"
         >
+            <line
+                id = "Line-220"
+                x1 = "160"
+                y1 = "-1177"
+                x2 = "3568"
+                y2 = "-2153"
+            >
+            </line>
+            <line
+                id = "Line-221"
+                x1 = "230"
+                y1 = "-3411"
+                x2 = "4755"
+                y2 = "-1465"
+            >
+            </line>
+            <line
+                id = "Line-222"
+                x1 = "3096"
+                y1 = "-2365"
+                x2 = "4059"
+                y2 = "-542"
+            >
+            </line>
+            <line
+                id = "Line-223"
+                x1 = "1493"
+                y1 = "-1456"
+                x2 = "477"
+                y2 = "-3836"
+            >
+            </line>
         </g>
         <g
             id = "T4"
@@ -2427,6 +2463,24 @@
             font-family = "Courier New, Courier, monospace"
             text-anchor = "start"
         >
+            <rect
+                id = "Rect-224"
+                x = "2934"
+                y = "-1494"
+                width = "45"
+                height = "78"
+                fill="none"
+            >
+            </rect>
+            <rect
+                id = "Rect-225"
+                x = "2793"
+                y = "-877"
+                width = "20"
+                height = "82"
+                fill="none"
+            >
+            </rect>
         </g>
         <g
             id = "T5"
@@ -2439,6 +2493,62 @@
             font-family = "Courier New, Courier, monospace"
             text-anchor = "start"
         >
+            <polygon
+                id = "Polygon-226"
+                points = " 1970,-4716 1907.1205464881202,-4802.546142982859 1805.3794535118798,-4769.488457958615 1805.3794535118798,-4662.511542041385 1907.1205464881202,-4629.453857017141"
+                fill="none"
+                transform="rotate(324, 1879, -4716) "
+            >
+            </polygon>
+            <circle
+                id = "Circle-227"
+                cx = "1879"
+                cy = "-4716"
+                r = "4"
+            >
+            </circle>
+            <polygon
+                id = "Polygon-228"
+                points = " 2288,-711 2242,-757 2196,-711 2242,-665"
+                fill="none"
+                transform="rotate(315, 2242, -711) "
+            >
+            </polygon>
+            <circle
+                id = "Circle-229"
+                cx = "2242"
+                cy = "-711"
+                r = "4"
+            >
+            </circle>
+            <polygon
+                id = "Polygon-230"
+                points = " 2915,-1955 2815,-2055 2715,-1955 2815,-1855"
+                fill="none"
+                transform="rotate(315, 2815, -1955) "
+            >
+            </polygon>
+            <circle
+                id = "Circle-231"
+                cx = "2815"
+                cy = "-1955"
+                r = "4"
+            >
+            </circle>
+            <polygon
+                id = "Polygon-232"
+                points = " 3348,-270 3339.716775640892,-287.20029261429664 3321.104539452961,-291.44841406800015 3306.178684906147,-279.5454422605863 3306.178684906147,-260.4545577394137 3321.104539452961,-248.55158593199988 3339.716775640892,-252.79970738570336"
+                fill="none"
+                transform="rotate(334.2857142857143, 3326, -270) "
+            >
+            </polygon>
+            <circle
+                id = "Circle-233"
+                cx = "3326"
+                cy = "-270"
+                r = "4"
+            >
+            </circle>
         </g>
     </g>
 

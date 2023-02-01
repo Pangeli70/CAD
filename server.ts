@@ -1,7 +1,6 @@
 /** -----------------------------------------------------------------------
  * @module [CAD/Application]
  * @author [APG] ANGELI Paolo Giusto
- * @version 0.9.2 [APG 2022/12/04] Deno Deploy Beta
  * -----------------------------------------------------------------------
  */
 import { Drash, Uts, Tng } from "./deps.ts";

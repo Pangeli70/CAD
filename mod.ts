@@ -3,7 +3,6 @@
  * @author [APG] ANGELI Paolo Giusto
  * ------------------------------------------------------------------------
  */
-export type { IApgCadInstruction } from "./src/interfaces/IApgCadInstruction.ts";
 export type { IApgCadSvgCartesians } from "./src/interfaces/IApgCadSvgCartesians.ts";
 export type { IApgCadSvgGround } from "./src/interfaces/IApgCadSvgGround.ts";
 export type { IApgCadSvgLayerDef } from "./src/interfaces/IApgCadSvgLayerDef.ts";
@@ -20,12 +19,10 @@ export { eApgCadDftLayers } from "./src/enums/eApgCadDftLayers.ts";
 export { eApgCadDftStrokeStyles } from "./src/enums/eApgCadDftStrokeStyles.ts";
 export { eApgCadDftTextStyles } from "./src/enums/eApgCadDftTextStyles.ts";
 export { eApgCadDftDimArrowStyles } from "./src/enums/eApgCadDftDimArrowStyles.ts";
-export { eApgCadInstructionTypes } from "./src/enums/eApgCadInstructionTypes.ts";
 export { eApgCadPrimitiveFactoryTypes} from "./src/enums/eApgCadPrimitiveFactoryTypes.ts";
 
 export { ApgCadSvg } from "./src/classes/ApgCadSvg.ts";
 export { ApgCadSvgUtils } from "./src/classes/ApgCadSvgUtils.ts";
-export { ApgCadInstructionsSet } from "./src/classes/ApgCadInstructionsSet.ts";
 
 export { ApgCadSvgPrimitivesFactory } from "./src/classes/factories/ApgCadSvgPrimitivesFactory.ts";
 export { ApgCadSvgBasicShapesFactory } from "./src/classes/factories/ApgCadSvgBasicShapesFactory.ts";

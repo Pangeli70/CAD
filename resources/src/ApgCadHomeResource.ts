@@ -1,13 +1,12 @@
 /** -----------------------------------------------------------------------
  * @module [CAD/Resources]
  * @author [APG] ANGELI Paolo Giusto
- * @version 0.9.2 [APG 2022/12/04] Deno Deploy Beta
+ * @version 0.9.4 [APG 2023/01/04] Deno Deploy Beta
  * -----------------------------------------------------------------------
  */
 import { Drash, Tng, Uts } from "../../deps.ts";
 
 import { eApgCadTestDefaults } from "../../test/src/enums/eApgCadTestDefaults.ts";
-import { eApgCadTestInsSets } from "../../test/src/enums/eApgCadTestInsSets.ts";
 import { eApgCadTestFactories } from "../../test/src/enums/eApgCadTestFactories.ts";
 import { eApgCadTestFeatures } from "../../test/src/enums/eApgCadTestFeatures.ts";
 import { eApgCadTestSvg } from "../../test/src/enums/eApgCadTestSvg.ts";
@@ -31,8 +30,6 @@ export class ApgCadHomeResource extends Drash.Resource {
         menu.push(featuresMenu);
         const factoriesMenu = this.getMenuFromEnum(eApgCadTestFactories, eApgCadTestTypes.FACTORIES);
         menu.push(factoriesMenu);
-        const insSetGroupsMenu = this.getMenuFromEnum(eApgCadTestInsSets, eApgCadTestTypes.INS_SETS);
-        menu.push(insSetGroupsMenu);
 
 
         const templateData = {

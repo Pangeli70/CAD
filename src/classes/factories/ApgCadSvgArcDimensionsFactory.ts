@@ -14,7 +14,7 @@ import { A2D, Svg, Uts } from "../../../deps.ts";
 import { eApgCadDftLayers } from "../../enums/eApgCadDftLayers.ts";
 import { eApgCadArcDimensionTypes } from "../../enums/eApgCadArcDimensionTypes.ts";
 import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
-import { IApgCadDimensionData } from "../../interfaces/IApgCadDimensionData.ts";
+import { IApgCadDimension } from "../../interfaces/IApgCadDimension.ts";
 
 import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
 
@@ -38,7 +38,7 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgBaseDimensionsFactor
   ) {
     const r = this.cad.svg.group();
 
-    const data: IApgCadDimensionData = {
+    const data: IApgCadDimension = {
       firstP: acenterPoint,
       secondP: a2ndPoint,
       p1: A2D.Apg2DPoint.Clone(acenterPoint),
@@ -108,7 +108,7 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgBaseDimensionsFactor
   }
 
 
-  #calculate(adata: IApgCadDimensionData, atype: eApgCadArcDimensionTypes) {
+  #calculate(adata: IApgCadDimension, atype: eApgCadArcDimensionTypes) {
 
     const r = {
       value: adata.value, //radious;
@@ -153,7 +153,7 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgBaseDimensionsFactor
 
 
 
-  #calculateText(adata: IApgCadDimensionData, atype: eApgCadArcDimensionTypes) {
+  #calculateText(adata: IApgCadDimension, atype: eApgCadArcDimensionTypes) {
 
     const atextWidth = adata.dimension.length * this.textStyle.size * this.textStyle.aspectRatio;
 
@@ -193,14 +193,14 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgBaseDimensionsFactor
   }
 
 
-  #checkType(data: IApgCadDimensionData, atype: eApgCadArcDimensionTypes) {
+  #checkType(data: IApgCadDimension, atype: eApgCadArcDimensionTypes) {
 
     return atype;
   }
 
 
   #adaptPointsByType(
-    adata: IApgCadDimensionData,
+    adata: IApgCadDimension,
     atype: eApgCadArcDimensionTypes,
   ) {
 
@@ -239,7 +239,7 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgBaseDimensionsFactor
 
 
   #adaptDisplacementByType(
-    adata: IApgCadDimensionData,
+    adata: IApgCadDimension,
     atype: eApgCadArcDimensionTypes,
     adisplacement: number
   ) {
@@ -297,7 +297,7 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgBaseDimensionsFactor
 
 
   #draw(
-    adata: IApgCadDimensionData,
+    adata: IApgCadDimension,
     atype: eApgCadArcDimensionTypes,
     ar: Svg.ApgSvgNode
   ) {
@@ -400,7 +400,7 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgBaseDimensionsFactor
   }
 
 
-  #debugText(adata: IApgCadDimensionData, atype: eApgCadArcDimensionTypes) {
+  #debugText(adata: IApgCadDimension, atype: eApgCadArcDimensionTypes) {
     let debugText = '';
     if (this.cad.settings.debug) {
 
@@ -428,7 +428,7 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgBaseDimensionsFactor
 
 
   #drawDebug(
-    adata: IApgCadDimensionData,
+    adata: IApgCadDimension,
     adebugText: string
   ) {
     const currLayer = this.cad.currentLayer;

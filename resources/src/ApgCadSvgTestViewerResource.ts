@@ -1,7 +1,7 @@
 /** -----------------------------------------------------------------------
  * @module [Cad/Resources]
  * @author [APG] ANGELI Paolo Giusto
- * @version 0.9.3 [APG 2022/12/04] Deno Deploy Beta
+ * @version 0.9.4 [APG 2023/01/04] Deno Deploy Beta
  * -----------------------------------------------------------------------
  */
 import { Drash, Tng, Uts } from "../../deps.ts";
@@ -9,12 +9,10 @@ import { ApgCadSvgTester } from "../../test/src/classes/ApgCadSvgTester.ts";
 import { ApgCadDefaultsTester } from "../../test/src/classes/ApgCadDefaultsTester.ts";
 import { ApgCadFactoriesTester } from "../../test/src/classes/ApgCadFactoriesTester.ts";
 import { ApgCadFeaturesTester } from "../../test/src/classes/ApgCadFeaturesTester.ts";
-import { ApgCadInsSetsTester } from "../../test/src/classes/ApgCadInsSetsTester.ts";
 import { eApgCadTestSvg } from "../../test/src/enums/eApgCadTestSvg.ts";
 import { eApgCadTestDefaults } from "../../test/src/enums/eApgCadTestDefaults.ts";
 import { eApgCadTestFactories } from "../../test/src/enums/eApgCadTestFactories.ts";
 import { eApgCadTestFeatures } from "../../test/src/enums/eApgCadTestFeatures.ts";
-import { eApgCadTestInsSets } from "../../test/src/enums/eApgCadTestInsSets.ts";
 import { eApgCadTestTypes } from "../../test/src/enums/eApgCadTestTypes.ts";
 import { eApgCadTestGridMode } from "../../test/src/enums/eApgCadTestGridMode.ts";
 import { eApgCadTestCartesianMode } from "../../test/src/enums/eApgCadTestCartesianMode.ts";
@@ -76,12 +74,6 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
             case eApgCadTestTypes.DEFAULTS:
                 svgContent = ApgCadDefaultsTester.RunTest(testName as eApgCadTestDefaults, blackBack);
                 break;
-            case eApgCadTestTypes.INS_SETS:
-                {
-                    const { svg, logger } = ApgCadInsSetsTester.RunTest(testName as unknown as eApgCadTestInsSets, blackBack, gridMode, debug);
-                    svgContent = svg;
-                    testLogger = logger;
-                } break;
         }
 
         const isDenoDeploy = Deno.env.get("DENO_DEPLOYMENT_ID") !== undefined;
@@ -199,10 +191,6 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
             case eApgCadTestTypes.FACTORIES:
                 {
                     apageMenu = [...fullMenu];
-                } break;
-            case eApgCadTestTypes.INS_SETS:
-                {
-                    apageMenu = [...noRandomlMenu];
                 } break;
         }
         return apageMenu;

@@ -415,7 +415,7 @@
             class="layer-backgroundlayer"
             stroke="#888888"
             stroke-width="4"
-            fill="white"
+            fill="black"
             fill-opacity="1"
             font-size = "100"
             font-family = "Courier New, Courier, monospace"
@@ -1784,7 +1784,7 @@
         <g
             id = "0Layer"
             class="layer-0layer"
-            stroke="black"
+            stroke="white"
             stroke-width="4"
             fill="none"
             font-size = "100"
@@ -1795,9 +1795,9 @@
         <g
             id = "CartoucheLayer"
             class="layer-cartouchelayer"
-            stroke="black"
+            stroke="white"
             stroke-width="4"
-            fill="black"
+            fill="white"
             fill-opacity="1"
             font-size = "200"
             font-family = "Arial, Helvetica, sans-serif"
@@ -1819,7 +1819,7 @@
                 font-family = "Arial, Helvetica, sans-serif"
                 text-anchor = "middle"
                 font-weight = "bold"
-                fill="black"
+                fill="white"
                 fill-opacity="1"
                 stroke="none"
                 stroke="none"
@@ -1839,7 +1839,7 @@
                 font-family = "Arial, Helvetica, sans-serif"
                 text-anchor = "middle"
                 font-weight = "bold"
-                fill="black"
+                fill="white"
                 fill-opacity="1"
                 stroke="none"
                 stroke="none"
@@ -1859,7 +1859,7 @@
                 font-family = "Arial, Helvetica, sans-serif"
                 text-anchor = "middle"
                 font-weight = "bold"
-                fill="black"
+                fill="white"
                 fill-opacity="1"
                 stroke="none"
                 stroke="none"
@@ -1870,14 +1870,14 @@
                     x = "0"
                     y = "0"
                 >
-                    2023-01-28T22:39:16.675Z
+                    2023-02-01T22:36:33.669Z
                 </text>
             </g>
         </g>
         <g
             id = "GuiLayer"
             class="layer-guilayer"
-            stroke="black"
+            stroke="white"
             stroke-width="4"
             fill="none"
             font-size = "100"
@@ -2369,24 +2369,6 @@
             font-family = "Courier New, Courier, monospace"
             text-anchor = "start"
         >
-            <polyline
-                id = "PolyLine-215"
-                points = " 3667,-556 3644,-514 3683,-474 3599,-388 3694,-355 3680,-390 3607,-359 3679,-391 3676,-294"
-                fill="none"
-            >
-            </polyline>
-            <polyline
-                id = "PolyLine-216"
-                points = " 4113,-2322 4036,-2322 4085,-2269 4000,-2308"
-                fill="none"
-            >
-            </polyline>
-            <polyline
-                id = "PolyLine-217"
-                points = " 2704,-4309 2664,-4396"
-                fill="none"
-            >
-            </polyline>
         </g>
         <g
             id = "T3"
@@ -2399,6 +2381,24 @@
             font-family = "Courier New, Courier, monospace"
             text-anchor = "start"
         >
+            <polyline
+                id = "PolyLine-215"
+                points = " 3448,-4286 3482,-4337 3412,-4278 3494,-4371 3428,-4404 3525,-4438 3514,-4433"
+                fill="none"
+            >
+            </polyline>
+            <polyline
+                id = "PolyLine-216"
+                points = " 3901,-1884 3862,-1889 3796,-1988 3701,-1909 3736,-1840 3780,-1911 3844,-1920"
+                fill="none"
+            >
+            </polyline>
+            <polyline
+                id = "PolyLine-217"
+                points = " 1737,-1743 1717,-1795 1694,-1766"
+                fill="none"
+            >
+            </polyline>
         </g>
         <g
             id = "T4"

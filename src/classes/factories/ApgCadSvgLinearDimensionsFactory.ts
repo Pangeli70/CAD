@@ -14,7 +14,7 @@ import { A2D, Svg, Uts } from "../../../deps.ts";
 import { eApgCadDftLayers } from "../../enums/eApgCadDftLayers.ts";
 import { eApgCadLinearDimensionTypes } from "../../enums/eApgCadLinearDimensionTypes.ts";
 import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
-import { IApgCadDimensionData } from "../../interfaces/IApgCadDimensionData.ts";
+import { IApgCadDimension } from "../../interfaces/IApgCadDimension.ts";
 
 import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
 
@@ -40,7 +40,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgBaseDimensionsFac
   ) {
     const r = this.cad.svg.group();
 
-    const data: IApgCadDimensionData = {
+    const data: IApgCadDimension = {
       firstP: a1stPoint,
       secondP: a2ndPoint,
       p1: A2D.Apg2DPoint.Clone(a1stPoint),
@@ -109,7 +109,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgBaseDimensionsFac
   }
 
 
-  #calculate(adata: IApgCadDimensionData) {
+  #calculate(adata: IApgCadDimension) {
 
     adata.pointsLine = new A2D.Apg2DLine(adata.p1, adata.p2);
 
@@ -137,7 +137,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgBaseDimensionsFac
   }
 
 
-  #checkType(data: IApgCadDimensionData, atype: eApgCadLinearDimensionTypes) {
+  #checkType(data: IApgCadDimension, atype: eApgCadLinearDimensionTypes) {
 
     // Vertical dimensions cannot be horizontal
     if (data.p1.x === data.p2.x && atype === eApgCadLinearDimensionTypes.HORIZONTAL) {
@@ -219,7 +219,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgBaseDimensionsFac
 
 
   #draw(
-    adata: IApgCadDimensionData,
+    adata: IApgCadDimension,
     ar: Svg.ApgSvgNode
   ) {
 
@@ -268,7 +268,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgBaseDimensionsFac
   }
 
 
-  #debugText(adata: IApgCadDimensionData, atype: eApgCadLinearDimensionTypes) {
+  #debugText(adata: IApgCadDimension, atype: eApgCadLinearDimensionTypes) {
     let debugText = '';
     if (this.cad.settings.debug) {
 
@@ -295,7 +295,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgBaseDimensionsFac
 
 
   #drawDebug(
-    adata: IApgCadDimensionData,
+    adata: IApgCadDimension,
     adebugText: string
   ) {
     const currLayer = this.cad.currentLayer;
