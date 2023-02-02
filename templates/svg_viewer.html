@@ -1,16 +1,23 @@
 [: extends("/master/pico.html") :]
 
 <section>
-    [: if(testLogger.hasErrors){ :]
-    [: partial("/partials/pico_logger.html") :]
     <p>
-        <code>
-            [: JSON.stringify(testLogger,undefined, '  ').replaceAll('\n','<br>').replaceAll(' ', '&nbsp;') :]
-        </code>
+        [: partial("/partials/svg_pan_zoom_inline_viewer.html") :]
     </p>
-    [: } else { :]
-    [: partial("/partials/svg_pan_zoom_inline_viewer.html") :]
-    [: } :]
+</section>
+
+<section>
+    <details>
+        <summary>
+            CAD Status
+        </summary>
+        <p>
+        <pre><code>
+            [: cadState :]
+            </code></pre>
+        </p>
+    </details>
+
 </section>
 
 <script>

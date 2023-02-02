@@ -7,10 +7,10 @@
  */
 
 import { A2D, Svg } from "../../../deps.ts";
-import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { IApgCadSvgGrid } from "../../interfaces/IApgCadSvgGrid.ts";
 import { ApgCadSvg } from "../ApgCadSvg.ts";
-import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
+import { ApgCadSvgFactoryBase } from "./ApgCadSvgFactoryBase.ts";
 
 
 interface IApgCadGridData {
@@ -20,10 +20,10 @@ interface IApgCadGridData {
 }
 
 
-export class ApgCadSvgGridFactory extends ApgCadSvgPrimitivesFactory {
+export class ApgCadSvgGridFactory extends ApgCadSvgFactoryBase {
 
   public constructor(acad: ApgCadSvg) {
-    super(acad,  eApgCadPrimitiveFactoryTypes.GRIDS);
+    super(acad,  eApgCadFactories.GRIDS);
   }
 
   build(

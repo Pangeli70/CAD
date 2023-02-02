@@ -11,16 +11,16 @@
  */
 
 import { Svg, A2D, Uts } from "../../../deps.ts";
-import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { ApgCadSvg } from "../ApgCadSvg.ts";
-import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
+import { ApgCadSvgFactoryBase } from "./ApgCadSvgFactoryBase.ts";
 
 
-export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
+export class ApgCadSvgBasicShapesFactory extends ApgCadSvgFactoryBase {
 
 
   public constructor(adoc: ApgCadSvg) {
-    super(adoc, eApgCadPrimitiveFactoryTypes.BASIC_SHAPES);
+    super(adoc, eApgCadFactories.BASIC_SHAPES);
   }
 
 
@@ -144,6 +144,13 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgPrimitivesFactory {
     const r = this.cad.svg
       .arc(acenter.x, acenter.y, radious, alpha, alpha + aangle)
     return r;
+  }
+
+  
+  buildPath(ainstructions: string) { 
+    const r = this.cad.svg
+      .path(ainstructions)
+    return r; 
   }
 
 

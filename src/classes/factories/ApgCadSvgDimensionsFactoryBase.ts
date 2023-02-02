@@ -11,14 +11,14 @@
  */
 import { Svg } from "../../../deps.ts";
 import { eApgCadDftDimArrowStyles } from "../../enums/eApgCadDftDimArrowStyles.ts";
-import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { ApgCadSvg } from "../ApgCadSvg.ts";
-import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
+import { ApgCadSvgFactoryBase } from "./ApgCadSvgFactoryBase.ts";
 
 
 /** Apg Svg : Base Factory for CAD dimensions with arrows and ladders
  */
-export class ApgCadSvgBaseDimensionsFactory extends ApgCadSvgPrimitivesFactory {
+export class ApgCadSvgDimensionsFactoryBase extends ApgCadSvgFactoryBase {
 
   /** Dimension digits */
   protected digits: number;
@@ -38,7 +38,7 @@ export class ApgCadSvgBaseDimensionsFactory extends ApgCadSvgPrimitivesFactory {
     adigits: number,
     acssClass = ''
   ) {
-    super(acad, eApgCadPrimitiveFactoryTypes.LINEAR_DIMS);
+    super(acad, eApgCadFactories.LINEAR_DIMS);
     this.textStyle = atextStyle;
     this.arrowStyle = aarrowStyle;
     this.digits = adigits;

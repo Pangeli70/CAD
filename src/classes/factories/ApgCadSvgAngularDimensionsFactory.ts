@@ -10,16 +10,16 @@
 import { A2D, Svg, Uts } from "../../../deps.ts";
 import { eApgCadDftDimArrowStyles } from "../../enums/eApgCadDftDimArrowStyles.ts";
 import { eApgCadDftLayers } from "../../enums/eApgCadDftLayers.ts";
-import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { ApgCadSvg } from "../ApgCadSvg.ts";
 import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
 import { ApgCadSvgBasicShapesFactory } from "./ApgCadSvgBasicShapesFactory.ts";
-import { ApgCadSvgPrimitivesFactory } from './ApgCadSvgPrimitivesFactory.ts';
+import { ApgCadSvgFactoryBase } from './ApgCadSvgFactoryBase.ts';
 
 
 /** Factory that creates Cad Linear dimensions with arrows and ladders
  */
-export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactory {
+export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgFactoryBase {
 
   /** text style */
   textStyle: Svg.IApgSvgTextStyle;
@@ -45,7 +45,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgPrimitivesFactor
     aarrowStyle: eApgCadDftDimArrowStyles,
     acssClass: string = ''
   ) {
-    super(acad, eApgCadPrimitiveFactoryTypes.ANGULAR_DIMS);
+    super(acad, eApgCadFactories.ANGULAR_DIMS);
     this.textStyle = Uts.ApgUtsObj.DeepCopy(atextStyle) as Svg.IApgSvgTextStyle;
     this.arrowStyle = aarrowStyle;
     this.cssClass = acssClass;

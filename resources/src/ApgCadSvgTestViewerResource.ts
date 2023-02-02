@@ -16,6 +16,7 @@ import { eApgCadTestFeatures } from "../../test/src/enums/eApgCadTestFeatures.ts
 import { eApgCadTestTypes } from "../../test/src/enums/eApgCadTestTypes.ts";
 import { eApgCadTestGridMode } from "../../test/src/enums/eApgCadTestGridMode.ts";
 import { eApgCadTestCartesianMode } from "../../test/src/enums/eApgCadTestCartesianMode.ts";
+import { ApgCadSvg } from "../../src/classes/ApgCadSvg.ts";
 
 enum eResParams {
     pTYPE = 'type',
@@ -59,11 +60,16 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
         pageMenu = this.#buildMenu(testType, testName, blackBack, gridMode, cartesianMode, random, debug, pageMenu);
 
         let svgContent = "";
-        let testLogger: any = { hasErrors: false };
+        let cad: ApgCadSvg | undefined = undefined;
+        let cadState: any = {};
 
         switch (testType) {
             case eApgCadTestTypes.DIRECT_SVG:
-                svgContent = ApgCadSvgTester.RunTest(testName as eApgCadTestSvg, blackBack);
+                cad = ApgCadSvgTester.RunTest(testName as eApgCadTestSvg, blackBack);
+                if (cad) { 
+                    svgContent = cad.svg.render();
+                    cadState = cad.getStateAsJson();
+                }
                 break;
             case eApgCadTestTypes.FACTORIES:
                 svgContent = ApgCadFactoriesTester.RunTest(testName as eApgCadTestFactories, blackBack, gridMode, random, debug);
@@ -100,7 +106,7 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
                 }
             ],
             svgContent,
-            testLogger
+            cadState
         };
 
         const html = await Tng.ApgTngService.Render("/svg_viewer.html", templateData) as string;

@@ -13,19 +13,19 @@ import { A2D, Svg, Uts } from "../../../deps.ts";
 
 import { eApgCadDftLayers } from "../../enums/eApgCadDftLayers.ts";
 import { eApgCadLinearDimensionTypes } from "../../enums/eApgCadLinearDimensionTypes.ts";
-import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { IApgCadDimension } from "../../interfaces/IApgCadDimension.ts";
 
 import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
 
 import { ApgCadSvgBasicShapesFactory } from "./ApgCadSvgBasicShapesFactory.ts";
-import { ApgCadSvgBaseDimensionsFactory } from "./ApgCadSvgBaseDimensionsFactory.ts";
+import { ApgCadSvgDimensionsFactoryBase } from "./ApgCadSvgDimensionsFactoryBase.ts";
 
 
 /**
  * Factory for Linear dimensions with arrows and ladders
  */
-export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgBaseDimensionsFactory {
+export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgDimensionsFactoryBase {
 
 
 
@@ -305,7 +305,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgBaseDimensionsFac
     const leyerDef = this.cad.layerDefs.get(eApgCadDftLayers.DEBUG);
 
     const DOT_SIZE = 10;
-    const pf = this.cad.getPrimitiveFactory(eApgCadPrimitiveFactoryTypes.BASIC_SHAPES) as ApgCadSvgBasicShapesFactory;
+    const pf = this.cad.getPrimitiveFactory(eApgCadFactories.BASIC_SHAPES) as ApgCadSvgBasicShapesFactory;
 
     // First and last point
     pf

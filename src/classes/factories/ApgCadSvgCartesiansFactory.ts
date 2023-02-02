@@ -12,10 +12,10 @@
 
 import { A2D, Svg } from "../../../deps.ts";
 import { eApgCadOrientations } from "../../enums/eApgCadOrientations.ts";
-import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { IApgCadSvgCartesians } from "../../interfaces/IApgCadSvgCartesians.ts";
 import { ApgCadSvg } from "../ApgCadSvg.ts";
-import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
+import { ApgCadSvgFactoryBase } from "./ApgCadSvgFactoryBase.ts";
 
 
 interface IApgCadAxisTickData {
@@ -27,10 +27,10 @@ interface IApgCadAxisTickData {
 }
 
 
-export class ApgCadSvgCartesiansFactory extends ApgCadSvgPrimitivesFactory {
+export class ApgCadSvgCartesiansFactory extends ApgCadSvgFactoryBase {
 
   public constructor(acad: ApgCadSvg) {
-    super(acad, eApgCadPrimitiveFactoryTypes.CARTESIANS);
+    super(acad, eApgCadFactories.CARTESIANS);
   }
 
   build(

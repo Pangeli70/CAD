@@ -12,15 +12,15 @@
 import { A2D, Svg, Uts } from "../../../deps.ts";
 import { eApgCadDftLayers } from "../../enums/eApgCadDftLayers.ts";
 import { eApgCadDftDimArrowStyles } from "../../enums/eApgCadDftDimArrowStyles.ts";
-import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { ApgCadSvg } from "../ApgCadSvg.ts";
 import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
-import { ApgCadSvgPrimitivesFactory } from "./ApgCadSvgPrimitivesFactory.ts";
+import { ApgCadSvgFactoryBase } from "./ApgCadSvgFactoryBase.ts";
 
 
 /** Factory that creates Annotations With arrows and ladders
  */
-export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
+export class ApgCadSvgAnnotationsFactory extends ApgCadSvgFactoryBase {
 
   /** The local copy of the text style data */
   textStyle: Svg.IApgSvgTextStyle;
@@ -48,7 +48,7 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgPrimitivesFactory {
     aarrowName: string,
     acssClass = ''
   ) {
-    super(acad, eApgCadPrimitiveFactoryTypes.ANNOTATIONS)
+    super(acad, eApgCadFactories.ANNOTATIONS)
 
     this.textStyle = Uts.ApgUtsObj.DeepCopy(atextStyle) as Svg.IApgSvgTextStyle;
     this.arrowStyle = aarrowName;

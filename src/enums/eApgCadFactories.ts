@@ -7,13 +7,17 @@
  * @version 0.9.4 [APG 2023/01/04] Deno Deploy Beta
  * -----------------------------------------------------------------------
  */
-export enum eApgCadPrimitiveFactoryTypes {
+
+/** 
+ * Cad Factories 
+ * */
+export enum eApgCadFactories {
   UNDEFINED = "Undefined",
   BASIC_SHAPES = "BasicShapes",
   CARTESIANS = "Axis",
   GRIDS = "Grids",
   LINEAR_DIMS = "LinearDims",
   ARC_DIMS = "RadialDims",
-  ANGULAR_DIMS = "AngularDimensions",
+  ANGULAR_DIMS = "AngularDims",
   ANNOTATIONS = "Annotations"
 }

@@ -17,7 +17,7 @@ import { eApgCadDftLayers } from "../enums/eApgCadDftLayers.ts";
 import { eApgCadDftStrokeStyles } from "../enums/eApgCadDftStrokeStyles.ts";
 import { eApgCadDftTextStyles } from "../enums/eApgCadDftTextStyles.ts";
 import { eApgCadOrientations } from "../enums/eApgCadOrientations.ts";
-import { eApgCadPrimitiveFactoryTypes } from "../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { eApgCadFactories } from "../enums/eApgCadFactories.ts";
 import { eApgCadStdColors } from "../enums/eApgCadStdColors.ts";
 import { IApgCadStyleOptions } from "../interfaces/IApgCadStyleOptions.ts";
 import { IApgCadSvgCartesians } from "../interfaces/IApgCadSvgCartesians.ts";
@@ -27,7 +27,7 @@ import { IApgCadSvgSettings } from "../interfaces/IApgCadSvgSettings.ts";
 import { IApgCadSvgViewBox } from "../interfaces/IApgCadSvgViewBox.ts";
 import { ApgCadSvgCartesiansFactory } from "./factories/ApgCadSvgCartesiansFactory.ts";
 import { ApgCadSvgGridFactory } from "./factories/ApgCadSvgGridFactory.ts";
-import { ApgCadSvgPrimitivesFactory } from "./factories/ApgCadSvgPrimitivesFactory.ts";
+import { ApgCadSvgFactoryBase } from "./factories/ApgCadSvgFactoryBase.ts";
 import { ApgCadSvgBlocksInitializer } from "./initializers/ApgCadSvgBlocksInitializer.ts";
 import { ApgCadSvgFillStylesInitializer } from "./initializers/ApgCadSvgFillStylesInitializer.ts";
 import { ApgCadSvgGradientsInitializer } from "./initializers/ApgCadSvgGradientsInitializer.ts";
@@ -81,7 +81,7 @@ export class ApgCadSvg {
   gradients: Map<string, Svg.ApgSvgNode> = new Map();
   gradientsDefs: string[] = [];
 
-  primitiveFactories: Map<string, ApgCadSvgPrimitivesFactory> = new Map();
+  primitiveFactories: Map<string, ApgCadSvgFactoryBase> = new Map();
 
 
 
@@ -312,7 +312,7 @@ export class ApgCadSvg {
   #initCartesians() {
     if (!this.settings.cartesians.draw) return;
 
-    const factory = this.primitiveFactories.get(eApgCadPrimitiveFactoryTypes.CARTESIANS);
+    const factory = this.primitiveFactories.get(eApgCadFactories.CARTESIANS);
     if (factory) {
       const axisFactory = factory as ApgCadSvgCartesiansFactory;
       const axisLayer = this.getLayer(eApgCadDftLayers.CARTESIANS);
@@ -344,7 +344,7 @@ export class ApgCadSvg {
   #initGrid() {
     if (!this.settings.grid.draw) return;
 
-    const factory = this.primitiveFactories.get(eApgCadPrimitiveFactoryTypes.GRIDS);
+    const factory = this.primitiveFactories.get(eApgCadFactories.GRIDS);
     if (factory) {
       const gridFactory = factory as ApgCadSvgGridFactory
       const gridLayer: Svg.ApgSvgNode | undefined = this.getLayer(eApgCadDftLayers.GRIDS);
@@ -387,7 +387,7 @@ export class ApgCadSvg {
 
 
   public getPrimitiveFactory(
-    atype: eApgCadPrimitiveFactoryTypes,
+    atype: eApgCadFactories,
   ) {
     return this.primitiveFactories.get(atype);
   }
@@ -617,14 +617,14 @@ export class ApgCadSvg {
   getStateAsJson() {
     const r: any = {};
     r.settings = this.settings;
-    r.strokeStyles = Uts.ApgUtsMap.ToArray(this.strokeStyles);
-    r.fillStyles = Uts.ApgUtsMap.ToArray(this.fillStyles);
-    r.textStyles = Uts.ApgUtsMap.ToArray(this.textStyles);
-    r.gradients = Uts.ApgUtsMap.ToArray(this.gradients);
-    r.patterns = Uts.ApgUtsMap.ToArray(this.patterns);
-    r.blocks = Uts.ApgUtsMap.ToArray(this.blocks);
-    r.layers = Uts.ApgUtsMap.ToArray(this.layers);
-    r.groups = Uts.ApgUtsMap.ToArray(this.groupsDefs);
+    r.strokeStyles = Array.from(this.strokeStyles.keys());
+    r.fillStyles = Array.from(this.fillStyles.keys());
+    r.textStyles = Array.from(this.textStyles.keys());
+    r.gradients = Array.from(this.gradients.keys());
+    r.patterns = Array.from(this.patterns.keys());
+    r.blocks = Array.from(this.blocks.keys());
+    r.layers = Array.from(this.layers.keys());
+    r.groups = Array.from(this.groupsDefs.keys());
     return JSON.stringify(r, undefined, "  ");
   }
 

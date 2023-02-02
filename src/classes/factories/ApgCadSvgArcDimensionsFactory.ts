@@ -13,18 +13,18 @@ import { A2D, Svg, Uts } from "../../../deps.ts";
 
 import { eApgCadDftLayers } from "../../enums/eApgCadDftLayers.ts";
 import { eApgCadArcDimensionTypes } from "../../enums/eApgCadArcDimensionTypes.ts";
-import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { IApgCadDimension } from "../../interfaces/IApgCadDimension.ts";
 
 import { ApgCadSvgUtils } from "../ApgCadSvgUtils.ts";
 
 import { ApgCadSvgBasicShapesFactory } from "./ApgCadSvgBasicShapesFactory.ts";
-import { ApgCadSvgBaseDimensionsFactory } from "./ApgCadSvgBaseDimensionsFactory.ts";
+import { ApgCadSvgDimensionsFactoryBase } from "./ApgCadSvgDimensionsFactoryBase.ts";
 
 
 /** Apg Svg : Factory for CAD Arc dimensions with arrows and ladders
  */
-export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgBaseDimensionsFactory {
+export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgDimensionsFactoryBase {
 
 
   /** Builds a Cad Arc Dimension with the ladders*/
@@ -438,7 +438,7 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgBaseDimensionsFactor
     const leyerDef = this.cad.layerDefs.get(eApgCadDftLayers.DEBUG);
 
     const DOT_SIZE = 10;
-    const pf = this.cad.getPrimitiveFactory(eApgCadPrimitiveFactoryTypes.BASIC_SHAPES) as ApgCadSvgBasicShapesFactory;
+    const pf = this.cad.getPrimitiveFactory(eApgCadFactories.BASIC_SHAPES) as ApgCadSvgBasicShapesFactory;
 
     // First and last point
     pf

@@ -7,7 +7,7 @@
  */
 import { eApgCadDftDimArrowStyles } from "../../enums/eApgCadDftDimArrowStyles.ts";
 import { eApgCadDftTextStyles } from "../../enums/eApgCadDftTextStyles.ts";
-import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { ApgCadSvgAnnotationsFactory } from "../factories/ApgCadSvgAnnotationsFactory.ts";
 import { ApgCadSvgLinearDimensionsFactory } from "../factories/ApgCadSvgLinearDimensionsFactory.ts";
 import { ApgCadSvgAngularDimensionsFactory } from "../factories/ApgCadSvgAngularDimensionsFactory.ts";
@@ -27,13 +27,13 @@ export class ApgCadSvgPrimitivesFactoriesInitializer extends ApgCadSvgBaseInitia
 
 
         const basicShapes = new ApgCadSvgBasicShapesFactory(this._cad);
-        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.BASIC_SHAPES, basicShapes,);
+        this._cad.primitiveFactories.set(eApgCadFactories.BASIC_SHAPES, basicShapes,);
 
         const grid = new ApgCadSvgGridFactory(this._cad);
-        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.GRIDS, grid,);
+        this._cad.primitiveFactories.set(eApgCadFactories.GRIDS, grid,);
 
         const cartesians = new ApgCadSvgCartesiansFactory(this._cad);
-        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.CARTESIANS, cartesians,);
+        this._cad.primitiveFactories.set(eApgCadFactories.CARTESIANS, cartesians,);
 
         const annotationsTextStyle = this._cad.getTextStyle(eApgCadDftTextStyles.ANNOTATIONS);
         const annotations = new ApgCadSvgAnnotationsFactory(
@@ -41,7 +41,7 @@ export class ApgCadSvgPrimitivesFactoriesInitializer extends ApgCadSvgBaseInitia
             annotationsTextStyle!,
             eApgCadDftDimArrowStyles.MECHANICAL
         );
-        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.ANNOTATIONS, annotations,);
+        this._cad.primitiveFactories.set(eApgCadFactories.ANNOTATIONS, annotations,);
 
         const dimensionsTextStyle = this._cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS);
         const linearDims = new ApgCadSvgLinearDimensionsFactory(
@@ -50,7 +50,7 @@ export class ApgCadSvgPrimitivesFactoriesInitializer extends ApgCadSvgBaseInitia
             eApgCadDftDimArrowStyles.MECHANICAL,
             4
         )
-        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.LINEAR_DIMS, linearDims,);
+        this._cad.primitiveFactories.set(eApgCadFactories.LINEAR_DIMS, linearDims,);
 
         const arcDims = new ApgCadSvgArcDimensionsFactory(
             this._cad,
@@ -58,14 +58,14 @@ export class ApgCadSvgPrimitivesFactoriesInitializer extends ApgCadSvgBaseInitia
             eApgCadDftDimArrowStyles.MECHANICAL,
             4
         )
-        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.ARC_DIMS, arcDims,);
+        this._cad.primitiveFactories.set(eApgCadFactories.ARC_DIMS, arcDims,);
 
         const angulardDims = new ApgCadSvgAngularDimensionsFactory(
             this._cad,
             dimensionsTextStyle!,
             eApgCadDftDimArrowStyles.MECHANICAL
         );
-        this._cad.primitiveFactories.set(eApgCadPrimitiveFactoryTypes.ANGULAR_DIMS, angulardDims,);
+        this._cad.primitiveFactories.set(eApgCadFactories.ANGULAR_DIMS, angulardDims,);
 
     }
 }

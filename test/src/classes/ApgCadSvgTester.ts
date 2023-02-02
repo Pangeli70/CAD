@@ -35,9 +35,7 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .circle(cx, cy, 20)
         .childOf(cad.currentLayer);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+    return cad;
   }
 
 
@@ -60,9 +58,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .line(x1, y1, x2, y2)
         .childOf(cad.currentLayer);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
 
@@ -107,9 +104,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .fill(eApgCadStdColors.NONE)
         .childOf(cad.currentLayer);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
 
@@ -134,9 +130,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .fill(eApgCadStdColors.NONE)
         .childOf(cad.currentLayer);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
 
@@ -163,9 +158,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .fill(eApgCadStdColors.NONE)
         .childOf(cad.currentLayer);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
 
@@ -212,9 +206,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .stroke(eApgCadStdColors.NONE, 0)
         .childOf(cad.currentLayer);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
 
@@ -253,9 +246,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .childOf(cad.currentLayer);
 
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
 
@@ -305,13 +297,13 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
 
       currY += textLineHeight;
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
 
-  static testRawPaths(aisBlackBack = false) {
+  static testPaths(aisBlackBack = false) {
+
     const cad = new ApgCadSvg(aisBlackBack);
     cad.svg.title = "Test Random Paths";
     cad.svg.description = "Apg Svg Cad";
@@ -320,47 +312,50 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
     cad.setCurrentLayer(layId);
 
     this.notImplemented(cad);
-
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+   
+    return cad;
   }
 
 
   static RunTest(atest: eApgCadTestSvg, aisBlackBack = false) {
 
-    let r = "";
+    let cad: ApgCadSvg | undefined = undefined;
     switch (atest) {
       case eApgCadTestSvg.POINTS:
-        r = this.testRawPoints(aisBlackBack);
+        cad = this.testRawPoints(aisBlackBack);
         break;
       case eApgCadTestSvg.LINES:
-        r = this.testRawLines(aisBlackBack);
+        cad = this.testRawLines(aisBlackBack);
         break;
       case eApgCadTestSvg.POLYLINES:
-        r = this.testRawPolyLines(aisBlackBack);
+        cad = this.testRawPolyLines(aisBlackBack);
         break;
       case eApgCadTestSvg.ARCS:
-        r = this.testRawArcs(aisBlackBack);
+        cad = this.testRawArcs(aisBlackBack);
         break;
       case eApgCadTestSvg.CIRCLES:
-        r = this.testRawCircles(aisBlackBack);
+        cad = this.testRawCircles(aisBlackBack);
         break;
       case eApgCadTestSvg.TEXTS:
-        r = this.testRawText(aisBlackBack);
+        cad = this.testRawText(aisBlackBack);
         break;
       case eApgCadTestSvg.PATHS:
-        r = this.testRawPaths(aisBlackBack);
+        cad = this.testPaths(aisBlackBack);
         break;
       case eApgCadTestSvg.IMAGES:
-        r = this.testRawImages(aisBlackBack);
+        cad = this.testRawImages(aisBlackBack);
         break;
       case eApgCadTestSvg.ASPECT_RATIOS:
-        r = this.testAspectRatios(aisBlackBack);
+        cad = this.testAspectRatios(aisBlackBack);
         break;
     }
 
-    return r;
+    if (cad) { 
+      this.DrawCartouche(cad);
+      this.Gui(cad);
+    }
+    return cad;
+
   }
 
 }

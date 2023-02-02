@@ -10,22 +10,22 @@
  * -----------------------------------------------------------------------
  */
 
-import { eApgCadPrimitiveFactoryTypes } from "../../enums/eApgCadPrimitiveFactoryTypes.ts";
+import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { ApgCadSvg } from "../ApgCadSvg.ts";
 
 
-export class ApgCadSvgPrimitivesFactory {
+export class ApgCadSvgFactoryBase {
 
   protected ready = false;
 
   protected messages: string[] = [];
 
-  protected type = eApgCadPrimitiveFactoryTypes.UNDEFINED;
+  protected type = eApgCadFactories.UNDEFINED;
 
   protected cad: ApgCadSvg;
 
 
-  public constructor(acad: ApgCadSvg, atype: eApgCadPrimitiveFactoryTypes) {
+  public constructor(acad: ApgCadSvg, atype: eApgCadFactories) {
     this.cad = acad;
     this.type = atype;
   }
