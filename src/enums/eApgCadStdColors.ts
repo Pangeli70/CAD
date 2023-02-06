@@ -22,10 +22,13 @@ export enum eApgCadStdColors {
   ORANGE = 'orange',
   YELLOW = 'yellow',
   GREEN = 'green',
+  GREEN_HATCH = 'green',
   CYAN = 'cyan',
   BLUE = 'blue',
   MAGENTA = 'magenta',
   WHITE = 'white',
   BLACK = 'black',
-  GRAY = '#888888'
+  BROWN_HATCH = 'orange',
+  GRAY = '#888888',
+  GRAY_HATCH = 'slategray'
 }

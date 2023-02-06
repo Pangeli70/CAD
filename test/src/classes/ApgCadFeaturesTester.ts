@@ -22,39 +22,46 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
 
 
 
-  static RunTest(atest: eApgCadTestFeatures, aisBlackBack = false) {
+  static async RunTest(atest: eApgCadTestFeatures, aisBlackBack = false) {
 
-    let r = "";
+    let cad: ApgCadSvg | undefined = undefined;
     switch (atest) {
       case eApgCadTestFeatures.LAYERS:
-        r = this.testLayers(aisBlackBack);
+        cad = await this.testLayers(aisBlackBack);
         break;
       case eApgCadTestFeatures.STROKE_STYLES:
-        r = this.testDftStrokeStyles(aisBlackBack);
+        cad = await this.testDftStrokeStyles(aisBlackBack);
         break;
       case eApgCadTestFeatures.FILL_STYLES:
-        r = this.testFillStyles(aisBlackBack);
+        cad = await this.testFillStyles(aisBlackBack);
         break;
       case eApgCadTestFeatures.TEXT_STYLES:
-        r = this.testTextStyles(aisBlackBack);
+        cad = await this.testTextStyles(aisBlackBack);
         break;
       case eApgCadTestFeatures.PATTERNS:
-        r = this.testPatterns(aisBlackBack);
+        cad = await this.testPatterns(aisBlackBack);
         break;
       case eApgCadTestFeatures.GRADIENTS:
-        r = this.testGradients(aisBlackBack);
+        cad = await this.testGradients(aisBlackBack);
         break;
       case eApgCadTestFeatures.BLOCKS:
-        r = this.testBlocks(aisBlackBack);
+        cad = await this.testBlocks(aisBlackBack);
         break;
     }
 
-    return r;
+    if (cad) {
+      this.DrawCartouche(cad);
+      this.Gui(cad);
+    }
+
+    return cad;
   }
 
-  static testLayers(aisBlackBack = false) {
+  static async testLayers(aisBlackBack = false) {
     const layerNames = Uts.ApgUtsEnum.StringValues(eApgCadDftLayers);
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Default Layers";
     cad.svg.description = "Apg-Cad";
     for (let i = 0; i < layerNames.length; i++) {
@@ -75,15 +82,16 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
         .stroke(eApgCadStdColors.NONE)
         .childOf(r.group);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
 
   }
 
-  static testDftStrokeStyles(aisBlackBack = false) {
+  static async testDftStrokeStyles(aisBlackBack = false) {
     const styles = Uts.ApgUtsEnum.StringValues(eApgCadDftStrokeStyles);
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Default Stroke Styles";
     cad.svg.description = "Apg-Cad";
     for (let i = 0; i < styles.length; i++) {
@@ -99,14 +107,15 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
       }
       r.group.childOf(cad.currentLayer);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
-  static testFillStyles(aisBlackBack = false) {
+  static async testFillStyles(aisBlackBack = false) {
     const styles = Uts.ApgUtsEnum.StringValues(eApgCadDftFillStyles);
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Default Fill Styles";
     cad.svg.description = "Apg-Cad";
     for (let i = 0; i < styles.length; i++) {
@@ -119,14 +128,15 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
       r.group.fill(fillStyle!.color, fillStyle!.opacity);
       r.group.childOf(cad.currentLayer);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
-  static testBlocks(aisBlackBack = false) {
+
+  static async testBlocks(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
 
     cad.svg.title = "Default Blocks";
     cad.svg.description = "Apg-Cad";
@@ -140,34 +150,39 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
         throw new Error("Block [" + block + "] Not implemented")
       }
       const _b = cad.svg
-        .useT(blockDef, r.point.x, r.point.y, {})
+        .useWithTransforms(blockDef, r.point.x, r.point.y, {})
         //.useT(blockDef, r.point.x, r.point.y, { scale: { x: 4, y: 4 }, rotate: { a: 90 }, translate: { x: 0, y: 100 } })
         .fill(eApgCadStdColors.CYAN)
         .childOf(r.group);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
   
 
-  static testGradients(aisBlackBack = false) {
+  static async testGradients(aisBlackBack = false) {
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     const r = this.notImplemented(cad);
-    return cad.svg.render();
+    return cad;
   }
 
 
-  static testPatterns(aisBlackBack = false) {
+  static async testPatterns(aisBlackBack = false) {
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     const r = this.notImplemented(cad);
-    return cad.svg.render();
+    return cad;
   }
 
 
-  static testTextStyles(aisBlackBack = false) {
+  static async testTextStyles(aisBlackBack = false) {
     const textStyleNames = Uts.ApgUtsEnum.StringValues(eApgCadDftTextStyles);
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Default Text styles";
     cad.svg.description = "Apg-Cad";
 
@@ -210,9 +225,8 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
         .textStyle(debugTextStyle)
         .childOf(r.group);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
 

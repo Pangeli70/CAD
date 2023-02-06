@@ -226,14 +226,12 @@ export abstract class ApgCadBaseTester {
     acad.svg
       .text(x + (WIDTH / 2), titleY, acad.svg.title, 0)
       .textStyle(titleTextStyle)
-      .stroke(eApgCadStdColors.NONE, 0)
       .childOf(acad.currentLayer);
 
     const descriptionY = titleY - (textStyle.size * (textStyle.leading || 1.1));
     acad.svg
       .text(x + (WIDTH / 2), descriptionY, acad.svg.description, 0)
       .textStyle(textStyle)
-      .stroke(eApgCadStdColors.NONE, 0)
       .childOf(acad.currentLayer);
 
     const dateY = descriptionY - (textStyle.size * (textStyle.leading || 1.1));
@@ -241,7 +239,6 @@ export abstract class ApgCadBaseTester {
     acad.svg
       .text(x + (WIDTH / 2), dateY, date, 0)
       .textStyle(textStyle)
-      .stroke(eApgCadStdColors.NONE, 0)
       .childOf(acad.currentLayer);
   }
 

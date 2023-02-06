@@ -11,9 +11,28 @@
  */
 export enum eApgCadDftPatterns {
     BACK_GRID_LINES = "BackGridLines",
+    BACK_GRID_LINES_AS_DOTS = "BackGridLinesAsDots",
     CHESSBOARD = "Chessboard",
-    GRID1 = "Background",
-    GRID2 = "Grid2",
-    GRID3 = "Grid3",
-    GRID4 = "Grid4"
+
+    CROSS1 = "Cross1",
+    CROSS2 = "Cross2",
+
+    SALTIRE1 = "Saltire1",
+    SALTIRE2 = "Saltire2",
+
+    DIAGONAL1 = "Diagonal1",
+    DIAGONAL2 = "Diagonal2",
+
+    BRICK1 = "Brick1",
+    BRICK2 = "Brick2",
+
+    ROOF1 = "Roof1",
+    ROOF2 = "Roof2",
+
+    ROOF_TILES1 = "RoofTiles1",
+    ROOF_TILES2 = "RoofTiles2",
+
+    FLOOR1 = "Floor1",
+    FLOOR2 = "Floor2",
+
 }

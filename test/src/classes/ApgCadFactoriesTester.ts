@@ -31,73 +31,79 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
 
 
 
-  static RunTest(atest: eApgCadTestFactories,
+  static async RunTest(atest: eApgCadTestFactories,
     aisBlackBack = false,
     agridMode = eApgCadTestGridMode.LINES,
     aisRandom = false,
     adebug = false,
   ) {
 
-    let r = "";
+    let cad: ApgCadSvg | undefined = undefined;
     switch (atest) {
 
       case eApgCadTestFactories.BASIC_SHAPES:
-        r = this.testBasicShapes(aisBlackBack);
+        cad = await this.testBasicShapes(aisBlackBack);
         break;
       case eApgCadTestFactories.ANNOTATIONS:
-        r = this.testAnnotations(aisBlackBack, agridMode, adebug);
+        cad = await this.testAnnotations(aisBlackBack, agridMode, adebug);
         break;
       case eApgCadTestFactories.HORIZONTAL_LIN_DIMS:
-        r = this.#testLinearDims(
+        cad = await this.#testLinearDims(
           eApgCadLinearDimensionTypes.HORIZONTAL, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.VERTICAL_LIN_DIMS:
-        r = this.#testLinearDims(
+        cad = await this.#testLinearDims(
           eApgCadLinearDimensionTypes.VERTICAL, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.ALIGNED_LIN_DIMS:
-        r = this.#testLinearDims(
+        cad = await this.#testLinearDims(
           eApgCadLinearDimensionTypes.ALIGNED, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.IN_DIAMETER_ARC_DIMS:
-        r= this.#testArcDims(
+        cad = await this.#testArcDims(
           eApgCadArcDimensionTypes.INNER_DIAMETER, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.IN_RADIOUS_ARC_DIMS:
-        r = this.#testArcDims(
+        cad = await this.#testArcDims(
           eApgCadArcDimensionTypes.INNER_RADIOUS, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.OUT_DIAMETER_DIMS:
-        r = this.#testArcDims(
+        cad = await this.#testArcDims(
           eApgCadArcDimensionTypes.OUTER_DIAMETER, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.OUT_RADIOUS_ARC_DIMS:
-        r = this.#testArcDims(
+        cad = await this.#testArcDims(
           eApgCadArcDimensionTypes.OUTER_RADIOUS, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.HORIZONTAL_ARC_DIMS:
-        r = this.#testArcDims(
+        cad = await this.#testArcDims(
           eApgCadArcDimensionTypes.HORIZONTAL, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.VERTICAL_ARC_DIMS:
-        r = this.#testArcDims(
+        cad = await this.#testArcDims(
           eApgCadArcDimensionTypes.VERTICAL, aisBlackBack, agridMode, aisRandom, adebug);
         break;
       case eApgCadTestFactories.ANGULAR_DIMS:
-        r = this.testAngularDims(aisBlackBack);
+        cad = await this.testAngularDims(aisBlackBack);
         break;
     }
 
-    return r;
+    if (cad) {
+      this.DrawCartouche(cad);
+      this.Gui(cad);
+    }
+    return cad;
   }
 
 
-  static testBasicShapes(
+  static async testBasicShapes(
     aisBlackBack = false,
     agridMode = eApgCadTestGridMode.LINES,
   ) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Test Basic Shapes";
     cad.svg.description = "Apg Svg Cad Factory";
 
@@ -159,12 +165,11 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
         .buildDot(cp, 4)
         .childOf(layers[4]);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
-  static testAnnotations(
+  static async testAnnotations(
     isBlackBack = false,
     agridMode = eApgCadTestGridMode.LINES,
     aisDebug = false,
@@ -172,6 +177,8 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
 
     const isDotGrid = agridMode == eApgCadTestGridMode.DOTS;
     const cad = new ApgCadSvg(isBlackBack, isDotGrid, aisDebug);
+    await cad.init();
+
     cad.svg.title = `Test Annotations`;
     cad.svg.description = "Apg Svg Cad";
 
@@ -220,9 +227,7 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
       g?.childOf(cad.currentLayer);
     }
 
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+    return cad;
 
   }
 
@@ -238,7 +243,7 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
     }
 */
 
-  static #testLinearDims(
+  static async #testLinearDims(
     atype: eApgCadLinearDimensionTypes,
     isBlackBack = false,
     agridMode = eApgCadTestGridMode.LINES,
@@ -248,6 +253,8 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
 
     const isDotGrid = agridMode == eApgCadTestGridMode.DOTS;
     const cad = new ApgCadSvg(isBlackBack, isDotGrid, aisDebug);
+    await cad.init();
+
     cad.svg.title = `Test Linear dims (${atype})`;
     cad.svg.description = "Apg Svg Cad";
 
@@ -298,23 +305,24 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
         ?.childOf(cad.currentLayer)
 
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
 
   }
 
 
-  static #testArcDims(
+  static async #testArcDims(
     atype: eApgCadArcDimensionTypes,
     isBlackBack = false,
     agridMode = eApgCadTestGridMode.LINES,
     aisRandom = false,
     aisDebug = false,
   ) {
-     
+
     const isDotGrid = agridMode == eApgCadTestGridMode.DOTS;
     const cad = new ApgCadSvg(isBlackBack, isDotGrid, aisDebug);
+    await cad.init();
+
     cad.svg.title = `Test Arc dims (${atype})`;
     cad.svg.description = "Apg Svg Cad";
 
@@ -360,13 +368,12 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
       const centerPoint = pts[i];
       const ladderPoint = pts[i + 1];
 
-       dimFact
-         .build(atype, centerPoint, ladderPoint, displacement)
+      dimFact
+        .build(atype, centerPoint, ladderPoint, displacement)
         ?.childOf(cad.currentLayer)
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
   static _m(arr: number[]) {
@@ -377,10 +384,13 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
     return delta + min;
   }
 
-  static testAngularDims(
+  static async testAngularDims(
     isBlackBack = false
   ) {
+
     const cad = new ApgCadSvg(isBlackBack);
+    await cad.init();
+
     cad.svg.title = `Test Angular dims`;
     cad.svg.description = "Apg Svg Cad";
     const textStyle = cad.getTextStyle(eApgCadDftTextStyles.DIMENSIONS)
@@ -416,9 +426,8 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
       cad.setCurrentLayer('2');
       dimFact.build(cad.currentLayer, l1, l2, 50, A2D.eApg2DQuadrant.posXposY, "##", "##");
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
 

@@ -65,25 +65,25 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
 
         switch (testType) {
             case eApgCadTestTypes.DIRECT_SVG:
-                cad = ApgCadSvgTester.RunTest(testName as eApgCadTestSvg, blackBack);
-                if (cad) { 
-                    svgContent = cad.svg.render();
-                    cadState = cad.getStateAsJson();
-                }
+                cad = await ApgCadSvgTester.RunTest(testName as eApgCadTestSvg, blackBack);
                 break;
             case eApgCadTestTypes.FACTORIES:
-                svgContent = ApgCadFactoriesTester.RunTest(testName as eApgCadTestFactories, blackBack, gridMode, random, debug);
+                cad = await ApgCadFactoriesTester.RunTest(testName as eApgCadTestFactories, blackBack, gridMode, random, debug);
                 break;
             case eApgCadTestTypes.FEATURES:
-                svgContent = ApgCadFeaturesTester.RunTest(testName as eApgCadTestFeatures, blackBack);
+                cad = await ApgCadFeaturesTester.RunTest(testName as eApgCadTestFeatures, blackBack);
                 break;
             case eApgCadTestTypes.DEFAULTS:
-                svgContent = ApgCadDefaultsTester.RunTest(testName as eApgCadTestDefaults, blackBack);
+                cad = await ApgCadDefaultsTester.RunTest(testName as eApgCadTestDefaults, blackBack);
                 break;
+        }
+        if (cad) {
+            svgContent = cad.svg.render();
+            cadState = cad.getStateAsJson();
         }
 
         const isDenoDeploy = Deno.env.get("DENO_DEPLOYMENT_ID") !== undefined;
-        if (!isDenoDeploy) { 
+        if (!isDenoDeploy) {
             await Deno.writeTextFile(Deno.cwd() + "/test/output/" + testType + "_" + testName + ".svg", svgContent);
         }
 

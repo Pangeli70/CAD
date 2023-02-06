@@ -17,6 +17,7 @@ export enum eApgCadTestDefaults {
     LAYERS = "Layers",
     BLOCKS = "Blocks",
     PATTERNS = "Patterns",
+    TEXTURES = "Textures",
     GRADIENTS = "Gradients",
 
 

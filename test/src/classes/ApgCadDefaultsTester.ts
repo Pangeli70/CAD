@@ -8,56 +8,60 @@
 
 import { ApgCadSvg } from "../../../src/classes/ApgCadSvg.ts";
 import { eApgCadStdColors } from "../../../src/enums/eApgCadStdColors.ts";
-import { eApgCadDftFillOpacities } from "../../../src/enums/eApgCadDftFillOpacities.ts";
 import { eApgCadDftFillStyles } from "../../../src/enums/eApgCadDftFillStyles.ts";
-import { eApgCadDftGradients } from "../../../src/enums/eApgCadDftGradients.ts";
 import { eApgCadDftLayers } from "../../../src/enums/eApgCadDftLayers.ts";
-import { eApgCadDftPatterns } from "../../../src/enums/eApgCadDftPatterns.ts";
 import { eApgCadDftStrokeStyles } from "../../../src/enums/eApgCadDftStrokeStyles.ts";
-import { eApgCadDftStrokeWidths } from "../../../src/enums/eApgCadDftStrokeWidths.ts";
 import { eApgCadDftTextStyles } from "../../../src/enums/eApgCadDftTextStyles.ts";
-import { eApgCadTestLayers } from "../enums/eApgCadTestLayers.ts";
 import { eApgCadTestDefaults } from "../enums/eApgCadTestDefaults.ts";
 import { ApgCadBaseTester } from "./ApgCadBaseTester.ts";
-import { A2D, Svg, Uts } from "../../../deps.ts";
+import {  Svg, Uts } from "../../../deps.ts";
 
 
 export class ApgCadDefaultsTester extends ApgCadBaseTester {
 
 
-  static RunTest(atest: eApgCadTestDefaults, aisBlackBack = false) {
+  static async RunTest(atest: eApgCadTestDefaults, aisBlackBack = false) {
 
-    let r = "";
+    let cad: ApgCadSvg | undefined = undefined;
     switch (atest) {
       case eApgCadTestDefaults.LAYERS:
-        r = this.testLayers(aisBlackBack);
+        cad = await this.testLayers(aisBlackBack);
         break;
       case eApgCadTestDefaults.STROKE_STYLES:
-        r = this.testDftStrokeStyles(aisBlackBack);
+        cad = await this.testDftStrokeStyles(aisBlackBack);
         break;
       case eApgCadTestDefaults.FILL_STYLES:
-        r = this.testFillStyles(aisBlackBack);
+        cad = await this.testFillStyles(aisBlackBack);
         break;
       case eApgCadTestDefaults.TEXT_STYLES:
-        r = this.testTextStyles(aisBlackBack);
+        cad = await this.testTextStyles(aisBlackBack);
         break;
       case eApgCadTestDefaults.PATTERNS:
-        r = this.testPatterns(aisBlackBack);
+        cad = await this.testPatterns(aisBlackBack);
+        break;
+      case eApgCadTestDefaults.TEXTURES:
+        cad = await this.testTextures(aisBlackBack);
         break;
       case eApgCadTestDefaults.GRADIENTS:
-        r = this.testGradients(aisBlackBack);
+        cad = await this.testGradients(aisBlackBack);
         break;
       case eApgCadTestDefaults.BLOCKS:
-        r = this.testBlocks(aisBlackBack);
+        cad = await this.testBlocks(aisBlackBack);
         break;
     }
 
-    return r;
+    if (cad) {
+      this.DrawCartouche(cad);
+      this.Gui(cad);
+    }
+    return cad;
   }
 
-  static testLayers(aisBlackBack = false) {
+  static async testLayers(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Default Layers";
     cad.svg.description = "Apg-Cad";
 
@@ -109,15 +113,15 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
         .childOf(r);
     }
 
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+    return cad;
 
   }
 
-  static testDftStrokeStyles(aisBlackBack = false) {
+  static async testDftStrokeStyles(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Default Stroke Styles";
     cad.svg.description = "Apg-Cad";
 
@@ -135,15 +139,16 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
       }
       r.group.childOf(cad.currentLayer);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
 
-  static testFillStyles(aisBlackBack = false) {
+  static async testFillStyles(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Default Fill Styles";
     cad.svg.description = "Apg-Cad";
 
@@ -158,15 +163,16 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
       r.group.fill(fillStyle!.color, fillStyle!.opacity);
       r.group.childOf(cad.currentLayer);
     }
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+
+    return cad;
   }
 
 
-  static testBlocks(aisBlackBack = false) {
+  static async testBlocks(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Default Blocks";
     cad.svg.description = "Apg-Cad";
 
@@ -180,18 +186,19 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
         throw new Error("Block [" + block + "] not defined")
       }
       const _b = cad.svg
-        .useT(blockDef, r.point.x, r.point.y, {})
+        .useWithTransforms(blockDef, r.point.x, r.point.y, {})
         .fill(eApgCadStdColors.CYAN)
         .childOf(r.group);
     }
 
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+    return cad;
   }
 
-  static testGradients(aisBlackBack = false) {
+  static async testGradients(aisBlackBack = false) {
+
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Default Gradients";
     cad.svg.description = "Apg-Cad";
 
@@ -207,13 +214,14 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
       r.group.childOf(cad.currentLayer);
     }
 
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+    return cad;
   }
 
-  static testPatterns(aisBlackBack = false) {
+  static async testPatterns(aisBlackBack = false) {
+
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Default Patterns";
     cad.svg.description = "Apg-Cad";
 
@@ -229,24 +237,42 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
       r.group.childOf(cad.currentLayer);
     }
 
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
-
-    // TODO @3 APG20220122 -- Implement this
-    /**
-     * <defs>
-        <pattern id="img1" patternUnits="userSpaceOnUse" width="100" height="100">
-          <image href="wall.jpg" x="0" y="0" width="100" height="100" />
-        </pattern>
-      </defs>
-      <path d="M5,5 l0,680 l980,0 l0,-680 l-980,0 fill="url(#img1)" />
-     * 
-     */
+    return cad;
   }
 
-  static testTextStyles(aisBlackBack = false) {
+  static async testTextures(aisBlackBack = false) {
+
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
+    cad.svg.title = "Default Textures";
+    cad.svg.description = "Apg-Cad";
+
+    for (let i = 0; i < cad.textureDefs.length; i++) {
+      const textureDef = cad.textureDefs[i];
+      const r = this.getTestBox(cad, i, textureDef);
+
+      const pattern = cad.getTexture(textureDef);
+      if (!pattern) {
+        throw new Error("Texture [" + pattern + "] not defined")
+      }
+      const clone = cad.svg.rect(r.point.x-r.w/2, r.point.y-r.h/2, r.w, r.h);
+      clone.childOf(r.group);
+      clone.fill('orange', 0.2);
+      clone.stroke('none')
+      
+      r.rect.fill(`url(#${textureDef})`)
+      r.group.childOf(cad.currentLayer);
+    }
+
+    return cad;
+  }
+
+  static async testTextStyles(aisBlackBack = false) {
+
+    const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Default Text styles";
     cad.svg.description = "Apg-Cad";
 
@@ -300,9 +326,7 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
         .childOf(r.group);
     }
 
-    this.DrawCartouche(cad);
-    this.Gui(cad);
-    return cad.svg.render();
+    return cad;
   }
 
 }

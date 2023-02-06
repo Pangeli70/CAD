@@ -9,7 +9,7 @@
  */
 
 
-import { A2D, Svg } from '../../../deps.ts';
+import { A2D, Svg, Uts } from '../../../deps.ts';
 import { ApgCadSvg } from "../../../src/classes/ApgCadSvg.ts";
 import { eApgCadStdColors } from "../../../src/enums/eApgCadStdColors.ts";
 import { eApgCadTestSvg } from "../enums/eApgCadTestSvg.ts";
@@ -19,9 +19,55 @@ import { ApgCadBaseTester } from "./ApgCadBaseTester.ts";
 export class ApgCadSvgTester extends ApgCadBaseTester {
 
 
-  static testRawPoints(aisBlackBack = false) {
+
+  static async RunTest(atest: eApgCadTestSvg, aisBlackBack = false) {
+
+    let cad: ApgCadSvg | undefined = undefined;
+    switch (atest) {
+      case eApgCadTestSvg.POINTS:
+        cad = await this.testRawPoints(aisBlackBack);
+        break;
+      case eApgCadTestSvg.LINES:
+        cad = await this.testRawLines(aisBlackBack);
+        break;
+      case eApgCadTestSvg.POLYLINES:
+        cad = await this.testRawPolyLines(aisBlackBack);
+        break;
+      case eApgCadTestSvg.ARCS:
+        cad = await this.testRawArcs(aisBlackBack);
+        break;
+      case eApgCadTestSvg.CIRCLES:
+        cad = await this.testRawCircles(aisBlackBack);
+        break;
+      case eApgCadTestSvg.TEXTS:
+        cad = await this.testRawText(aisBlackBack);
+        break;
+      case eApgCadTestSvg.PATHS:
+        cad = await this.testPaths(aisBlackBack);
+        break;
+      case eApgCadTestSvg.IMAGES:
+        cad = await this.testRawImages(aisBlackBack);
+        break;
+      case eApgCadTestSvg.ASPECT_RATIOS:
+        cad = await this.testAspectRatios(aisBlackBack);
+        break;
+    }
+
+    if (cad) {
+      this.DrawCartouche(cad);
+      this.Gui(cad);
+    }
+    return cad;
+
+  }
+
+
+
+  static async testRawPoints(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Test Random Points";
     cad.svg.description = "Apg Svg Cad";
     const layers = this.buildTestLayers(cad);
@@ -39,9 +85,11 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
   }
 
 
-  static testRawLines(aisBlackBack = false) {
+  static async testRawLines(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Test Random Lines";
     cad.svg.description = "Apg Svg Cad";
     const layers = this.buildTestLayers(cad);
@@ -63,9 +111,11 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
   }
 
 
-  static testRawPolyLines(aisBlackBack = false) {
+  static async testRawPolyLines(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Test Random Polylines";
     cad.svg.description = "Apg Svg Cad";
     const layers = this.buildTestLayers(cad);
@@ -78,8 +128,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
 
       const np = 2 + Math.floor(Math.random() * (maxPtsInPolyLine - 2));
 
-      const minD = -100;
-      const maxD = 100;
+      const minD = -1000;
+      const maxD = 1000;
 
       const pts: A2D.Apg2DPoint[] = [];
       for (let j = 0; j < np; j++) {
@@ -109,9 +159,11 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
   }
 
 
-  static testRawCircles(aisBlackBack = false) {
+  static async testRawCircles(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Test Random Circles";
     cad.svg.description = "Apg Svg Cad";
     const layers = this.buildTestLayers(cad);
@@ -135,9 +187,11 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
   }
 
 
-  static testRawArcs(aisBlackBack = false) {
+  static async testRawArcs(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Test Random Arcs";
     cad.svg.description = "Apg Svg Cad";
     const layers = this.buildTestLayers(cad);
@@ -163,9 +217,11 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
   }
 
 
-  static testRawText(aisBlackBack = false) {
+  static async testRawText(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Test Random Texts";
     cad.svg.description = "Apg Svg Cad";
     const layers = this.buildTestLayers(cad);
@@ -201,7 +257,6 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
       cad.svg
         .text(midPoint.x, midPoint.y, strings[stringId], textLineHeight)
         .textStyle(testTextStyle)
-        //.rotate(line.angle, midPoint.x, midPoint.y)
         .rotate(line.angle)
         .stroke(eApgCadStdColors.NONE, 0)
         .childOf(cad.currentLayer);
@@ -211,9 +266,11 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
   }
 
 
-  static testRawImages(aisBlackBack = false) {
+  static async testRawImages(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Test Image";
     cad.svg.description = "Apg Svg Cad";
     const layers = this.buildTestLayers(cad);
@@ -231,11 +288,7 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
 
     for (let i = 0; i < this.randomInN(); i++) {
 
-      const stringId = this.randomInt(0, imagesRefs.length - 1);
-
       const p1 = this.randomPointInRange();
-      const p2 = this.randomPointInRange();
-      const midPoint = p1.halfwayFrom(p2);
 
       cad.svg
         .rect(p1.x, p1.y, 800, 600)
@@ -251,9 +304,11 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
   }
 
 
-  static testAspectRatios(aisBlackBack = false) {
+  static async testAspectRatios(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Test Aspect Ratios";
     cad.svg.description = "Apg Svg Cad";
 
@@ -295,68 +350,92 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         .childOf(cad.currentLayer);
 
 
-      currY += textLineHeight;
+      currY += 400;
     }
 
     return cad;
   }
 
 
-  static testPaths(aisBlackBack = false) {
+  static async testPaths(aisBlackBack = false) {
 
     const cad = new ApgCadSvg(aisBlackBack);
+    await cad.init();
+
     cad.svg.title = "Test Random Paths";
     cad.svg.description = "Apg Svg Cad";
     const layers = this.buildTestLayers(cad);
     const layId = this.randomLayer(layers);
     cad.setCurrentLayer(layId);
 
-    this.notImplemented(cad);
-   
+    const MAX_COMMANDS_IN_PATH = 10;
+    const pointsPoolSize = MAX_COMMANDS_IN_PATH * 4;
+
+    for (let i = 0; i < this.randomInN(); i++) {
+
+      let relPoint: A2D.Apg2DPoint;
+      const relPointsPool: A2D.Apg2DPoint[] = [];
+      let absPoint: A2D.Apg2DPoint;
+      const absPointsPool: A2D.Apg2DPoint[] = [];
+
+      const minD = -1000;
+      const maxD = 1000;
+
+      for (let j = 0; j < pointsPoolSize; j++) {
+
+        let x, y;
+        if (j === 0) {
+          x = this.randomInRange();
+          y = this.randomInRange();
+          relPoint = new A2D.Apg2DPoint(x, y);
+          absPoint = new A2D.Apg2DPoint(x, y);
+        }
+        else {
+          x = this.randomInt(minD, maxD);
+          y = this.randomInt(minD, maxD);
+          relPoint = new A2D.Apg2DPoint(x, y);
+
+          x = relPointsPool[j - 1].x + x;
+          y = relPointsPool[j - 1].y + y;
+          absPoint = new A2D.Apg2DPoint(x, y);
+        }
+        relPointsPool.push(relPoint);
+        absPointsPool.push(absPoint);
+      }
+
+      const pathBuilder = new Svg.ApgSvgPathBuilder();
+      const pathCommands = Uts.ApgUtsEnum.StringValues(Svg.eApgSvgPathCommands);
+
+      const numCommands = this.randomInt(5, MAX_COMMANDS_IN_PATH);
+
+      let pointIndex = 0;
+      for (let i = 0; i < numCommands; i++) {
+        if (i == 0) {
+          pathBuilder.moveAbs(absPointsPool[pointIndex].x, absPointsPool[pointIndex].y);
+        }
+        else {
+          const commandIndex = this.randomInt(0, pathCommands.length);
+          const command = pathCommands[commandIndex] as Svg.eApgSvgPathCommands;
+          switch (command) {
+            case Svg.eApgSvgPathCommands.ARC_ABS: {
+              pathBuilder.arc(1, 1, 2, false, false);
+              break;
+            }
+          }
+        }
+      }
+
+      const path = pathBuilder.build();
+      cad.svg
+        .path(path)
+        .fill(eApgCadStdColors.NONE)
+        .childOf(cad.currentLayer);
+    }
+
     return cad;
   }
 
 
-  static RunTest(atest: eApgCadTestSvg, aisBlackBack = false) {
-
-    let cad: ApgCadSvg | undefined = undefined;
-    switch (atest) {
-      case eApgCadTestSvg.POINTS:
-        cad = this.testRawPoints(aisBlackBack);
-        break;
-      case eApgCadTestSvg.LINES:
-        cad = this.testRawLines(aisBlackBack);
-        break;
-      case eApgCadTestSvg.POLYLINES:
-        cad = this.testRawPolyLines(aisBlackBack);
-        break;
-      case eApgCadTestSvg.ARCS:
-        cad = this.testRawArcs(aisBlackBack);
-        break;
-      case eApgCadTestSvg.CIRCLES:
-        cad = this.testRawCircles(aisBlackBack);
-        break;
-      case eApgCadTestSvg.TEXTS:
-        cad = this.testRawText(aisBlackBack);
-        break;
-      case eApgCadTestSvg.PATHS:
-        cad = this.testPaths(aisBlackBack);
-        break;
-      case eApgCadTestSvg.IMAGES:
-        cad = this.testRawImages(aisBlackBack);
-        break;
-      case eApgCadTestSvg.ASPECT_RATIOS:
-        cad = this.testAspectRatios(aisBlackBack);
-        break;
-    }
-
-    if (cad) { 
-      this.DrawCartouche(cad);
-      this.Gui(cad);
-    }
-    return cad;
-
-  }
 
 }
 

@@ -115,5 +115,22 @@ export class ApgCadSvgStrokeStylesInitializer extends ApgCadSvgBaseInitializer {
         };
         this._cad.newStrokeStyle(eApgCadDftStrokeStyles.CARTOUCHE, cart);
 
+        const HatchGray: Svg.IApgSvgStrokeStyle = {
+            color: eApgCadStdColors.GRAY_HATCH,
+            width: eApgCadDftStrokeWidths.MILD_4,
+        };
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.HATCH_GRAY, HatchGray);
+
+        const HatchBrown: Svg.IApgSvgStrokeStyle = {
+            color: eApgCadStdColors.BROWN_HATCH,
+            width: eApgCadDftStrokeWidths.MILD_4,
+        };
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.HATCH_BROWN, HatchBrown);
+
+        const HatchGreen: Svg.IApgSvgStrokeStyle = {
+            color: eApgCadStdColors.GREEN_HATCH,
+            width: eApgCadDftStrokeWidths.MILD_4,
+        };
+        this._cad.newStrokeStyle(eApgCadDftStrokeStyles.HATCH_GREEN, HatchGreen);
     }
 }

@@ -33,6 +33,7 @@ import { ApgCadSvgFillStylesInitializer } from "./initializers/ApgCadSvgFillStyl
 import { ApgCadSvgGradientsInitializer } from "./initializers/ApgCadSvgGradientsInitializer.ts";
 import { ApgCadSvgLayersInitializer } from "./initializers/ApgCadSvgLayersInitializer.ts";
 import { ApgCadSvgPatternsInitializer } from "./initializers/ApgCadSvgPatternsInitializer.ts";
+import { ApgCadSvgTexturesInitializer } from "./initializers/ApgCadSvgTexturesInitializer.ts";
 import { ApgCadSvgPrimitivesFactoriesInitializer } from "./initializers/ApgCadSvgPrimitivesFactoriesInitializer.ts";
 import { ApgCadSvgStrokeStylesInitializer } from "./initializers/ApgCadSvgStrokeStylesInitializer.ts";
 import { ApgCadSvgTextStylesInitializer } from "./initializers/ApgCadSvgTextStylesInitializer.ts";
@@ -70,13 +71,14 @@ export class ApgCadSvg {
   groups: Map<string, Svg.ApgSvgNode> = new Map();
   currentGroup!: Svg.ApgSvgNode | undefined;
 
-  patterns: Map<string, Svg.ApgSvgNode> = new Map();
-  patternsDefs: string[] = [];
-
-
   blocks: Map<string, Svg.ApgSvgNode> = new Map();
   blockDefs: string[] = [];
 
+  patterns: Map<string, Svg.ApgSvgNode> = new Map();
+  patternsDefs: string[] = [];
+
+  textures: Map<string, Svg.ApgSvgNode> = new Map();
+  textureDefs: string[] = [];
 
   gradients: Map<string, Svg.ApgSvgNode> = new Map();
   gradientsDefs: string[] = [];
@@ -157,18 +159,18 @@ export class ApgCadSvg {
 
     this.settings = ApgCadSvg.GetDefaultSettings(ahasBlackBack, ahasDottedGrid, adebug);
 
-    this.#init();
   }
 
-  setup(asettings: IApgCadSvgSettings) {
+
+  async setup(asettings: IApgCadSvgSettings) {
 
     this.settings = asettings;
 
-    this.#init();
+    await this.init();
   }
 
 
-  #init() {
+  async init() {
 
     this.svg = new Svg.ApgSvgDoc(
       this.settings.viewBox.canvasWidth,
@@ -189,6 +191,8 @@ export class ApgCadSvg {
     this.#initBlocks();
 
     this.#initPatterns();
+
+    await this.#initTextures();
 
     this.#initGradients();
 
@@ -280,6 +284,12 @@ export class ApgCadSvg {
   }
 
 
+  async #initTextures() {
+    const initializer = new ApgCadSvgTexturesInitializer(this);
+    await initializer.build();
+  }
+
+
   #initGradients() {
     const initializer = new ApgCadSvgGradientsInitializer(this);
     initializer.build();
@@ -362,27 +372,27 @@ export class ApgCadSvg {
   /** Sets the viewbox.
    * This method must be called in the proper order becuse clears 
    * the entire content of the drawing */
-  setViewBox(avb: IApgCadSvgViewBox) {
+  async setViewBox(avb: IApgCadSvgViewBox) {
     this.settings.viewBox = avb;
-    this.#init();
+    await this.init();
   }
 
 
   /** Draws the axis and grid on the drawing.
      * This method must be called in the proper order becuse clears 
      * the entire content of the drawing */
-  setCartesian(aa: IApgCadSvgCartesians) {
+  async setCartesian(aa: IApgCadSvgCartesians) {
     this.settings.cartesians = Object.assign({}, this.settings.cartesians, aa);
-    this.#init();
+    await this.init();
   }
 
 
   /** Draws the background of the drawing.
     * This method must be called in the proper order becuse clears 
     * the entire content of the drawing*/
-  setBackground(ab: IApgCadSvgGround) {
+  async setBackground(ab: IApgCadSvgGround) {
     this.settings.background = Object.assign({}, this.settings.background, ab);
-    this.#init();
+    await this.init();
   }
 
 
@@ -586,6 +596,16 @@ export class ApgCadSvg {
   }
 
 
+  newTexture(atexture: Svg.ApgSvgNode) {
+    this.textures.set(atexture.ID, atexture);
+    this.textureDefs.push(atexture.ID);
+    this.svg.addToDefs(atexture.ID, atexture);
+  }
+  getTexture(aname: string) {
+    return this.textures.get(aname);
+  }
+
+
   newGradient(agradient: Svg.ApgSvgNode) {
     this.gradients.set(agradient.ID, agradient);
     this.gradientsDefs.push(agradient.ID);
@@ -622,6 +642,7 @@ export class ApgCadSvg {
     r.textStyles = Array.from(this.textStyles.keys());
     r.gradients = Array.from(this.gradients.keys());
     r.patterns = Array.from(this.patterns.keys());
+    r.textures = Array.from(this.textures.keys());
     r.blocks = Array.from(this.blocks.keys());
     r.layers = Array.from(this.layers.keys());
     r.groups = Array.from(this.groupsDefs.keys());

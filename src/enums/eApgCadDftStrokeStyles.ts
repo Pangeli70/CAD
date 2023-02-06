@@ -25,4 +25,7 @@ export enum eApgCadDftStrokeStyles {
   ANNOTATIONS = "Annotations",
   DIMENSIONS = "Dimensions",
   CARTOUCHE = "Cartouche",
+  HATCH_GRAY = "HatchGray",
+  HATCH_BROWN = "HatchBrown",
+  HATCH_GREEN = "HatchGreen",
 }
