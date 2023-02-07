@@ -7,6 +7,7 @@
  */
 
 import { A2D, Svg } from "../../../deps.ts";
+import { eApgCadDftPatterns } from "../../enums/eApgCadDftPatterns.ts";
 import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { IApgCadSvgGrid } from "../../interfaces/IApgCadSvgGrid.ts";
 import { ApgCadSvg } from "../ApgCadSvg.ts";
@@ -23,7 +24,7 @@ interface IApgCadGridData {
 export class ApgCadSvgGridFactory extends ApgCadSvgFactoryBase {
 
   public constructor(acad: ApgCadSvg) {
-    super(acad,  eApgCadFactories.GRIDS);
+    super(acad, eApgCadFactories.GRIDS);
   }
 
   build(
@@ -31,19 +32,31 @@ export class ApgCadSvgGridFactory extends ApgCadSvgFactoryBase {
     agridSettings: IApgCadSvgGrid,
   ) {
 
-    const gridData = this.#getData(agridSettings);
-    const r = this.cad.svg
-      .group()
+    // const gridData = this.#getData(agridSettings);
+    // const r = this.cad.svg
+    //   .group()
+    //   .stroke(agridSettings.gridStroke.color, agridSettings.gridStroke.width)
+    //   .childOf(aparent);
+
+    // if (agridSettings.asDots) {
+    //   r.strokeDashPattern([10, agridSettings.gridStep - 10], 5)
+    // }
+
+    // this.#drawGridLines(gridData, r, agridSettings);
+
+    const bottomLeft = this.cad.svg.bottomLeft();
+    const topRight = this.cad.svg.topRight();
+    const r1 = this.cad.svg
+      .rect(bottomLeft.x, bottomLeft.y, topRight.x, topRight.y)
+      .fillPattern(eApgCadDftPatterns.BACK_GRID_LINES)
       .stroke(agridSettings.gridStroke.color, agridSettings.gridStroke.width)
       .childOf(aparent);
 
     if (agridSettings.asDots) {
-      r.strokeDashPattern([10, agridSettings.gridStep - 10], 5)
+      r1.fillPattern(eApgCadDftPatterns.BACK_GRID_LINES_AS_DOTS)
     }
 
-    this.#drawGridLines(gridData, r, agridSettings);
-
-    return r;
+    return r1;
   }
 
   #drawGridLines(alinesData: IApgCadGridData[], r: Svg.ApgSvgNode, agridSettings: IApgCadSvgGrid) {

@@ -127,7 +127,7 @@ export class ApgCadSvg {
     }
 
     const cartesians: IApgCadSvgCartesians = {
-      draw: false,
+      draw: true,
       axisStroke: { color: eApgCadStdColors.GRAY, width: 4 },
       drawTicks: true,
       tickStroke: { color: eApgCadStdColors.CYAN, width: 2 },

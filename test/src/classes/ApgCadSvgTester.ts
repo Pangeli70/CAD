@@ -395,8 +395,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
           y = this.randomInt(minD, maxD);
           relPoint = new A2D.Apg2DPoint(x, y);
 
-          x = relPointsPool[j - 1].x + x;
-          y = relPointsPool[j - 1].y + y;
+          x = absPointsPool[j - 1].x + x;
+          y = absPointsPool[j - 1].y + y;
           absPoint = new A2D.Apg2DPoint(x, y);
         }
         relPointsPool.push(relPoint);
@@ -418,9 +418,122 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
           const command = pathCommands[commandIndex] as Svg.eApgSvgPathCommands;
           switch (command) {
             case Svg.eApgSvgPathCommands.ARC_ABS: {
-              pathBuilder.arc(1, 1, 2, false, false);
+              pointIndex++;
+              const p1 = absPointsPool[pointIndex];
+              pathBuilder.arcRel(p1.x, p1.y, 1, 1, 0, false, false);
               break;
             }
+            case Svg.eApgSvgPathCommands.ARC_REL: {
+              pointIndex++;
+              const p1 = relPointsPool[pointIndex];
+              pathBuilder.arcRel(p1.x, p1.y, 1, 1, 0, false, false);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.CLOSE_ABS: {
+              pathBuilder.close();
+              break;
+            }
+            case Svg.eApgSvgPathCommands.CLOSE_REL: {
+              pathBuilder.close();
+              break;
+            }
+            case Svg.eApgSvgPathCommands.CUBIC_CURVE_ABS: {
+              pointIndex++;
+              const p1 = absPointsPool[pointIndex];
+              pointIndex++;
+              const p2 = absPointsPool[pointIndex];
+              pointIndex++;
+              const p3 = absPointsPool[pointIndex];
+              pathBuilder.cubicAbs(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.CUBIC_CURVE_REL: {
+              pointIndex++;
+              const p1 = relPointsPool[pointIndex];
+              pointIndex++;
+              const p2 = relPointsPool[pointIndex];
+              pointIndex++;
+              const p3 = relPointsPool[pointIndex];
+              pathBuilder.cubicRel(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.LINE_ABS: {
+              pointIndex++;
+              const p1 = absPointsPool[pointIndex];
+              pathBuilder.lineAbs(p1.x, p1.y);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.LINE_REL: {
+              pointIndex++;
+              const p1 = relPointsPool[pointIndex];
+              pathBuilder.lineRel(p1.x, p1.y);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.LINE_HOR_ABS: {
+              pointIndex++;
+              const p1 = absPointsPool[pointIndex];
+              pathBuilder.lineHorizontalAbs(p1.x);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.LINE_HOR_REL: {
+              pointIndex++;
+              const p1 = relPointsPool[pointIndex];
+              pathBuilder.lineHorizontalRel(p1.x);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.LINE_VERT_ABS: {
+              pointIndex++;
+              const p1 = absPointsPool[pointIndex];
+              pathBuilder.lineVerticalAbs(p1.y);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.LINE_VERT_REL: {
+              pointIndex++;
+              const p1 = relPointsPool[pointIndex];
+              pathBuilder.lineVerticalRel(p1.y);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.MOVE_ABS: {
+              pointIndex++;
+              const p1 = absPointsPool[pointIndex];
+              pathBuilder.moveAbs(p1.x, p1.y);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.MOVE_REL: {
+              pointIndex++;
+              const p1 = relPointsPool[pointIndex];
+              pathBuilder.moveRel(p1.x, p1.y);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.QUADRATIC_CURVE_ABS: {
+              pointIndex++;
+              const p1 = absPointsPool[pointIndex];
+              pointIndex++;
+              const p2 = absPointsPool[pointIndex];
+              pathBuilder.quadraticAbs(p1.x, p1.y, p2.x, p2.y);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.QUADRATIC_CURVE_REL: {
+              pointIndex++;
+              const p1 = relPointsPool[pointIndex];
+              pointIndex++;
+              const p2 = relPointsPool[pointIndex];
+              pathBuilder.quadraticRel(p1.x, p1.y, p2.x, p2.y);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.SMOOTH_QUADRATIC_CURVE_ABS: {
+              pointIndex++;
+              const p1 = relPointsPool[pointIndex];
+              pathBuilder.quadraticSmoothRel(p1.x, p1.y,);
+              break;
+            }
+            case Svg.eApgSvgPathCommands.SMOOTH_QUADRATIC_CURVE_REL: {
+              pointIndex++;
+              const p1 = absPointsPool[pointIndex];
+              pathBuilder.quadraticSmoothAbs(p1.x, p1.y,);
+              break;
+            }
+
           }
         }
       }

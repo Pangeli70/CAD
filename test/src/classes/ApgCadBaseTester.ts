@@ -200,7 +200,6 @@ export abstract class ApgCadBaseTester {
     return { group: g, rect, point: new A2D.Apg2DPoint(cx, cy), w: aoptions.w, h: aoptions.h };
   }
 
-
   protected static DrawCartouche(acad: ApgCadSvg) {
     const WIDTH = 2000;
     const HEIGHT = 500;
