@@ -36,7 +36,6 @@ export class ApgCadSvgTexturesInitializer extends ApgCadSvgBaseInitializer {
             }
         }
 
-        // TODO @4 APG 20221229 -- Implement this
         /* 
         <pattern id="imgpattern" x="0" y="0" width="1" height="1"
                 viewBox="0 0 1024 576" preserveAspectRatio="xMidYMid slice">
