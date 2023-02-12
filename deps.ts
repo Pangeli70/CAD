@@ -1,6 +1,7 @@
 /** -----------------------------------------------------------------------
  * @module [CAD]
  * @author [APG] ANGELI Paolo Giusto
+ * @version 0.9.5 [APG 2023/02/12]
  * ------------------------------------------------------------------------
  */
 
@@ -9,6 +10,8 @@
 // https://deno.land/std
 export * as StdFs from "https://deno.land/std@0.153.0/fs/mod.ts";
 export * as StdPath from "https://deno.land/std@0.153.0/path/mod.ts";
+export { type Cookie as StdCookie } from "https://deno.land/std@0.153.0/http/cookie.ts";
+
 
 // https://deno.land/x/drash
 export * as  Drash from "https://deno.land/x/drash@v2.5.4/mod.ts";

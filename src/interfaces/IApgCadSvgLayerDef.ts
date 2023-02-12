@@ -12,6 +12,9 @@
 
 import { Svg } from "../../deps.ts";
 
+/**
+ * Layer data
+ */
 export interface IApgCadSvgLayerDef {
 
   name: string;

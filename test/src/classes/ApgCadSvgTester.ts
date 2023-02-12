@@ -5,6 +5,7 @@
  * @version 0.9.2 [APG 2022/11/30] Github beta
  * @version 0.9.3 [APG 2022/12/18] Deno Deploy
  * @version 0.9.4 [APG 2023/01/04] Deno Deploy Beta
+ * @version 0.9.5 [APG 2023/02/12] Improving Beta
  * -----------------------------------------------------------------------
  */
 
@@ -12,7 +13,10 @@
 import { A2D, Svg, Uts } from '../../../deps.ts';
 import { ApgCadSvg } from "../../../src/classes/ApgCadSvg.ts";
 import { eApgCadStdColors } from "../../../src/enums/eApgCadStdColors.ts";
+import { IApgCadSvgOptions } from "../../../src/interfaces/IApgCadSvgOptions.ts";
 import { eApgCadTestSvg } from "../enums/eApgCadTestSvg.ts";
+import { IApgCadTestParameters } from "../interfaces/IApgCadTestParameters.ts";
+
 import { ApgCadBaseTester } from "./ApgCadBaseTester.ts";
 
 
@@ -20,13 +24,18 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
 
 
   static async RunTest(
-    atest: eApgCadTestSvg,
-    aisBlackBack = false,
-    ahasDottedGrid = false,
-    adebug = true
+    aparams: IApgCadTestParameters
   ) {
 
-    const cad = new ApgCadSvg(aisBlackBack, ahasDottedGrid, adebug);
+    const options: IApgCadSvgOptions = {
+      name: aparams.name,
+      blackBack: aparams.blackBack,
+      gridMode: aparams.gridMode,
+      cartesiansMode: aparams.cartesianMode,
+      debug: aparams.debug
+    }
+
+    const cad = new ApgCadSvg(options);
     await cad.init();
     cad.svg.title = "Apg Cad Test";
 
@@ -34,7 +43,9 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
     const layId = this.randomLayer(layers);
     cad.setCurrentLayer(layId);
 
-    switch (atest) {
+    const type = aparams.name as eApgCadTestSvg;
+
+    switch (type) {
       case eApgCadTestSvg.POINTS:
         this.testRawPoints(cad);
         break;
@@ -42,7 +53,10 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         this.testRawLines(cad);
         break;
       case eApgCadTestSvg.POLYLINES:
-        this.testRawPolyLines(cad);
+        this.testRawPolyLines(cad, aparams.random);
+        break;
+      case eApgCadTestSvg.POLYGONS:
+        this.testRawPolygons(cad, aparams.random);
         break;
       case eApgCadTestSvg.ARCS:
         this.testRawArcs(cad);
@@ -54,7 +68,7 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
         this.testRawText(cad);
         break;
       case eApgCadTestSvg.PATHS:
-        this.testRawPaths(cad);
+        this.testRawPaths(cad, aparams.random);
         break;
       case eApgCadTestSvg.IMAGES:
         this.testRawImages(cad);
@@ -108,9 +122,38 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
   }
 
 
-  static testRawPolyLines(cad: ApgCadSvg) {
 
-    cad.svg.description = "Polylines";
+  static testRawPolyLines(cad: ApgCadSvg, arandom: boolean) {
+
+    if (arandom) {
+      this.#testPolylinesRandom(cad);
+    }
+    else {
+      this.#testPolylinesManual(cad);
+    }
+  }
+
+  static #testPolylinesManual(cad: ApgCadSvg) {
+
+    cad.svg.description = "Manual polyline";
+
+    const pts: A2D.Apg2DPoint[] = [];
+    pts.push(new A2D.Apg2DPoint(100, 100));
+    pts.push(new A2D.Apg2DPoint(100, 1000));
+    pts.push(new A2D.Apg2DPoint(1000, 1000));
+    pts.push(new A2D.Apg2DPoint(2000, 2000));
+
+    cad.svg
+      .polyline(pts)
+      .fill(eApgCadStdColors.NONE)
+      .childOf(cad.currentLayer);
+
+    return cad;
+  }
+
+  static #testPolylinesRandom(cad: ApgCadSvg) {
+
+    cad.svg.description = "Random polylines";
 
     const maxPtsInPolyLine = 10;
 
@@ -147,6 +190,82 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
 
     return cad;
   }
+
+
+
+
+  static testRawPolygons(cad: ApgCadSvg, arandom: boolean) {
+
+    if (arandom) {
+      this.#testPolygonsRandom(cad);
+    }
+    else {
+      this.#testPolygonsManual(cad);
+    }
+  }
+
+  static #testPolygonsManual(cad: ApgCadSvg) {
+
+    cad.svg.description = "Manual polygon";
+    const pts: A2D.Apg2DPoint[] = [];
+    pts.push(new A2D.Apg2DPoint(1000, 0));
+    pts.push(new A2D.Apg2DPoint(0, 1000));
+    pts.push(new A2D.Apg2DPoint(500, 1500));
+    pts.push(new A2D.Apg2DPoint(1000, 1500));
+    pts.push(new A2D.Apg2DPoint(1000, 2000));
+    pts.push(new A2D.Apg2DPoint(2000, 1000));
+    pts.push(new A2D.Apg2DPoint(1500, 500));
+    pts.push(new A2D.Apg2DPoint(1000, 500));
+
+    cad.svg
+      .polygon(pts)
+      .fill(eApgCadStdColors.NONE)
+      .childOf(cad.currentLayer);
+
+    return cad;
+  }
+
+  static #testPolygonsRandom(cad: ApgCadSvg) {
+
+    cad.svg.description = "Random polygons";
+
+    const maxPtsInPolyLine = 10;
+
+    for (let i = 0; i < this.randomInN(); i++) {
+
+      const np = 2 + Math.floor(Math.random() * (maxPtsInPolyLine - 2));
+
+      const minD = -250;
+      const maxD = 250;
+
+      const pts: A2D.Apg2DPoint[] = [];
+      for (let j = 0; j < np; j++) {
+
+        let x, y;
+        if (j === 0) {
+          x = this.randomInRange();
+          y = this.randomInRange();
+        }
+        else {
+          x = this.randomInt(minD, maxD);
+          y = this.randomInt(minD, maxD);
+
+          x = pts[j - 1].x + x;
+          y = pts[j - 1].y + y;
+        }
+        const pt = new A2D.Apg2DPoint(x, y);
+        pts.push(pt);
+      }
+      cad.svg
+        .polygon(pts)
+        .fill(eApgCadStdColors.NONE)
+        .childOf(cad.currentLayer);
+    }
+
+    return cad;
+  }
+
+
 
 
   static testRawCircles(cad: ApgCadSvg) {
@@ -316,23 +435,24 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
   }
 
 
-  static testRawPaths(cad: ApgCadSvg) {
 
-    cad.svg.description = "Paths";
+  static testRawPaths(cad: ApgCadSvg, arandom: boolean) {
 
-    if (cad.settings.debug) {
-      this.#testPathsManual(cad);
+    if (arandom) {
+      this.#testPathsRandom(cad);
     }
     else {
-      this.#testPathsRandom(cad);
+      this.#testPathsManual(cad);
     }
   }
 
-
   static #testPathsManual(cad: ApgCadSvg) {
+
+    cad.svg.description = "Manual paths";
 
     const pathBuilder = new Svg.ApgSvgPathBuilder();
 
+    // Absolute commands
     pathBuilder
       .moveAbs(1000, 1000)
       .lineHorizontalAbs(1100)
@@ -346,6 +466,7 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
       .arcAbs(2400, 1800, 100, 300, 0, true, true)
       .close()
 
+    // Relative commands
     pathBuilder
       .moveAbs(0, 0)
       .moveRel(3000, 1000)
@@ -359,8 +480,8 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
       .arcRel(0, 300, 300, 150, 0, false, false)
       .arcRel(0, 300, 100, 300, 0, true, true)
       .close();
-    
-      const path = pathBuilder.build();
+
+    const path = pathBuilder.build();
     cad.svg
       .path(path)
       .fill(eApgCadStdColors.NONE)
@@ -370,7 +491,10 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
 
   static #testPathsRandom(cad: ApgCadSvg) {
 
-    const MAX_COMMANDS_IN_PATH = 10;
+    cad.svg.description = "Random paths";
+
+    const MIN_COMMANDS_IN_PATH = 8;
+    const MAX_COMMANDS_IN_PATH = 12;
     const pointsPoolSize = MAX_COMMANDS_IN_PATH * 4;
 
     for (let i = 0; i < this.randomInN(); i++) {
@@ -408,7 +532,7 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
       const pathBuilder = new Svg.ApgSvgPathBuilder();
       const pathCommands = Uts.ApgUtsEnum.StringValues(Svg.eApgSvgPathCommands);
 
-      const numCommands = this.randomInt(5, MAX_COMMANDS_IN_PATH);
+      const numCommands = this.randomInt(MIN_COMMANDS_IN_PATH, MAX_COMMANDS_IN_PATH);
 
       let pointIndex = 0;
       for (let i = 0; i < numCommands; i++) {

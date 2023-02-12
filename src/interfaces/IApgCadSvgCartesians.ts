@@ -10,11 +10,14 @@
  */
 
 import { Svg } from "../../deps.ts";
+import { eApgCadCartesianMode } from "../enums/eApgCadCartesianMode.ts";
 
-
+/**
+ * Cartesian axises data
+ */
 export interface IApgCadSvgCartesians {
-  /** Flag that controls if the cartesian axises has to be drawn */
-  draw: boolean,
+
+  mode: eApgCadCartesianMode,
   axisStroke: Svg.IApgSvgStrokeStyle;
   drawTicks: boolean;
   tickStroke: Svg.IApgSvgStrokeStyle;

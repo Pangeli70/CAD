@@ -45,13 +45,12 @@
               <h1 class="apg-page-title">
                 [: page.title :]
               </h1>
-              [: partial("/partials/pico_p_buttons_menu.html", [page.menu]) :]
             </td>
           </tr>
         </table>
       </section>
 
-      [: if(page.toolbar) {:]
+      [: if(page.toolbar) { :]
       <section id="bar" style="text-align: center;">
         [: page.toolbar :]
         <hr>
@@ -69,7 +68,7 @@
       <section id="footer" style="padding: 0; margin: 2em, 0, 0, 0">
         <p style="text-align: center; font-size: 0.5em">
           <em>
-            © 2017-2022 APG: free man angeli paolo giusto.<br />
+            © 2017-2023 APG: free man angeli paolo giusto.<br />
             Made with &#10084; using
             <a href="https://deno.land/" target="_blank">Deno</a>,
             <a href="https://drash.land/" target="_blank"> Drash</a>,

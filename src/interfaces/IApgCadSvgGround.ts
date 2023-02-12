@@ -10,7 +10,9 @@
  * -----------------------------------------------------------------------
  */
 
-
+/**
+ * Ground Data
+ */
 export interface IApgCadSvgGround {
   /** Flag that controls if the background has to be drawn */
   draw: boolean;

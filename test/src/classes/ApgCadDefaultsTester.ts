@@ -3,9 +3,11 @@
  * @author [APG] ANGELI Paolo Giusto
  * @version 0.9.3 [APG 2022/12/29] Deno Deploy
  * @version 0.9.4 [APG 2023/01/04] Deno Deploy Beta
+ * @version 0.9.5 [APG 2023/02/12] Improving Beta
  * -----------------------------------------------------------------------
  */
 
+import { Svg, Uts } from "../../../deps.ts";
 import { ApgCadSvg } from "../../../src/classes/ApgCadSvg.ts";
 import { eApgCadStdColors } from "../../../src/enums/eApgCadStdColors.ts";
 import { eApgCadDftFillStyles } from "../../../src/enums/eApgCadDftFillStyles.ts";
@@ -14,39 +16,52 @@ import { eApgCadDftStrokeStyles } from "../../../src/enums/eApgCadDftStrokeStyle
 import { eApgCadDftTextStyles } from "../../../src/enums/eApgCadDftTextStyles.ts";
 import { eApgCadTestDefaults } from "../enums/eApgCadTestDefaults.ts";
 import { ApgCadBaseTester } from "./ApgCadBaseTester.ts";
-import {  Svg, Uts } from "../../../deps.ts";
+import { IApgCadTestParameters } from "../interfaces/IApgCadTestParameters.ts";
+import { IApgCadSvgOptions } from "../../../src/interfaces/IApgCadSvgOptions.ts";
 
 
 export class ApgCadDefaultsTester extends ApgCadBaseTester {
 
 
-  static async RunTest(atest: eApgCadTestDefaults, aisBlackBack = false) {
+  static async RunTest(aparams: IApgCadTestParameters) {
 
-    let cad: ApgCadSvg | undefined = undefined;
+    const options: IApgCadSvgOptions = {
+      name: aparams.name,
+      blackBack: aparams.blackBack,
+      gridMode: aparams.gridMode,
+      cartesiansMode: aparams.cartesianMode,
+      debug: aparams.debug
+    }
+
+    const cad = new ApgCadSvg(options);
+    await cad.init();
+
+    const atest = aparams.name as eApgCadTestDefaults;
+
     switch (atest) {
       case eApgCadTestDefaults.LAYERS:
-        cad = await this.testLayers(aisBlackBack);
+        this.testLayers(cad);
         break;
       case eApgCadTestDefaults.STROKE_STYLES:
-        cad = await this.testDftStrokeStyles(aisBlackBack);
+        this.testDftStrokeStyles(cad);
         break;
       case eApgCadTestDefaults.FILL_STYLES:
-        cad = await this.testFillStyles(aisBlackBack);
+        this.testFillStyles(cad);
         break;
       case eApgCadTestDefaults.TEXT_STYLES:
-        cad = await this.testTextStyles(aisBlackBack);
+        this.testTextStyles(cad);
         break;
       case eApgCadTestDefaults.PATTERNS:
-        cad = await this.testPatterns(aisBlackBack);
+        this.testPatterns(cad);
         break;
       case eApgCadTestDefaults.TEXTURES:
-        cad = await this.testTextures(aisBlackBack);
+        this.testTextures(cad);
         break;
       case eApgCadTestDefaults.GRADIENTS:
-        cad = await this.testGradients(aisBlackBack);
+        this.testGradients(cad);
         break;
       case eApgCadTestDefaults.BLOCKS:
-        cad = await this.testBlocks(aisBlackBack);
+        this.testBlocks(cad);
         break;
     }
 
@@ -57,10 +72,8 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
     return cad;
   }
 
-  static async testLayers(aisBlackBack = false) {
 
-    const cad = new ApgCadSvg(aisBlackBack);
-    await cad.init();
+  static testLayers(cad: ApgCadSvg) {
 
     cad.svg.title = "Default Layers";
     cad.svg.description = "Apg-Cad";
@@ -117,10 +130,8 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
 
   }
 
-  static async testDftStrokeStyles(aisBlackBack = false) {
 
-    const cad = new ApgCadSvg(aisBlackBack);
-    await cad.init();
+  static testDftStrokeStyles(cad: ApgCadSvg) {
 
     cad.svg.title = "Default Stroke Styles";
     cad.svg.description = "Apg-Cad";
@@ -144,10 +155,7 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
   }
 
 
-  static async testFillStyles(aisBlackBack = false) {
-
-    const cad = new ApgCadSvg(aisBlackBack);
-    await cad.init();
+  static testFillStyles(cad: ApgCadSvg) {
 
     cad.svg.title = "Default Fill Styles";
     cad.svg.description = "Apg-Cad";
@@ -168,10 +176,7 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
   }
 
 
-  static async testBlocks(aisBlackBack = false) {
-
-    const cad = new ApgCadSvg(aisBlackBack);
-    await cad.init();
+  static testBlocks(cad: ApgCadSvg) {
 
     cad.svg.title = "Default Blocks";
     cad.svg.description = "Apg-Cad";
@@ -194,10 +199,8 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
     return cad;
   }
 
-  static async testGradients(aisBlackBack = false) {
 
-    const cad = new ApgCadSvg(aisBlackBack);
-    await cad.init();
+  static testGradients(cad: ApgCadSvg) {
 
     cad.svg.title = "Default Gradients";
     cad.svg.description = "Apg-Cad";
@@ -217,10 +220,8 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
     return cad;
   }
 
-  static async testPatterns(aisBlackBack = false) {
 
-    const cad = new ApgCadSvg(aisBlackBack);
-    await cad.init();
+  static testPatterns(cad: ApgCadSvg) {
 
     cad.svg.title = "Default Patterns";
     cad.svg.description = "Apg-Cad";
@@ -240,10 +241,8 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
     return cad;
   }
 
-  static async testTextures(aisBlackBack = false) {
 
-    const cad = new ApgCadSvg(aisBlackBack);
-    await cad.init();
+  static testTextures(cad: ApgCadSvg) {
 
     cad.svg.title = "Default Textures";
     cad.svg.description = "Apg-Cad";
@@ -256,11 +255,11 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
       if (!pattern) {
         throw new Error("Texture [" + pattern + "] not defined")
       }
-      const clone = cad.svg.rect(r.point.x-r.w/2, r.point.y-r.h/2, r.w, r.h);
+      const clone = cad.svg.rect(r.point.x - r.w / 2, r.point.y - r.h / 2, r.w, r.h);
       clone.childOf(r.group);
       clone.fill('orange', 0.2);
       clone.stroke('none')
-      
+
       r.rect.fillTexture(textureDef)
       r.group.childOf(cad.currentLayer);
     }
@@ -268,10 +267,8 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
     return cad;
   }
 
-  static async testTextStyles(aisBlackBack = false) {
 
-    const cad = new ApgCadSvg(aisBlackBack);
-    await cad.init();
+  static testTextStyles(cad: ApgCadSvg) {
 
     cad.svg.title = "Default Text styles";
     cad.svg.description = "Apg-Cad";

@@ -15,7 +15,9 @@ import { IApgCadSvgGround } from "./IApgCadSvgGround.ts";
 import { IApgCadSvgCartesians } from "./IApgCadSvgCartesians.ts";
 import { IApgCadSvgGrid } from "./IApgCadSvgGrid.ts";
 
-
+/**
+ * Settings
+ */
 export interface IApgCadSvgSettings {
   /** Name of the SVG object */
   name: string;

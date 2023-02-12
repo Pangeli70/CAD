@@ -6,10 +6,10 @@
  */
 
 /**
- *  Test Cad Grid modes
+ *  Test Cad Cartesian Axises modes
  */
-export enum eApgCadTestGridMode {
+export enum eApgCadCartesianMode {
   NONE = 'None',
-  DOTS = 'Dots',
-  LINES = 'Lines'
+  NORMAL = 'Normal',
+  NO_LABELS = 'NoLabels'
 }

@@ -10,7 +10,9 @@
  * -----------------------------------------------------------------------
  */
 
-
+/**
+ * Boundaries of the drawing canvas
+ */
 export interface IApgCadSvgViewBox {
   /** Canvas Width in pixels */
   canvasWidth: number;

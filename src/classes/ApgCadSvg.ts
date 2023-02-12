@@ -7,10 +7,11 @@
  * @version 0.9.2 [APG 2022/11/30] Github beta
  * @version 0.9.3 [APG 2022/12/18] Deno Deploy
  * @version 0.9.4 [APG 2023/01/04] Deno Deploy Beta
+ * @version 0.9.5 [APG 2023/02/12] Improving Beta
  * -----------------------------------------------------------------------
  */
 
-import { A2D, Svg, Uts } from "../../deps.ts";
+import { A2D, Svg } from "../../deps.ts";
 
 import { eApgCadDftFillStyles } from "../enums/eApgCadDftFillStyles.ts";
 import { eApgCadDftLayers } from "../enums/eApgCadDftLayers.ts";
@@ -39,6 +40,9 @@ import { ApgCadSvgStrokeStylesInitializer } from "./initializers/ApgCadSvgStroke
 import { ApgCadSvgTextStylesInitializer } from "./initializers/ApgCadSvgTextStylesInitializer.ts";
 import { eApgCadDftStrokeWidths } from "../enums/eApgCadDftStrokeWidths.ts";
 import { IApgCadSvgLayerDef } from "../interfaces/IApgCadSvgLayerDef.ts";
+import { IApgCadSvgOptions } from "../interfaces/IApgCadSvgOptions.ts";
+import { eApgCadCartesianMode } from "../enums/eApgCadCartesianMode.ts";
+import { eApgCadGridMode } from "../enums/eApgCadGridMode.ts";
 
 /** The Object that allows to create an Svg CAD Drawing
  */
@@ -88,9 +92,7 @@ export class ApgCadSvg {
 
 
   static GetDefaultSettings(
-    ablackBackground = false,
-    adotGrid = false,
-    adebug = false
+    aparams: IApgCadSvgOptions
   ): IApgCadSvgSettings {
 
     const viewBox: IApgCadSvgViewBox = {
@@ -106,28 +108,27 @@ export class ApgCadSvg {
       draw: true,
       strokeWidth: eApgCadDftStrokeWidths.MILD_4,
       strokeColor: eApgCadStdColors.GRAY,
-      fillColor: ablackBackground ? eApgCadStdColors.BLACK : eApgCadStdColors.WHITE,
+      fillColor: aparams.blackBack ? eApgCadStdColors.BLACK : eApgCadStdColors.WHITE,
     }
 
     const foreGround: IApgCadSvgGround = {
       draw: true,
       strokeWidth: eApgCadDftStrokeWidths.MILD_4,
-      strokeColor: ablackBackground ? eApgCadStdColors.WHITE : eApgCadStdColors.BLACK,
-      fillColor: ablackBackground ? eApgCadStdColors.WHITE : eApgCadStdColors.BLACK,
+      strokeColor: aparams.blackBack ? eApgCadStdColors.WHITE : eApgCadStdColors.BLACK,
+      fillColor: aparams.blackBack ? eApgCadStdColors.WHITE : eApgCadStdColors.BLACK,
     }
 
     const grid: IApgCadSvgGrid = {
-      draw: true,
+      mode: aparams.gridMode,
       gridStep: 100,
       gridStroke: { color: eApgCadStdColors.GREEN, width: 1, dashPattern: [10, 90], dashOffset: 5 },
       drawMajors: true,
       majorEvery: 1000,
       majorGridStroke: { color: eApgCadStdColors.CYAN, width: 2, dashPattern: [10, 90], dashOffset: 5 },
-      asDots: adotGrid
     }
 
     const cartesians: IApgCadSvgCartesians = {
-      draw: true,
+      mode: aparams.cartesiansMode,
       axisStroke: { color: eApgCadStdColors.GRAY, width: 4 },
       drawTicks: true,
       tickStroke: { color: eApgCadStdColors.CYAN, width: 2 },
@@ -142,22 +143,22 @@ export class ApgCadSvg {
 
     const r: IApgCadSvgSettings = {
 
-      name: "APG-CAD-SVG",
+      name: aparams.name,
       viewBox,
       background,
       foreGround,
       grid,
       cartesians,
-      debug: adebug
-    };
+      debug: aparams.debug
+    }
 
     return r;
   }
 
 
-  constructor(ahasBlackBack = false, ahasDottedGrid = false, adebug = false) {
+  constructor(aparams: IApgCadSvgOptions) {
 
-    this.settings = ApgCadSvg.GetDefaultSettings(ahasBlackBack, ahasDottedGrid, adebug);
+    this.settings = ApgCadSvg.GetDefaultSettings(aparams);
 
   }
 
@@ -320,7 +321,7 @@ export class ApgCadSvg {
 
 
   #initCartesians() {
-    if (!this.settings.cartesians.draw) return;
+    if (this.settings.cartesians.mode == eApgCadCartesianMode.NONE) return;
 
     const factory = this.primitiveFactories.get(eApgCadFactories.CARTESIANS);
     if (factory) {
@@ -352,7 +353,7 @@ export class ApgCadSvg {
 
 
   #initGrid() {
-    if (!this.settings.grid.draw) return;
+    if (this.settings.grid.mode == eApgCadGridMode.NONE) return;
 
     const factory = this.primitiveFactories.get(eApgCadFactories.GRIDS);
     if (factory) {

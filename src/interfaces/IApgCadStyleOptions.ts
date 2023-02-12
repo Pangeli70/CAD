@@ -6,7 +6,9 @@
  * -----------------------------------------------------------------------
  */
 
-
+/**
+ * Drawing styles (stroke, fill and  text) collected together
+ */
 export interface IApgCadStyleOptions {
   strokeName?: string,
   fillName?: string,

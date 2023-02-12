@@ -6,7 +6,9 @@
  */
 import { A2D } from "../../deps.ts";
 
-
+/**
+ * Dimension data
+ */
 export interface IApgCadDimension {
 
   firstP: A2D.Apg2DPoint;

@@ -7,15 +7,16 @@
  */
 
 import { Svg } from "../../deps.ts";
+import { eApgCadGridMode } from "../enums/eApgCadGridMode.ts";
 
-
+/**
+ * Grid data
+ */
 export interface IApgCadSvgGrid {
-  /** Flag that controls if the background has to be drawn */
-  draw: boolean;
+  mode: eApgCadGridMode;
   gridStep: number;
   gridStroke: Svg.IApgSvgStrokeStyle;
   drawMajors: boolean;
   majorEvery: number;
   majorGridStroke: Svg.IApgSvgStrokeStyle;
-  asDots: boolean;
 }
