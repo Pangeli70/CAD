@@ -14,7 +14,7 @@ import { eApgCadTestTypes } from "../enums/eApgCadTestTypes.ts";
  */
 export interface IApgCadTestParameters {
 
-    type: eApgCadTestTypes;
+    type: eApgCadTestTypes | string;
     name: string;
     blackBack: boolean;
     gridMode: eApgCadGridMode;
