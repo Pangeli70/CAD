@@ -156,22 +156,28 @@ export class ApgCadSvg {
   }
 
 
-  constructor(aparams: IApgCadSvgOptions) {
+  private constructor(aoptions: IApgCadSvgOptions) {
 
-    this.settings = ApgCadSvg.GetDefaultSettings(aparams);
+    this.settings = ApgCadSvg.GetDefaultSettings(aoptions);
 
   }
 
+  static async New(aoptions: IApgCadSvgOptions) { 
+    const r = new ApgCadSvg(aoptions);
+    await r.#init();
+    return r;
+  }
 
-  async setup(asettings: IApgCadSvgSettings) {
+
+  async reset(asettings: IApgCadSvgSettings) {
 
     this.settings = asettings;
 
-    await this.init();
+    await this.#init();
   }
 
 
-  async init() {
+  async #init() {
 
     this.svg = new Svg.ApgSvgDoc(
       this.settings.viewBox.canvasWidth,
@@ -375,7 +381,7 @@ export class ApgCadSvg {
    * the entire content of the drawing */
   async setViewBox(avb: IApgCadSvgViewBox) {
     this.settings.viewBox = avb;
-    await this.init();
+    await this.#init();
   }
 
 
@@ -384,7 +390,7 @@ export class ApgCadSvg {
      * the entire content of the drawing */
   async setCartesian(aa: IApgCadSvgCartesians) {
     this.settings.cartesians = Object.assign({}, this.settings.cartesians, aa);
-    await this.init();
+    await this.#init();
   }
 
 
@@ -393,7 +399,7 @@ export class ApgCadSvg {
     * the entire content of the drawing*/
   async setBackground(ab: IApgCadSvgGround) {
     this.settings.background = Object.assign({}, this.settings.background, ab);
-    await this.init();
+    await this.#init();
   }
 
 
@@ -635,7 +641,7 @@ export class ApgCadSvg {
   }
 
 
-  getStateAsJson() {
+  getState() {
     const r: any = {};
     r.settings = this.settings;
     r.strokeStyles = Array.from(this.strokeStyles.keys());
@@ -647,7 +653,7 @@ export class ApgCadSvg {
     r.blocks = Array.from(this.blocks.keys());
     r.layers = Array.from(this.layers.keys());
     r.groups = Array.from(this.groupsDefs.keys());
-    return JSON.stringify(r, undefined, "  ");
+    return r;
   }
 
 
