@@ -66,7 +66,6 @@ export class ApgCadFeaturesTester extends ApgCadBaseTester {
 
     if (cad) {
       this.DrawCartouche(cad);
-      this.Gui(cad);
     }
 
     return cad;

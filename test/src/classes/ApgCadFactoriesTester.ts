@@ -92,7 +92,6 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
 
     if (cad) {
       this.DrawCartouche(cad);
-      this.Gui(cad);
     }
     return cad;
   }

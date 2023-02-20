@@ -80,7 +80,6 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
 
     if (cad) {
       this.DrawCartouche(cad);
-      this.Gui(cad);
     }
     return cad;
 
