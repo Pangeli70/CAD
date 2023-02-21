@@ -1,23 +1,12 @@
 [: extends("/master/pico.html") :]
 
 <section>
-    <p>
-        [: partial("/partials/svg_pan_zoom_inline_viewer.html") :]
-    </p>
-    [: const dialogID = 'myDialog'; :]
-    [: partial("/partials/pico_dialog_options.html", [dialogID], [page.menu]) :]
+
+[: partial("/partials/pico_cad_test_toolbar.html") :]
+[: partial("/partials/svg_pan_zoom_inline_viewer.html") :]
+
 </section>
 
-<section>
-    <details>
-        <summary>
-            CAD Status
-        </summary>
-        <p>
-        <pre><code>
-            [: cadState :]
-            </code></pre>
-        </p>
-    </details>
-</section>
+[: partial("/partials/pico_cad_state.html", [cadState] ) :]
+
 

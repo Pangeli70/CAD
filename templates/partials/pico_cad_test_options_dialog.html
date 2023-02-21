@@ -1,0 +1,120 @@
+<div id="pico_cad_test_options_dialog">
+
+    [: const optionsDialogID = 'ApgCadTestOptionsDialog'; :]
+
+    <script>
+        function openOptionsDialog(open) {
+            const d = document.getElementById('[: optionsDialogID :]');
+            if (open) {
+                d.showModal()
+            }
+            else {
+                d.close()
+            }
+            // alert(open)
+        }
+
+        function updateLink() {
+
+            const currUrlFragments = window.location.href.split("?");
+
+            const blackInput = document.getElementById('BlackFlag');
+            const blackFlag = "black=" + blackInput.checked.toString();
+
+            const debugInput = document.getElementById('DebugFlag');
+            const debugFlag = "&debug=" + debugInput.checked.toString();
+
+            const manualInput = document.getElementById('ManualFlag');
+            const randomFlag = "&random=" + (!(manualInput.checked)).toString();
+
+            const gridModeSelect = document.getElementById('GridMode');
+            const gridFlag = "&grid=" + gridModeSelect.value;
+
+            const cartesianModeSelect = document.getElementById('CartesianMode');
+            const cartesianFlag = "&cart=" + cartesianModeSelect.value;
+
+            const root = currUrlFragments[0];
+
+            const r = root + "?" + blackFlag + randomFlag + debugFlag + gridFlag + cartesianFlag;
+
+            //alert(r)
+            return r;
+        }
+
+        function updatePage() {
+            const newUrl = updateLink();
+            const d = document.getElementById('[: optionsDialogID :]');
+            d.close();
+            window.location.href = newUrl;
+        }
+
+    </script>
+
+    <button onclick='openOptionsDialog(true)'>Settings</button>
+
+    <dialog id="[: optionsDialogID :]">
+        <div style="background-color: aliceblue; padding: 1rem;">
+            <H2>Cad test settings</H2>
+            
+            [: const blackFlag = params.blackBack ? "checked" : ""; :]
+            <label for="BlackFlag">
+                <input type="checkbox" id="BlackFlag" [: blackFlag :]>
+                Use black background
+            </label>
+            
+            [: const debugFlag = params.debug ? "checked" : ""; :]
+            <label for="DebugFlag">
+                <input type="checkbox" id="DebugFlag" [: debugFlag :]>
+                Show debug info (if available)
+            </label>
+            
+            [: const manualFlag = (params.random==true) ? "" : "checked"; :]
+            <label for="ManualFlag">
+                <input type="checkbox" id="ManualFlag" [: manualFlag :]>
+                Manual test (if available)
+            </label>
+
+            <label for="GridMode">
+                Grid mode
+                <select id="GridMode">
+
+                    [: const gridNone = params.gridMode=="None" ? "selected" : ""; :]
+                    <option value="None" [: gridNone :]>
+                        None
+                    </option>
+                    
+                    [: const gridLines = params.gridMode=="Lines" ? "selected" : ""; :]
+                    <option value="Lines" [: gridLines :]>
+                        Lines
+                    </option>
+                    
+                    [: const gridDots = params.gridMode=="Dots" ? "selected" : ""; :]
+                    <option value="Dots" [: gridDots :]>
+                        Dots
+                    </option>
+                    
+                </select>
+            </label>
+            
+            <label for="CartesianMode">
+                Cartesian axises
+                <select id="CartesianMode">
+
+                    [: const cartNone = params.cartesianMode=="None" ? "selected" : ""; :]
+                    <option value="None" [: cartNone :]>
+                        None
+                    </option>
+
+                    [: const cartNormal = params.cartesianMode=="Normal" ? "selected" : ""; :]
+                    <option value="Normal" [: cartNormal :]>
+                        Standard
+                    </option>
+                </select>
+            </label>
+
+            <button onclick='updatePage()'>Update</button>
+            <button onclick='openOptionsDialog(false)'>Cancel</button>
+        </div>
+    </dialog>
+
+</div>

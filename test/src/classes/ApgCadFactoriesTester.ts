@@ -45,8 +45,7 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
       debug: aparams.debug
     }
 
-    const cad = new ApgCadSvg(options);
-    await cad.init();
+    const cad = await ApgCadSvg.New(options);
 
     const atest = aparams.name as eApgCadTestFactories;
 

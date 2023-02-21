@@ -35,8 +35,7 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
       debug: aparams.debug
     }
 
-    const cad = new ApgCadSvg(options);
-    await cad.init();
+    const cad = await ApgCadSvg.New(options);
     cad.svg.title = "Apg Cad Test";
 
     const layers = this.buildTestLayers(cad);
@@ -545,7 +544,7 @@ export class ApgCadSvgTester extends ApgCadBaseTester {
             case Svg.eApgSvgPathCommands.ARC_ABS: {
               pointIndex++;
               const p1 = absPointsPool[pointIndex];
-              pathBuilder.arcRel(p1.x, p1.y, 1, 1, 0, false, false);
+              pathBuilder.arcAbs(p1.x, p1.y, 1, 1, 0, false, false);
               break;
             }
             case Svg.eApgSvgPathCommands.ARC_REL: {

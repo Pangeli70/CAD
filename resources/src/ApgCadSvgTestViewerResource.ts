@@ -5,7 +5,7 @@
  * @version 0.9.5 [APG 2023/02/12] Improving Beta
  * -----------------------------------------------------------------------
  */
-import { Drash, Tng, Uts, StdCookie } from "../../deps.ts";
+import { Drash, Tng, Uts, StdCookie, Rst, Lgr } from "../../deps.ts";
 import { ApgCadSvgTester } from "../../test/src/classes/ApgCadSvgTester.ts";
 import { ApgCadDefaultsTester } from "../../test/src/classes/ApgCadDefaultsTester.ts";
 import { ApgCadFactoriesTester } from "../../test/src/classes/ApgCadFactoriesTester.ts";
@@ -15,6 +15,7 @@ import { ApgCadSvg } from "../../src/classes/ApgCadSvg.ts";
 import { IApgCadTestParameters } from "../../test/src/interfaces/IApgCadTestParameters.ts";
 import { eApgCadGridMode } from "../../src/enums/eApgCadGridMode.ts";
 import { eApgCadCartesianMode } from "../../src/enums/eApgCadCartesianMode.ts";
+import { IApgCadSvgOptions } from "../../src/interfaces/IApgCadSvgOptions.ts";
 
 enum eResParams {
     PATH_TYPE = 'type',
@@ -37,6 +38,13 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
 
         const params = this.#getParameters(request);
 
+        const options: IApgCadSvgOptions = {
+            name: params.name,
+            blackBack: params.blackBack,
+            gridMode: params.gridMode,
+            cartesiansMode: params.cartesianMode,
+            debug: params.debug
+        }
 
         const cad: ApgCadSvg | undefined = await this.#getCadTestResult(params);
 
@@ -45,7 +53,7 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
 
         if (cad) {
             svgContent = cad.svg.render();
-            cadState = cad.getStateAsJson();
+            cadState = cad.getState();
         }
 
         await this.#saveSvgIfNotIsDeploy(params, svgContent);
@@ -63,7 +71,7 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
             },
             svgContent,
             cadState,
-            params
+            params,
         };
 
         const html = await Tng.ApgTngService.Render("/svg_viewer.html", templateData, false, false) as string;
@@ -221,5 +229,98 @@ export class ApgCadSvgTestViewerResource extends Drash.Resource {
         return r;
     }
 
+    // TODO @1 -- APG 20230219 Move from here maybe in LGR
+    #loggerResult(alogger: Lgr.ApgLgr) {
+
+        const r: Rst.IApgRst = { ok: true };
+        const p: string[] = [];
+
+        let hrtDelta = 0;
+        let hrtFirst = 0;
+        let hrtElapsed = 0;
+        let delta = "0.00000";
+        let elapsed = "0.00000"
+        for (let i = 0; i < alogger.events.length; i++) {
+            let logBegin = false;
+            let message = "";
+            const event = alogger.events[i];
+
+            // timers
+            if (i == 0) {
+                hrtFirst = event.hrt;
+            }
+            else {
+                hrtDelta = (event.hrt - alogger.events[i - 1].hrt) / 1000;
+                delta = hrtDelta.toFixed(5).padStart(6, '0');
+                hrtElapsed = (event.hrt - hrtFirst) / 1000;
+                elapsed = hrtElapsed.toFixed(5).padStart(6, '0');
+            }
+
+            // Detect errors
+            if (event.result) {
+                if (event.result.message) {
+                    message = event.result.message;
+                }
+                if (!event.result.ok) {
+                    r.ok = false;
+                }
+                if (message.includes("{")) {
+                    logBegin = true;
+                }
+            }
+
+            // Develop payload
+            let payloadData = "";
+            if (
+                event.result &&
+                event.result.payload &&
+                event.result.payload.data
+            ) {
+                if (
+                    typeof (event.result.payload.data) == 'object' ||
+                    Array.isArray(event.result.payload.data)
+                ) {
+                    payloadData = '<br/>' + JSON.stringify(event.result.payload.data);
+                }
+                else {
+                    payloadData = `${event.result.payload.data}`;
+                }
+
+            }
+            const padding = "  ".repeat(event.depth * 2);
+            const depth = event.depth.toString().padStart(3);
+
+            const currMethod = (logBegin) ? `${event.className}.${event.method}` : "";
+            const index = i.toString().padStart(4, '0');
+            const currRow = `${index} ${elapsed} ${delta} ${depth}${padding}${currMethod}${message} ${payloadData}`;
+            p.push(currRow);
+
+            if (
+                event.result &&
+                !event.result.ok &&
+                event.result.message
+            ) {
+                p.push(`<br><span style="color: red;">`);
+
+                const message = Rst.ApgRst.InterpolateMessage(event.result);
+                console.log(message);
+                p.push(`${padding}${message}`);
+
+                if (
+                    event.result.payload &&
+                    event.result.payload.data &&
+                    (event.result.payload.data as any).errors
+                ) {
+                    p.push(`<br>`);
+                    const dataErrors = JSON.stringify((event.result.payload.data as any).errors);
+                    p.push(`${padding}${dataErrors}`);
+                }
+                p.push(`</span>`);
+            }
+        }
+        r.payload = { signature: 'string[]', data: p }
+
+        return r;
+    }
 
 }

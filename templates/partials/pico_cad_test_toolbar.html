@@ -1,0 +1,15 @@
+[: const toolbarID = 'ApgCadTestToolbar'; :]
+
+
+
+<div id="pico_cad_test_toolbar_dialog"
+     style="background-color: #888888; width: 100%; display:flex; justify-content: center;">
+
+
+    [: partial("/partials/pico_cad_test_layers_dialog.html", [cadState.layers]) :]
+    &nbsp;
+    [: partial("/partials/pico_cad_test_options_dialog.html") :]
+    &nbsp;
+    [: partial("/partials/pico_cad_pan_zoom_controls.html") :]
+
+</div>

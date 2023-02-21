@@ -1,0 +1,44 @@
+<div id="pico_cad_pan_zoom_controls" style="display:flex;">
+    <script>
+
+        function bindSvgPanZoomControls() {
+            if (typeof (svgPanZoomInstance) != 'undefined') {
+
+                document
+                    .getElementById('svgZoomInButton')
+                    .addEventListener('click', function (ev) {
+                        ev.preventDefault()
+                        svgPanZoomInstance.zoomIn()
+                    });
+
+                document
+                    .getElementById('svgZoomOutButton')
+                    .addEventListener('click', function (ev) {
+                        ev.preventDefault()
+                        svgPanZoomInstance.zoomOut()
+                    });
+
+                document
+                    .getElementById('svgResetButton')
+                    .addEventListener('click', function (ev) {
+                        ev.preventDefault()
+                        svgPanZoomInstance.resetZoom();
+                        svgPanZoomInstance.fit();
+                        svgPanZoomInstance.center();
+                    });
+            }
+            else {
+                setTimeout(bindSvgPanZoomControls, 50)
+            }
+        }
+
+        document
+            .getElementById('pico_cad_pan_zoom_controls')
+            .addEventListener('load', bindSvgPanZoomControls())
+
+    </script>
+
+    <button id="svgZoomInButton">+</button>
+    <button id="svgResetButton">Reset</button>
+    <button id="svgZoomOutButton">-</button>
+</div>

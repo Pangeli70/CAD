@@ -1,0 +1,56 @@
+<pre hidden>
+  [: arguments({
+    "#0": "string[]"
+  }) :]
+</pre>
+
+<div id="pico_cad_test_layers_dialog">
+
+    [: const layersDialogID = 'ApgCadTestLayersDialog'; :]
+
+    <script>
+        function openLayersDialog(open) {
+            const d = document.getElementById('[: layersDialogID :]');
+            if (open) {
+                d.showModal()
+            }
+            else {
+                d.close()
+            }
+            // alert(open)
+        }
+
+        function flipLayerVisibility(alayerId) {
+
+            const svgG = document.getElementById(alayerId);
+            const show = svgG.style.display;
+
+            if (show == "" || show == "block") {
+                svgG.style.display = "none";
+            }
+            else {
+                svgG.style.display = "block";
+            }
+        }
+
+    </script>
+
+    <button style="width:fit-content" onclick='openLayersDialog(true)'>Layers</button>
+
+    <dialog id="[: layersDialogID :]">
+        <div style="background-color: aliceblue; padding: 1rem;">
+            <H2>Layers</H2>
+
+            [: for (const layer of [#0]) { :]
+            <label for="[: layer :]CheckBox">
+                <input type="checkbox" id="[: layer :]CheckBox"
+                       onchange="flipLayerVisibility('[: layer :]')" checked>
+                [: layer :]
+            </label>
+            [: } :]
+
+            <button onclick='openLayersDialog(false)'>Close</button>
+        </div>
+    </dialog>
+
+</div>

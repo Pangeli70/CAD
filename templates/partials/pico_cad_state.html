@@ -1,0 +1,38 @@
+<pre hidden>
+  [: arguments({
+    "#0": {
+        "settings": "object",
+        "strokeStyles": "string[]",
+        "fillStyles": "string[]",
+        "textStyles": "string[]",
+        "gradients": "string[]",
+        "patterns": "string[]",
+        "textures": "string[]",
+        "blocks": "string[]",
+        "layers": "string[]",
+        "groups": "string[]"
+    }
+  }) :]
+</pre>
+
+
+<div id="pico_cad_state">
+    <details>
+        <summary>
+            <h3>CAD State</h3>
+        </summary>
+        [: for (const item in [#0] ){ :]
+        <details>
+            <summary>
+                [: item :]
+            </summary>
+            <p>
+            <pre><code>
+                [: const code = JSON.stringify([#0][item], undefined, "  "); :]
+                [: r.push(code) :]
+                </code></pre>
+            </p>
+        </details>
+        [: } :]
+    </details>
+</div>
