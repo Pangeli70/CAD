@@ -179,8 +179,10 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
     cad.svg.title = "Default Blocks";
     cad.svg.description = "Apg-Cad";
 
-    for (let i = 0; i < cad.blockDefs.length; i++) {
-      const blockDef = cad.blockDefs[i];
+    const blockDefs = Array.from(cad.blocks.keys());
+
+    for (let i = 0; i < blockDefs.length; i++) {
+      const blockDef = blockDefs[i];
       const r = this.getTestBox(cad, i, blockDef);
       r.group.childOf(cad.currentLayer);
 
@@ -203,8 +205,10 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
     cad.svg.title = "Default Gradients";
     cad.svg.description = "Apg-Cad";
 
-    for (let i = 0; i < cad.gradientsDefs.length; i++) {
-      const gradientDef = cad.gradientsDefs[i];
+    const gradientsDefs = Array.from(cad.gradients.keys());
+
+    for (let i = 0; i < gradientsDefs.length; i++) {
+      const gradientDef = gradientsDefs[i];
       const r = this.getTestBox(cad, i, gradientDef);
 
       const gradient = cad.getGradient(gradientDef);
@@ -224,8 +228,10 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
     cad.svg.title = "Default Patterns";
     cad.svg.description = "Apg-Cad";
 
-    for (let i = 0; i < cad.patternsDefs.length; i++) {
-      const patternDef = cad.patternsDefs[i];
+    const patternsDefs = Array.from(cad.patterns.keys());
+
+    for (let i = 0; i < patternsDefs.length; i++) {
+      const patternDef = patternsDefs[i];
       const r = this.getTestBox(cad, i, patternDef);
 
       const pattern = cad.getPattern(patternDef);
@@ -245,8 +251,10 @@ export class ApgCadDefaultsTester extends ApgCadBaseTester {
     cad.svg.title = "Default Textures";
     cad.svg.description = "Apg-Cad";
 
-    for (let i = 0; i < cad.textureDefs.length; i++) {
-      const textureDef = cad.textureDefs[i];
+    const textureDefs = Array.from(cad.textures.keys());
+
+    for (let i = 0; i < textureDefs.length; i++) {
+      const textureDef = textureDefs[i];
       const r = this.getTestBox(cad, i, textureDef);
 
       const pattern = cad.getTexture(textureDef);
