@@ -8,6 +8,7 @@
  * @version 0.9.3 [APG 2022/12/18] Deno Deploy
  * @version 0.9.4 [APG 2023/01/04] Deno Deploy Beta
  * @version 0.9.5 [APG 2023/02/12] Improving Beta
+ * @version 0.9.5.1 [APG 2023/02/27] Cleanup groups and defs
  * -----------------------------------------------------------------------
  */
 
@@ -71,21 +72,16 @@ export class ApgCadSvg {
   layerDefs: Map<string, IApgCadSvgLayerDef> = new Map();
   currentLayer!: Svg.ApgSvgNode;
 
-  groupsDefs: Map<string, string> = new Map();
   groups: Map<string, Svg.ApgSvgNode> = new Map();
-  currentGroup!: Svg.ApgSvgNode | undefined;
+  groupStack: Svg.ApgSvgNode[] = [];
 
   blocks: Map<string, Svg.ApgSvgNode> = new Map();
-  blockDefs: string[] = [];
 
   patterns: Map<string, Svg.ApgSvgNode> = new Map();
-  patternsDefs: string[] = [];
 
   textures: Map<string, Svg.ApgSvgNode> = new Map();
-  textureDefs: string[] = [];
 
   gradients: Map<string, Svg.ApgSvgNode> = new Map();
-  gradientsDefs: string[] = [];
 
   primitiveFactories: Map<string, ApgCadSvgFactoryBase> = new Map();
 
@@ -162,7 +158,7 @@ export class ApgCadSvg {
 
   }
 
-  static async New(aoptions: IApgCadSvgOptions) { 
+  static async New(aoptions: IApgCadSvgOptions) {
     const r = new ApgCadSvg(aoptions);
     await r.#init();
     return r;
@@ -469,42 +465,25 @@ export class ApgCadSvg {
   }
 
 
-  clearLayer(aname: string) {
-    const r = this.layers.get(aname);
-    if (r) {
-      r.clear();
-    }
-    return r;
-  }
-
-
   setCurrentLayer(aname: string) {
     const g = this.getLayer(aname);
     if (g !== undefined) {
       this.currentLayer = g;
-      // By default sets the current undefined so will draw directly on the layer
-      this.currentGroup = undefined;
+      // By default clears the groupstack so will draw directly on the layer
+      // TODO @2 -- APG 20230227 We can't do this we risk to call close groups randomly
+      this.groupStack = [];
     }
     return g;
   }
 
 
-  /** Clear the drawing by clearing all the layers except the Axis one. 
-    * Defs, Styles and other stuff will remain */
-  clearAllLayers() {
-    this.layers.forEach((_layer, key) => {
-      if (key != eApgCadDftLayers.CARTESIANS) {
-        this.clearLayer(key);
-      }
-    });
-  }
-
-
   /** Creates a new group on the current layer, sets it as the current group
    * and adds it to the groups library */
-  newGroup(aname: string, astyleOptions: IApgCadStyleOptions) {
-    const g = this.svg.group("GROUP_" + aname.toUpperCase())
-      .childOf(this.currentLayer);
+  newGroup(aname: string, astyleOptions: IApgCadStyleOptions, aparent?: Svg.ApgSvgNode) {
+    
+    const g = this.svg.group("GROUP_" + aname.toUpperCase());
+
+    g.childOf(aparent ? aparent : this.currentGroupOrLayer());
 
     if (astyleOptions.strokeName) {
       const strokeStyle = this.strokeStyles.get(astyleOptions.strokeName);
@@ -528,31 +507,19 @@ export class ApgCadSvg {
       }
     }
 
-    // Add to library
     this.groups.set(aname, g);
-    this.groupsDefs.set(aname, this.currentLayer.ID);
-    // Set as current
-    this.currentGroup = g;
+    this.groupStack.push(g);
 
     return g;
   }
 
-
-  getGroup(aname: string) {
-    const r = this.groups.get(aname);
-    return r;
+  currentGroupOrLayer() { 
+    const n = this.groupStack.length;
+    return n > 0 ? this.groupStack[n - 1] : this.currentLayer;
   }
 
-
-  setCurrentGroup(aname: string) {
-    const g = this.getGroup(aname);
-    if (g !== undefined) {
-      this.currentGroup = g;
-    }
-    return g;
-  }
-  unSetCurrentGroup() {
-    this.currentGroup = undefined;
+  closeGroup() {
+    this.groupStack.pop();
   }
 
 
@@ -585,7 +552,6 @@ export class ApgCadSvg {
 
   newBlock(anode: Svg.ApgSvgNode) {
     this.blocks.set(anode.ID, anode)
-    this.blockDefs.push(anode.ID);
     this.svg.addToDefs(anode.ID, anode);
   }
   getBlock(ablockId: string) {
@@ -595,7 +561,6 @@ export class ApgCadSvg {
 
   newPattern(apattern: Svg.ApgSvgNode) {
     this.patterns.set(apattern.ID, apattern);
-    this.patternsDefs.push(apattern.ID);
     this.svg.addToDefs(apattern.ID, apattern);
   }
   getPattern(aname: string) {
@@ -605,7 +570,6 @@ export class ApgCadSvg {
 
   newTexture(atexture: Svg.ApgSvgNode) {
     this.textures.set(atexture.ID, atexture);
-    this.textureDefs.push(atexture.ID);
     this.svg.addToDefs(atexture.ID, atexture);
   }
   getTexture(aname: string) {
@@ -615,14 +579,11 @@ export class ApgCadSvg {
 
   newGradient(agradient: Svg.ApgSvgNode) {
     this.gradients.set(agradient.ID, agradient);
-    this.gradientsDefs.push(agradient.ID);
     this.svg.addToDefs(agradient.ID, agradient);
   }
   getGradient(aname: string) {
     return this.gradients.get(aname);
   }
-
-
 
 
   /** Draws a simple svg as stub for the tests */
@@ -652,7 +613,7 @@ export class ApgCadSvg {
     r.textures = Array.from(this.textures.keys());
     r.blocks = Array.from(this.blocks.keys());
     r.layers = Array.from(this.layers.keys());
-    r.groups = Array.from(this.groupsDefs.keys());
+    r.groups = Array.from(this.groups.keys());
     return r;
   }
 

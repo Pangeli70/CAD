@@ -432,10 +432,9 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgDimensionsFactoryBas
     adebugText: string
   ) {
     const currLayer = this.cad.currentLayer;
-    const currGroup = this.cad.currentGroup;
 
     this.cad.setCurrentLayer(eApgCadDftLayers.DEBUG);
-    const leyerDef = this.cad.layerDefs.get(eApgCadDftLayers.DEBUG);
+    const layerDef = this.cad.layerDefs.get(eApgCadDftLayers.DEBUG);
 
     const DOT_SIZE = 10;
     const pf = this.cad.getPrimitiveFactory(eApgCadFactories.BASIC_SHAPES) as ApgCadSvgBasicShapesFactory;
@@ -470,7 +469,7 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgDimensionsFactoryBas
       .fill("none")
       .childOf(this.cad.currentLayer);
 
-    const textStyle = leyerDef!.textStyle;
+    const textStyle = layerDef!.textStyle;
     const textLineHeight = (textStyle.size * (textStyle.leading || 1.1));
 
     // Draw the debug info
@@ -480,7 +479,6 @@ export class ApgCadSvgArcDimensionsFactory extends ApgCadSvgDimensionsFactoryBas
       .textStyle(textStyle)
       .childOf(this.cad.currentLayer);
 
-    this.cad.currentGroup = currGroup;
     this.cad.currentLayer = currLayer;
   }
 }

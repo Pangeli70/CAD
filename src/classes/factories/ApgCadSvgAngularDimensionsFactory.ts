@@ -269,55 +269,57 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgFactoryBase {
     arrowPoint2: A2D.Apg2DPoint
   ) {
     const DOT_SIZE = 10;
-
-    const pf = new ApgCadSvgBasicShapesFactory(this.cad);
+    const currlayer = this.cad.currentLayer;
+    const factory = new ApgCadSvgBasicShapesFactory(this.cad);
     this.cad.setCurrentLayer(eApgCadDftLayers.DEBUG);
 
     // First and last point first line
-    pf
+    factory
       .buildCircle(afirstLine.p1, DOT_SIZE)
       .childOf(this.cad.currentLayer);
-    pf
+    factory
       .buildCircle(afirstLine.p2, DOT_SIZE)
       .childOf(this.cad.currentLayer);
     
     // First line
-    pf
+    factory
       .buildLine(afirstLine.p1, afirstLine.p2)
       .childOf(this.cad.currentLayer);
     
     // First and last point second line
-    pf
+    factory
       .buildDot(asecondLine.p1, DOT_SIZE)
       .childOf(this.cad.currentLayer);
-    pf
+    factory
       .buildDot(asecondLine.p2, DOT_SIZE)
       .childOf(this.cad.currentLayer);
     
     // Second line
-    pf
+    factory
       .buildLine(asecondLine.p1, asecondLine.p2)
       .childOf(this.cad.currentLayer);
     
     // Intersection
-    pf
+    factory
       .buildDot(intersectionPoint, DOT_SIZE)
       .childOf(this.cad.currentLayer);
     
     // Bisector line
-    pf
+    factory
       .buildLine(intersectionPoint, bisectorPoint)
       .childOf(this.cad.currentLayer);
 
     // Text origin
-    pf
+    factory
       .buildCircle(textPoint!, DOT_SIZE)
       .childOf(this.cad.currentLayer);
     
     // Line between arrowpoints
-    pf
+    factory
       .buildLine(arrowPoint1, arrowPoint2)
       .childOf(this.cad.currentLayer);
+    
+    this.cad.currentLayer = currlayer;
   }
 
   #getArrowPoints(

@@ -162,10 +162,9 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgFactoryBase {
 
     if (this.cad.settings.debug) {
       const currLayer = this.cad.currentLayer;
-      const currGroup = this.cad.currentGroup;
 
       this.cad.setCurrentLayer(eApgCadDftLayers.DEBUG);
-      const leyerDef = this.cad.layerDefs.get(eApgCadDftLayers.DEBUG);
+      const layerDef = this.cad.layerDefs.get(eApgCadDftLayers.DEBUG);
 
       const debugText = '\n\n'
         + 'o1:' + aorientation.toFixed(2) + '° - o2:' + annotationLine.angle.toFixed(2) + '°\n'
@@ -175,7 +174,7 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgFactoryBase {
         + 'tp:' + textPosition.x.toFixed(2) + ',' + textPosition.y.toFixed(2) + '\n'
         + 'tw:' + lengthOfTheMultilineText.toFixed(2) + ' - th:' + textHeight.toFixed(2);
 
-      const textStyle = leyerDef!.textStyle;
+      const textStyle = layerDef!.textStyle;
       const textLineHeight = (textStyle.size * (textStyle.leading || 1.1));
       
       // Draw the debug info
@@ -190,7 +189,6 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgFactoryBase {
         .circle(textPosition.x, textPosition.y, 5)
         .childOf(this.cad.currentLayer)
 
-      this.cad.currentGroup = currGroup;
       this.cad.currentLayer = currLayer;
     }
 
