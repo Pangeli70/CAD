@@ -223,18 +223,6 @@ export class ApgCadFactoriesTester extends ApgCadBaseTester {
 
   }
 
-
-
-
-  /*  
-    private _testDimStyles() {
-      const dxf = new ApgDxfDrawing();
-  
-      // TODO @9 implement this mockup
-      return dxf.toDxfString();
-    }
-*/
-
   static #testLinearDims(
     cad: ApgCadSvg,
     atype: eApgCadLinearDimensionTypes,

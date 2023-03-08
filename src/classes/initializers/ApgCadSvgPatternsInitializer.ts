@@ -88,19 +88,7 @@ export class ApgCadSvgPatternsInitializer extends ApgCadSvgBaseInitializer {
         p = hatchBuilder.roofTiles(eApgCadDftPatterns.ROOF_TILES2, 150, 200, stroke2);
         this._cad.newPattern(p);
 
-
-
-        // TODO @4 APG 20221229 -- Implement this
-        /* 
-                <pattern id="imgpattern" x="0" y="0" width="1" height="1"
-               viewBox="0 0 1024 576" preserveAspectRatio="xMidYMid slice">
-        <image width="1024" height="576" xlink:href="http://calciodanese.altervista.org/alterpages/hbkgepage.jpg"/>
-      </pattern>
-         */
     }
-
-
-
 
     #gridPattern(aname: string, aasDots: boolean) {
         const stroke = this._cad.settings.grid.gridStroke;

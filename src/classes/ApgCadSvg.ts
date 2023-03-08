@@ -470,7 +470,7 @@ export class ApgCadSvg {
     if (g !== undefined) {
       this.currentLayer = g;
       // By default clears the groupstack so will draw directly on the layer
-      // TODO @2 -- APG 20230227 We can't do this we risk to call close groups randomly
+      // TODO @4 We can't do this we risk to call close groups randomly -- APG 20230227
       this.groupStack = [];
     }
     return g;

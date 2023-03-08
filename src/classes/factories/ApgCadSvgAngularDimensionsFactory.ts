@@ -152,7 +152,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgFactoryBase {
       if (!afirstLine.isInTheSegment(arrowPoint1)) {
         const pts = arrow1Baseline.pointsOverLine(arrowPoint1, 100 * this.K_ARROW_LINE);
         lpg = intersectionPoint.nearestIn(pts!);
-        // TODO @3 APG 20221226 -- this is the inner arrow line that is drawn over the arc
+        // TODO @4 This is the inner arrow line that is drawn over the arc -- APG 20221226
         this.cad.svg
           .line(arrowPoint1.x, arrowPoint1.y, lpg.x, lpg.y)
           .childOf(r);
@@ -208,7 +208,7 @@ export class ApgCadSvgAngularDimensionsFactory extends ApgCadSvgFactoryBase {
         'M ' + arrowPoint1.x.toString() + ' ' + (arrowPoint1.y).toString()
         + ' A ' + aladderRadious.toString() + ' ' + aladderRadious.toString() + ' 0 1 0 ' + arrowPoint2.x.toString() + ' ' + (arrowPoint2.y).toString()
     }
-    // TODO @4 APG 20221226 -- explore the arc instruction instead than path
+    // TODO @4 Use arc instruction instead than path -- APG 20221226
     this.cad.svg
       .path(pathInstruction)
       .fill('none')
