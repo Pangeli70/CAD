@@ -7,6 +7,7 @@
  * @version 0.9.2 [APG 2022/11/30] Github beta
  * @version 0.9.3 [APG 2022/12/18] Deno Deploy
  * @version 0.9.4 [APG 2023/01/14] Deno Deploy beta
+ * @version 0.9.6 [APG 2023/03/18] Text
  * -----------------------------------------------------------------------
  */
 
@@ -134,10 +135,10 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgFactoryBase {
 
     const dx = astart.x - acenter.x;
     const dy = (astart.y - acenter.y) / dx;
-    
-    let alpha = Math.asin(dy)*360/(2*Math.PI);
 
-    if (dx < 0) { 
+    let alpha = Math.asin(dy) * 360 / (2 * Math.PI);
+
+    if (dx < 0) {
       alpha += 90;
     }
 
@@ -146,11 +147,11 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgFactoryBase {
     return r;
   }
 
-  
-  buildPath(ainstructions: string) { 
+
+  buildPath(ainstructions: string) {
     const r = this.cad.svg
       .path(ainstructions)
-    return r; 
+    return r;
   }
 
 
@@ -169,11 +170,37 @@ export class ApgCadSvgBasicShapesFactory extends ApgCadSvgFactoryBase {
 
     const tx = acenter.x + atextStyle.size * atextStyle.aspectRatio;
     const ty = acenter.y - atextStyle.size;
-    const text = ` ${aname}: ${acenter.x},${acenter.y}`;
+
+    const x = Uts.ApgUtsMath.RoundToSignificant(acenter.x, 6);
+    const y = Uts.ApgUtsMath.RoundToSignificant(acenter.y, 6);
+
+    const text = ` ${aname}: ${x},${y}`;
     const _t = this.cad.svg
       .text(tx, ty, text, 0)
       .textStyle(atextStyle)
       .childOf(r);
+
+    return r;
+  }
+
+  buildText(
+    aorigin: A2D.Apg2DPoint,
+    atext: string | string[],
+    atextStyle: Svg.IApgSvgTextStyle,
+  ) {
+
+    let textToDraw = "";
+    if (Array.isArray(atext)) {
+      textToDraw = atext.join("\n");
+    }
+    else {
+      textToDraw = atext
+    }
+
+    const lineSpacing = atextStyle.size * (atextStyle.lineHeight || 1.1);
+    const r = this.cad.svg
+      .text(aorigin.x, aorigin.y, textToDraw, lineSpacing)
+      .textStyle(atextStyle)
 
     return r;
   }

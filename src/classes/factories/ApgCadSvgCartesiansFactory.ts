@@ -7,6 +7,7 @@
  * @version 0.9.2 [APG 2022/11/30] Github beta
  * @version 0.9.3 [APG 2022/12/18] Deno Deploy
  * @version 0.9.4 [APG 2023/01/04] Deno Deploy Beta
+ * @version 0.9.6 [APG 2023/03/19] Draw ticks using patterns
  * -----------------------------------------------------------------------
  */
 
@@ -16,6 +17,7 @@ import { eApgCadFactories } from "../../enums/eApgCadFactories.ts";
 import { IApgCadSvgCartesians } from "../../interfaces/IApgCadSvgCartesians.ts";
 import { ApgCadSvg } from "../ApgCadSvg.ts";
 import { ApgCadSvgFactoryBase } from "./ApgCadSvgFactoryBase.ts";
+import { eApgCadDftPatterns } from "../../enums/eApgCadDftPatterns.ts";
 
 
 interface IApgCadAxisTickData {
@@ -67,8 +69,33 @@ export class ApgCadSvgCartesiansFactory extends ApgCadSvgFactoryBase {
   #drawTicks(
     aparent: Svg.ApgSvgNode,
     atype: eApgCadOrientations,
-    aaxis: IApgCadSvgCartesians,
+    asettings: IApgCadSvgCartesians,
   ) {
+    const bottomLeft = this.cad.svg.bottomLeft();
+    const topRight = this.cad.svg.topRight();
+    let x = 0, y = 0, w = 0, h = 0;
+    if (atype == eApgCadOrientations.horizontal) {
+      x = bottomLeft.x;
+      y = -asettings.bigTicksSize;
+      w = topRight.x - bottomLeft.x;
+      h = asettings.bigTicksSize;
+    }
+    else {
+      x = -asettings.bigTicksSize;
+      y = bottomLeft.y;
+      w = asettings.bigTicksSize;
+      h = topRight.y - bottomLeft.y;
+    }
+    const r = this.cad.svg
+      .rect(x, y, w, h)
+      .stroke('none', 0)
+      .fillPattern(eApgCadDftPatterns.CARTESIAN_HORIZONTAL)
+      .childOf(aparent);
+
+    if (atype == eApgCadOrientations.vertical) {
+      r.fillPattern(eApgCadDftPatterns.CARTESIAN_VERTICAL)
+    }
+
     let firstTick: number;
     let lastTick: number;
     let ticksNum: number;
@@ -77,15 +104,15 @@ export class ApgCadSvgCartesiansFactory extends ApgCadSvgFactoryBase {
 
     if (atype == eApgCadOrientations.horizontal) {
 
-      firstTick = Math.floor(topLeft.x / aaxis.ticksStep) * aaxis.ticksStep;
-      lastTick = Math.floor(bottomRight.x / aaxis.ticksStep) * aaxis.ticksStep;
-      ticksNum = (lastTick - firstTick) / aaxis.ticksStep;
+      firstTick = Math.floor(topLeft.x / asettings.ticksStep) * asettings.ticksStep;
+      lastTick = Math.floor(bottomRight.x / asettings.ticksStep) * asettings.ticksStep;
+      ticksNum = (lastTick - firstTick) / asettings.ticksStep;
 
     } else {
 
-      firstTick = Math.floor(topLeft.y / aaxis.ticksStep) * aaxis.ticksStep;
-      lastTick = Math.floor(bottomRight.y / aaxis.ticksStep) * aaxis.ticksStep;
-      ticksNum = (lastTick - firstTick) / aaxis.ticksStep;
+      firstTick = Math.floor(topLeft.y / asettings.ticksStep) * asettings.ticksStep;
+      lastTick = Math.floor(bottomRight.y / asettings.ticksStep) * asettings.ticksStep;
+      ticksNum = (lastTick - firstTick) / asettings.ticksStep;
     }
 
     const ticksG = this.cad.svg
@@ -96,15 +123,15 @@ export class ApgCadSvgCartesiansFactory extends ApgCadSvgFactoryBase {
       .group()
       .childOf(aparent);
 
-    if (aaxis.labelsStyle) {
-      labelsG.textStyle(aaxis.labelsStyle);
+    if (asettings.labelsStyle) {
+      labelsG.textStyle(asettings.labelsStyle);
     }
 
     let currentTick = 0;
     do {
-      const tickData = this.#getTickData(aaxis, atype, currentTick, firstTick);
-      this.#drawTick(ticksG, aaxis, tickData);
-      this.#drawTickLabel(labelsG, aaxis, atype, tickData);
+      const tickData = this.#getTickData(asettings, atype, currentTick, firstTick);
+      // this.#drawTick(ticksG, asettings, tickData);
+      this.#drawTickLabel(labelsG, asettings, atype, tickData);
       currentTick++;
     } while (currentTick <= ticksNum);
   }

@@ -103,7 +103,7 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgFactoryBase {
 
     const textOrientation = ApgCadSvgUtils.GetTextOrientation(annotationLine.angle);
 
-    const textLineSpacing = this.textStyle.size * ((this.textStyle.leading || 1.1) - 1);
+    const textLineSpacing = this.textStyle.size * ((this.textStyle.lineHeight || 1.1) - 1);
 
     const textLineHeight = (this.textStyle.size + textLineSpacing);
 
@@ -175,7 +175,7 @@ export class ApgCadSvgAnnotationsFactory extends ApgCadSvgFactoryBase {
         + 'tw:' + lengthOfTheMultilineText.toFixed(2) + ' - th:' + textHeight.toFixed(2);
 
       const textStyle = layerDef!.textStyle;
-      const textLineHeight = (textStyle.size * (textStyle.leading || 1.1));
+      const textLineHeight = (textStyle.size * (textStyle.lineHeight || 1.1));
       
       // Draw the debug info
       const _debugText = this.cad.svg

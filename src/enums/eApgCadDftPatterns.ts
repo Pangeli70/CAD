@@ -12,6 +12,10 @@
 export enum eApgCadDftPatterns {
     BACK_GRID_LINES = "BackGridLines",
     BACK_GRID_LINES_AS_DOTS = "BackGridLinesAsDots",
+
+    CARTESIAN_HORIZONTAL = "CartesianHorizontal",
+    CARTESIAN_VERTICAL = "CartesianVertical",
+
     CHESSBOARD = "Chessboard",
 
     CROSS1 = "Cross1",

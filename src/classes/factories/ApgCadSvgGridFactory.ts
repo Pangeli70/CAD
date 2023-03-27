@@ -28,17 +28,17 @@ export class ApgCadSvgGridFactory extends ApgCadSvgFactoryBase {
 
     const bottomLeft = this.cad.svg.bottomLeft();
     const topRight = this.cad.svg.topRight();
-    const r1 = this.cad.svg
-      .rect(bottomLeft.x, bottomLeft.y, topRight.x, topRight.y)
+    const r = this.cad.svg
+      .rect(bottomLeft.x, bottomLeft.y, topRight.x - bottomLeft.x, topRight.y - bottomLeft.y)
       .fillPattern(eApgCadDftPatterns.BACK_GRID_LINES)
       .stroke(agridSettings.gridStroke.color, agridSettings.gridStroke.width)
       .childOf(aparent);
 
     if (agridSettings.mode == eApgCadGridMode.DOTS ) {
-      r1.fillPattern(eApgCadDftPatterns.BACK_GRID_LINES_AS_DOTS)
+      r.fillPattern(eApgCadDftPatterns.BACK_GRID_LINES_AS_DOTS)
     }
 
-    return r1;
+    return r;
   }
 
 }

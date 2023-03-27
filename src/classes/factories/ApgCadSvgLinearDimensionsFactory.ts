@@ -129,7 +129,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgDimensionsFactory
     adata.textOrientation = ApgCadSvgUtils.GetTextOrientation(adata.dimLine.angle);
     adata.arrowOrientation = adata.dimLine.angle % 360;
 
-    adata.textLineSpacing = this.textStyle.size * ((this.textStyle.leading || 1.1) - 1);
+    adata.textLineSpacing = this.textStyle.size * ((this.textStyle.lineHeight || 1.1) - 1);
 
     adata.textPoint = adata.dimLine.offsetPoint(adata.textBasePoint, adata.textLineSpacing);
 
@@ -251,7 +251,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgDimensionsFactory
 
     // Draw the text
     const _textDef = this.cad.svg
-      .text(adata.textPoint!.x, adata.textPoint!.y, adata.dimension, this.textStyle.leading || 1.1)
+      .text(adata.textPoint!.x, adata.textPoint!.y, adata.dimension, this.textStyle.lineHeight || 1.1)
       .rotate(adata.textOrientation!)
       .stroke("none", 0)
       .childOf(ar);
@@ -331,7 +331,7 @@ export class ApgCadSvgLinearDimensionsFactory extends ApgCadSvgDimensionsFactory
       .childOf(this.cad.currentLayer);
 
     const textStyle = layerDef!.textStyle;
-    const textLineHeight = (textStyle.size * (textStyle.leading || 1.1));
+    const textLineHeight = (textStyle.size * (textStyle.lineHeight || 1.1));
 
     // Draw the debug info
     const _debugText = this.cad.svg

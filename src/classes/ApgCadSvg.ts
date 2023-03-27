@@ -212,6 +212,7 @@ export class ApgCadSvg {
 
 
   #resetViewBox() {
+
     /** Display ratio */
     const horizontalDisplayRatio = this.settings.viewBox.viewPortWidth /
       this.settings.viewBox.canvasWidth;
@@ -287,6 +288,18 @@ export class ApgCadSvg {
   }
 
 
+  #reinitGridPatterns() {
+    const initializer = new ApgCadSvgPatternsInitializer(this);
+    initializer.rebuildGridPatterns();
+  }
+
+
+  #reinitCartesianPatterns() {
+    const initializer = new ApgCadSvgPatternsInitializer(this);
+    initializer.rebuildCartesianPatterns();
+  }
+
+
   async #initTextures() {
     const initializer = new ApgCadSvgTexturesInitializer(this);
     await initializer.build();
@@ -331,6 +344,7 @@ export class ApgCadSvg {
       const axisLayer = this.getLayer(eApgCadDftLayers.CARTESIANS);
 
       if (axisLayer) {
+        axisLayer.clear();
         let axisLabelsStyle = this
           .getTextStyle(this.settings.cartesians.labelsTextStyleName);
         if (!axisLabelsStyle) {
@@ -342,7 +356,6 @@ export class ApgCadSvg {
           axisLayer,
           eApgCadOrientations.horizontal,
           this.settings.cartesians,
-
         );
         axisFactory.build(
           axisLayer,
@@ -359,10 +372,11 @@ export class ApgCadSvg {
 
     const factory = this.primitiveFactories.get(eApgCadFactories.GRIDS);
     if (factory) {
-      const gridFactory = factory as ApgCadSvgGridFactory
-      const gridLayer: Svg.ApgSvgNode | undefined = this.getLayer(eApgCadDftLayers.GRIDS);
+      const gridFactory = factory as ApgCadSvgGridFactory;
+      const gridLayer = this.getLayer(eApgCadDftLayers.GRIDS);
 
       if (gridLayer) {
+        gridLayer.clear();
         gridFactory.build(
           gridLayer,
           this.settings.grid,
@@ -372,30 +386,35 @@ export class ApgCadSvg {
   }
 
 
-  /** Sets the viewbox.
-   * This method must be called in the proper order becuse clears 
-   * the entire content of the drawing */
-  async setViewBox(avb: IApgCadSvgViewBox) {
-    this.settings.viewBox = avb;
+  /** Sets the viewbox. */
+  async setViewBox(aviewbox: IApgCadSvgViewBox) {
+    this.settings.viewBox = Object.assign({}, this.settings.viewBox, aviewbox);
     await this.#init();
   }
 
 
-  /** Draws the axis and grid on the drawing.
-     * This method must be called in the proper order becuse clears 
-     * the entire content of the drawing */
-  async setCartesian(aa: IApgCadSvgCartesians) {
-    this.settings.cartesians = Object.assign({}, this.settings.cartesians, aa);
-    await this.#init();
+  /** Sets the cartesians axises */
+  setCartesian(acartesians: IApgCadSvgCartesians) {
+    this.settings.cartesians = Object.assign({}, this.settings.cartesians, acartesians);
+    this.#reinitCartesianPatterns();
+    this.#initCartesians();
   }
 
 
-  /** Draws the background of the drawing.
-    * This method must be called in the proper order becuse clears 
-    * the entire content of the drawing*/
-  async setBackground(ab: IApgCadSvgGround) {
-    this.settings.background = Object.assign({}, this.settings.background, ab);
-    await this.#init();
+  /** Sets the grid */
+  setGrid(agrid: IApgCadSvgGrid) {
+    this.settings.grid = Object.assign({}, this.settings.grid, agrid);
+    this.#reinitGridPatterns();
+    this.#initGrid();
+  }
+
+
+  /** Set the bacgkround */
+  setBackground(abackground: IApgCadSvgGround) {
+    this.settings.background = Object.assign({}, this.settings.background, abackground);
+    const backLayer = this.getLayer(eApgCadDftLayers.BACKGROUND);
+    backLayer?.fill(this.settings.background.fillColor);
+    backLayer?.stroke(abackground.strokeColor, abackground.strokeWidth);
   }
 
 
@@ -404,6 +423,7 @@ export class ApgCadSvg {
   ) {
     return this.primitiveFactories.get(atype);
   }
+
 
   newLayer(
     aname: string,
@@ -477,10 +497,17 @@ export class ApgCadSvg {
   }
 
 
+  /** Returns the data structure associated to the settings of the current layer */
+  getCurrentLayerDef() {
+    const r = this.layerDefs.get(this.currentLayer.ID);
+    return r;
+  }
+
+
   /** Creates a new group on the current layer, sets it as the current group
    * and adds it to the groups library */
   newGroup(aname: string, astyleOptions: IApgCadStyleOptions, aparent?: Svg.ApgSvgNode) {
-    
+
     const g = this.svg.group("GROUP_" + aname.toUpperCase());
 
     g.childOf(aparent ? aparent : this.currentGroupOrLayer());
@@ -513,10 +540,12 @@ export class ApgCadSvg {
     return g;
   }
 
-  currentGroupOrLayer() { 
+
+  currentGroupOrLayer() {
     const n = this.groupStack.length;
     return n > 0 ? this.groupStack[n - 1] : this.currentLayer;
   }
+
 
   closeGroup() {
     this.groupStack.pop();
@@ -583,6 +612,18 @@ export class ApgCadSvg {
   }
   getGradient(aname: string) {
     return this.gradients.get(aname);
+  }
+
+
+  getMask(aname: string) {
+    let r = this.gradients.get(aname);
+    if (r === undefined) {
+      r = this.patterns.get(aname);
+    }
+    if (r === undefined) {
+      r = this.textures.get(aname);
+    }
+    return (r == undefined)? undefined : aname;
   }
 
 

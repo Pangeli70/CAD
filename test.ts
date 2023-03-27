@@ -5,6 +5,7 @@
  * ------------------------------------------------------------------------
  */
 export { ApgCadBaseTester } from "./test/src/classes/ApgCadBaseTester.ts";
+export { ApgCadTestRandomizer } from "./test/src/classes/ApgCadTestRandomizer.ts";
 
 export type { IApgCadTestParameters  } from "./test/src/interfaces/IApgCadTestParameters.ts";
 

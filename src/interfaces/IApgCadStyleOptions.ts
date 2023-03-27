@@ -7,11 +7,11 @@
  */
 
 /**
- * Drawing styles (stroke, fill and  text) collected together
+ * Drawing and filling styles (stroke, fill and text) collected together
  */
 export interface IApgCadStyleOptions {
   strokeName?: string,
   fillName?: string,
-  textName?: string
+  textName?: string,
 }
 

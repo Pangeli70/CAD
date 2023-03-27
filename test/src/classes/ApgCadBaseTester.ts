@@ -155,7 +155,7 @@ export abstract class ApgCadBaseTester {
       stroke: { color: eApgCadStdColors.NONE, width: eApgCadDftStrokeWidths.NONE_0 },
       anchor: Svg.eApgSvgTextAnchor.end,
       aspectRatio: 0.5,
-      leading: 1.1
+      lineHeight: 1.1
     }
     return r;
   }
@@ -194,7 +194,7 @@ export abstract class ApgCadBaseTester {
     const textStyle = this.getTestTextStyle(acad);
 
     const _t = acad.svg
-      .text(x + aoptions.w, y + (1.1*aoptions.h), aname, 0)
+      .text(x + aoptions.w, y + (1.1 * aoptions.h), aname, 0)
       .textStyle(textStyle)
       .childOf(g)
 
@@ -202,43 +202,47 @@ export abstract class ApgCadBaseTester {
   }
 
   protected static DrawCartouche(acad: ApgCadSvg) {
-    const WIDTH = 2000;
-    const HEIGHT = 500;
+
+    acad.setCurrentLayer(eApgCadDftLayers.CARTOUCHE);
+    const currLayerDef = acad.layerDefs.get(acad.currentLayer.ID);
+    const currTextStyle = currLayerDef!.textStyle;
+    const titleTextStyle = Uts.ApgUtsObj.DeepCopy(currTextStyle) as Svg.IApgSvgTextStyle;
+    const descrTextStyle = Uts.ApgUtsObj.DeepCopy(currTextStyle) as Svg.IApgSvgTextStyle;
+    descrTextStyle.size /= 2;
+    const titleTextStyleHeight = (titleTextStyle.size * (titleTextStyle.lineHeight || 1.1));
+    const titleBottomPadding = (titleTextStyle.size * ((titleTextStyle.lineHeight || 1.1) - 1));
+    const descrTextStyleHeight = (descrTextStyle.size * (descrTextStyle.lineHeight || 1.1));
+    const WIDTH = (acad.svg.title.length + 4) * titleTextStyle.size * titleTextStyle.aspectRatio
+    const HEIGHT = titleTextStyleHeight + 2 * descrTextStyleHeight + titleBottomPadding;
 
     const topRight = acad.svg.topRight();
 
     const x = (topRight.x - WIDTH);
     const y = (topRight.y - HEIGHT);
 
-    acad.setCurrentLayer(eApgCadDftLayers.CARTOUCHE);
+    const titleY = topRight.y - titleTextStyleHeight;
+
     acad.svg
       .rect(x, y, WIDTH, HEIGHT)
       .fill(eApgCadStdColors.NONE, 0)
       .childOf(acad.currentLayer);
-
-    const currLayerDef = acad.layerDefs.get(acad.currentLayer.ID);
-    const currTextStyle = currLayerDef!.textStyle;
-    const titleTextStyle = Uts.ApgUtsObj.DeepCopy(currTextStyle) as Svg.IApgSvgTextStyle;
-    const textStyle = Uts.ApgUtsObj.DeepCopy(currTextStyle) as Svg.IApgSvgTextStyle;
-    textStyle.size /= 2;
-    const titleY = topRight.y - (titleTextStyle.size * (titleTextStyle.leading || 1.1));
 
     acad.svg
       .text(x + (WIDTH / 2), titleY, acad.svg.title, 0)
       .textStyle(titleTextStyle)
       .childOf(acad.currentLayer);
 
-    const descriptionY = titleY - (textStyle.size * (textStyle.leading || 1.1));
+    const descriptionY = titleY - descrTextStyleHeight;
     acad.svg
       .text(x + (WIDTH / 2), descriptionY, acad.svg.description, 0)
-      .textStyle(textStyle)
+      .textStyle(descrTextStyle)
       .childOf(acad.currentLayer);
 
-    const dateY = descriptionY - (textStyle.size * (textStyle.leading || 1.1));
+    const dateY = descriptionY - descrTextStyleHeight;
     const date = new Date().toISOString();
     acad.svg
       .text(x + (WIDTH / 2), dateY, date, 0)
-      .textStyle(textStyle)
+      .textStyle(descrTextStyle)
       .childOf(acad.currentLayer);
   }
 

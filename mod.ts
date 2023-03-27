@@ -2,6 +2,7 @@
  * @module [CAD]
  * @author [APG] ANGELI Paolo Giusto
  * @version 0.9.5 [APG 2023/02/12]
+ * @version 0.9.6 [APG 2023/03/26] CII related improvements
  * ------------------------------------------------------------------------
  */
 
@@ -30,6 +31,7 @@ export { eApgCadDftStrokeStyles } from "./src/enums/eApgCadDftStrokeStyles.ts";
 export { eApgCadDftStrokeWidths } from "./src/enums/eApgCadDftStrokeWidths.ts";
 export { eApgCadDftTextStyles } from "./src/enums/eApgCadDftTextStyles.ts";
 export { eApgCadDftTextures } from "./src/enums/eApgCadDftTextures.ts";
+export { eApgCadDimensionPositions } from "./src/enums/eApgCadDimensionPositions.ts";
 export { eApgCadFactories } from "./src/enums/eApgCadFactories.ts";
 export { eApgCadGridMode } from "./src/enums/eApgCadGridMode.ts"
 export { eApgCadLinearDimensionTypes } from "./src/enums/eApgCadLinearDimensionTypes.ts";
